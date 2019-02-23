@@ -13,6 +13,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.slf4j.LoggerFactory;
 
 /**
  * FXML Controller class
@@ -41,6 +42,9 @@ public class PreferencesController implements Initializable {
          @FXML
     private void handleSavePrefButton(ActionEvent event) {
        // get a handle to the stage
+
+        
+        
     Stage stage = (Stage) b_saveProperties.getScene().getWindow();
     // do what you have to do
     stage.close();
@@ -48,6 +52,12 @@ public class PreferencesController implements Initializable {
             
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+               
+        org.slf4j.Logger logger = LoggerFactory.getLogger(PreferencesController.class);
+        logger.info("test");
+        System.err.println("rrrr");
+        
+      
         // TODO
     }    
     
