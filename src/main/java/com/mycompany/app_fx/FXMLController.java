@@ -50,9 +50,8 @@ public class FXMLController implements Initializable {
             Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
- 
     
-      @FXML
+    @FXML
     private void handle_itemPreferences(ActionEvent event){
         
         try {

@@ -34,8 +34,7 @@ public class MainApp extends Application {
     public static void main(String[] args) {
         launch(args);
         
-        org.slf4j.Logger logger = LoggerFactory.getLogger(PreferencesController.class);
-        logger.info("start");
+    
     }
 
 }
