@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.slf4j.LoggerFactory;
 
 
 public class MainApp extends Application {
@@ -32,6 +33,9 @@ public class MainApp extends Application {
      */
     public static void main(String[] args) {
         launch(args);
+        
+        org.slf4j.Logger logger = LoggerFactory.getLogger(PreferencesController.class);
+        logger.info("start");
     }
 
 }
