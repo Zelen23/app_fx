@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane id="AnchorPane" prefHeight="609.0" prefWidth="861.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.app_fx.FXMLController">
+    <children>
+        <Button fx:id="button" layoutX="726.0" layoutY="376.0" onAction="#handleButtonAction" text="Click Me!" />
+        <Button fx:id="button2" layoutX="726.0" layoutY="417.0" onAction="#handleButtonAction2" text="Click Me!" />
+        <Label fx:id="label" layoutX="126" layoutY="120" minHeight="16" minWidth="69" />
+      <CheckBox layoutX="726.0" layoutY="346.0" mnemonicParsing="false" text="CheckBox" />
+      
+      
+      <MenuBar fx:id="menuBar" layoutY="1.0" prefHeight="26.0" prefWidth="861.0">
+        <menus>
+          <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
+            <items>
+                  <MenuItem fx:id="m_itemAuth" mnemonicParsing="false" onAction="#handle_itemAuth" text="Authorization" />
+                  <MenuItem fx:id="m_itemApiKey" mnemonicParsing="false" onAction="#handle_itemPreferences" text="API key" />
+                  <MenuItem fx:id="m_itemProviders" mnemonicParsing="false" text="Providers" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+    </children>
+</AnchorPane>
