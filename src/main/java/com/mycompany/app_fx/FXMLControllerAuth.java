@@ -47,8 +47,7 @@ public class FXMLControllerAuth implements Initializable {
     stage.close();
     }
 
-    
-    
+
   
     @Override
     public void initialize(URL url, ResourceBundle rb) {

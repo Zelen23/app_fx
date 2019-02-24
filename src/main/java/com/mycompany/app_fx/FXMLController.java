@@ -1,7 +1,13 @@
 package com.mycompany.app_fx;
 
+import com.mycompany.helper.PostGrabber;
+import com.mycompany.helper.Vk_api;
+import com.mycompany.helper.Vk_preferences;
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -85,18 +91,21 @@ public class FXMLController implements Initializable {
     } 
     @FXML
     private void handleButtonAction2(ActionEvent event){
-         try {
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/FXML.fxml"));
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add("/styles/Styles.css");
-        Stage stage = new Stage();
-        stage.setTitle("JavaFX and Maven");
-        stage.setScene(scene);
-        stage.show();
- 
-        } catch (IOException ex) {
-            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
+        List<Integer> providerList=new ArrayList<>();
+        providerList.add(529989036);
+        
+        PostGrabber postGrabber=new PostGrabber(providerList);
+        postGrabber.start();
+        
+        /*
+         Vk_api vk_api=new Vk_api();
+         vk_api.getwalls(vk_api.getActor(Integer.parseInt(
+                 new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),  
+                 new Vk_preferences().getPref(Vk_preferences.TOKEN)),
+                 529989036
+               );
+        */
     }
    
     
