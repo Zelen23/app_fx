@@ -63,13 +63,13 @@ public class Vk_api {
                     TransportClient transportClient = HttpTransportClient.getInstance();
                     VkApiClient vk = new VkApiClient(transportClient);
                              walls=vk.wall().get(actor)
-                            .count(3)
+                            .count(1)
                             .ownerId(provider_id)
                             .execute();
                     
-                    System.out.println(walls.getItems().get(0).getText()+" "
-                            +walls.getItems().get(0).getAttachments().get(0).getPhoto().getPhoto1280()
-                    );
+                  //  System.out.println(walls.getItems().get(0).getText()+" "
+                  //          +walls.getItems().get(0).getAttachments().get(0).getPhoto().getPhoto1280()
+                  //  );
                     
                 } catch (ApiException ex) { 
                     java.util.logging.Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);

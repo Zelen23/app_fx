@@ -74,10 +74,6 @@ public class FXMLController implements Initializable {
     }
     
     
-    
-    
-    
-    
     @FXML
     private Label label;
     @FXML
@@ -88,16 +84,20 @@ public class FXMLController implements Initializable {
     private void handleButtonAction(ActionEvent event) {
         System.out.println("You clicked me!");
         label.setText("Hello World!");
+     
     } 
     @FXML
     private void handleButtonAction2(ActionEvent event){
         
         List<Integer> providerList=new ArrayList<>();
-        providerList.add(529989036);
+        //providerList.add(529989036);
+          providerList.add(419021587);
         
         PostGrabber postGrabber=new PostGrabber(providerList);
         postGrabber.start();
+    
         
+      
         /*
          Vk_api vk_api=new Vk_api();
          vk_api.getwalls(vk_api.getActor(Integer.parseInt(
