@@ -12,29 +12,24 @@ import java.util.List;
  * @author adolf
  */
 
-
-/* Integer provId = getwalls.getItems().get(0).getOwnerId();
-            Integer postId = getwalls.getItems().get(0).getId();
-            Integer postdate = getwalls.getItems().get(0).getDate();
-            Integer postLikes = getwalls.getItems().get(0).getLikes().getCount();
-
-            String text = getwalls.getItems().get(0).getText();
-            Integer count_photo = getwalls.getItems().get(0).getAttachments().size();
-            List<String> listPhoto = new ArrayList<String>();*/
 public class ConstructorPost  {
     
+            Integer provId;
             Integer postId;
             Integer postdate ;
             Integer postLikes;
+            Integer postViews;
 
             String text ;
             Integer count_photo ;
             List<String> listPhoto ;
 
-    public ConstructorPost(Integer postId, Integer postdate, Integer postLikes, String text, Integer count_photo, List<String> listPhoto) {
+    public ConstructorPost( Integer provId,Integer postId, Integer postdate,Integer postViews, Integer postLikes, String text, Integer count_photo, List<String> listPhoto) {
+        this.provId = provId;
         this.postId = postId;
         this.postdate = postdate;
         this.postLikes = postLikes;
+        this.postViews =postViews;
         this.text = text;
         this.count_photo = count_photo;
         this.listPhoto = listPhoto;

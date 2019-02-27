@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,6 +21,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -40,6 +43,9 @@ public class FXMLController implements Initializable {
     private MenuItem m_itemApiKey;
      @FXML
     private MenuItem m_itemProviders;
+     @FXML
+    private ListView postListView;
+     
     
     @FXML
     private void handle_itemAuth(ActionEvent event){
@@ -90,10 +96,13 @@ public class FXMLController implements Initializable {
     private void handleButtonAction2(ActionEvent event){
         
         List<Integer> providerList=new ArrayList<>();
-        //providerList.add(529989036);
-          providerList.add(419021587);
+       // providerList.add(529989036);
+       // providerList.add(411014340);
+       // providerList.add(408902013);
+       providerList.add(419021587);
         
-        PostGrabber postGrabber=new PostGrabber(providerList);
+        
+        PostGrabber postGrabber=new PostGrabber(providerList,postListView);
         postGrabber.start();
     
         
@@ -110,10 +119,16 @@ public class FXMLController implements Initializable {
    
     
     
-    
+    public void setList (List<String>aaa){
+       
+        ObservableList observableList = FXCollections.observableArrayList();
+        observableList.setAll(aaa);
+        postListView.setItems(observableList);
+    }
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+       
     }    
 }

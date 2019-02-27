@@ -3,6 +3,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
@@ -12,7 +13,7 @@
     <children>
         <Button fx:id="button" layoutX="726.0" layoutY="376.0" onAction="#handleButtonAction" text="Click Me!" />
         <Button fx:id="button2" layoutX="726.0" layoutY="417.0" onAction="#handleButtonAction2" text="Click Me!" />
-        <Label fx:id="label" layoutX="126" layoutY="120" minHeight="16" minWidth="69" />
+        <Label fx:id="label" layoutX="723.0" layoutY="319.0" minHeight="16" minWidth="69" />
       <CheckBox layoutX="726.0" layoutY="346.0" mnemonicParsing="false" text="CheckBox" />
       
       
@@ -37,5 +38,6 @@
           </Menu>
         </menus>
       </MenuBar>
+      <ListView fx:id="postListView" layoutX="14.0" layoutY="42.0" prefHeight="556.0" prefWidth="322.0" />
     </children>
 </AnchorPane>
