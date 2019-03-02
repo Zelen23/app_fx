@@ -8,6 +8,7 @@ package com.mycompany.helper;
 import com.mycompany.app_fx.FXMLController;
 import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.objects.base.Geo;
+import com.vk.api.sdk.objects.base.LikesInfo;
 import com.vk.api.sdk.objects.photos.Photo;
 import com.vk.api.sdk.objects.wall.PostSource;
 import com.vk.api.sdk.objects.wall.PostType;
@@ -56,10 +57,7 @@ public class PostGrabber extends Thread {
             try {
                 for (int i = 0; i < providerList.size(); i++) {
 
-                    // addtoListPost(
-                    //         addtoWallsList(vk_api.getwalls(userActor, providerList.get(i),10,1))
-                    // );
-                    filterDataInPost(vk_api.getwalls(userActor, providerList.get(i), 10, 1));
+                    filterDataInPost(vk_api.getwalls(userActor, providerList.get(i), 2, 0));
                 }
                 sleep(50000);
 
@@ -74,35 +72,42 @@ public class PostGrabber extends Thread {
     public void filterDataInPost(GetResponse getwalls) {
 
         //System.out.println(getwalls.getItems().toString());
-        /// System.out.println("getwalls.getCount() " + getwalls.getCount());
+        //System.out.println("getwalls.getCount() " + getwalls.getCount());
         //System.out.println("getwalls.getItems().size() " + getwalls.getItems().size());
         ConstructorPost post = null;
         Integer provId = null;
         Integer postId = null;
         Integer postdate = null;
-        Integer postViews;
-        Integer postLikes;
-        String text = null;
+        Integer postViews = 0;
+        Integer postLikes = 0;
+        String text = "";
         Integer count_itemsAttach = null;
         List<String> listPhoto = null;
 
         for (int i = 0; i < getwalls.getItems().size(); i++) {
             List<WallpostAttachment> attachments = getwalls.getItems().get(i).getAttachments();
             // если данные удовлетворяют могу добавить в listPost
-            if (attachments != null) {
-
-                provId = getwalls.getItems().get(i).getOwnerId();
-                postId = getwalls.getItems().get(i).getId();
-                postdate = getwalls.getItems().get(i).getDate();
-//           postViews = getwalls.getItems().get(0).getViews().getCount();
-//           postLikes = getwalls.getItems().get(0).getLikes().getCount();
-                text = getwalls.getItems().get(i).getText();
+            if (getwalls.getItems().get(i).getIsPinned()==null&&attachments != null) {
                 count_itemsAttach = getwalls.getItems().get(i).getAttachments().size();
-                listPhoto = new ArrayList<String>();
 
                 for (int j = 0; j < count_itemsAttach; j++) {
-                    Photo isPhoto = getwalls.getItems().get(i).getAttachments().get(j).getPhoto();
+                    Photo isPhoto       = getwalls.getItems().get(i).getAttachments().get(j).getPhoto();
+                    Views views         = getwalls.getItems().get(i).getViews();
+                    LikesInfo likesInfo = getwalls.getItems().get(i).getLikes();
+                    
                     if (isPhoto != null) {
+                        if(views!=null){
+                            postViews=views.getCount();
+                        };
+                        if(likesInfo!=null){
+                            postLikes=likesInfo.getCount();
+                        };
+                        provId = getwalls.getItems().get(i).getOwnerId();
+                        postId = getwalls.getItems().get(i).getId();
+                        postdate = getwalls.getItems().get(i).getDate();
+                        text = getwalls.getItems().get(i).getText();
+                        
+                        listPhoto = new ArrayList<String>();
 
                         listPhoto.add(
                                 getwalls.getItems().get(i).getAttachments().get(j).getPhoto().getPhoto807());
@@ -110,13 +115,12 @@ public class PostGrabber extends Thread {
 
                 }
                 //проверяю входит ди запись в массив записей 
-                addtoListPost(new ConstructorPost(provId, postId, postdate, 1, 1, text, count_itemsAttach, listPhoto));
+                addtoListPost(new ConstructorPost(provId, postId, postdate,postViews, postLikes, text, count_itemsAttach, listPhoto));
 
             }
 
         }
 
-        // viewInListView(listPost);
     }
 
     void addtoListPost(ConstructorPost addtoWallsList) {
