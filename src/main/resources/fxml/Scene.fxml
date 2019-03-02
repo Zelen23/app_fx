@@ -38,6 +38,8 @@
           </Menu>
         </menus>
       </MenuBar>
-      <ListView fx:id="postListView" layoutX="14.0" layoutY="42.0" prefHeight="556.0" prefWidth="322.0" />
+      <ListView fx:id="postListView" layoutX="14.0" layoutY="42.0" prefHeight="556.0" prefWidth="686.0">
+         
+       </ListView>
     </children>
 </AnchorPane>

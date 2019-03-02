@@ -14,15 +14,15 @@ import java.util.List;
 
 public class ConstructorPost  {
     
-            Integer provId;
-            Integer postId;
-            Integer postdate ;
-            Integer postLikes;
-            Integer postViews;
+        public    Integer provId;
+        public   Integer postId;
+        public   Integer postdate ;
+        public   Integer postLikes;
+        public  Integer postViews;
 
-            String text ;
-            Integer count_photo ;
-            List<String> listPhoto ;
+        public String text ;
+        public  Integer count_photo ;
+        public List<String> listPhoto ;
 
     public ConstructorPost( Integer provId,Integer postId, Integer postdate,Integer postViews, Integer postLikes, String text, Integer count_photo, List<String> listPhoto) {
         this.provId = provId;

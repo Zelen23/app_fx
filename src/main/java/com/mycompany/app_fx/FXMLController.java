@@ -1,5 +1,6 @@
 package com.mycompany.app_fx;
 
+import com.mycompany.helper.ConstructorPost;
 import com.mycompany.helper.PostGrabber;
 import com.mycompany.helper.Vk_api;
 import com.mycompany.helper.Vk_preferences;
@@ -21,6 +22,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -28,6 +30,7 @@ import javafx.scene.control.MenuItem;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Callback;
 
 public class FXMLController implements Initializable {
     
@@ -96,13 +99,12 @@ public class FXMLController implements Initializable {
     private void handleButtonAction2(ActionEvent event){
         
         List<Integer> providerList=new ArrayList<>();
-      // providerList.add(529989036);
-       // providerList.add(411014340);
-       // providerList.add(408902013);
-       //providerList.add(344417917);
-       
-       providerList.add(419021587);
-       providerList.add(474456246);
+        providerList.add(529989036);
+        providerList.add(411014340);
+        providerList.add(408902013);
+        providerList.add(344417917);
+        providerList.add(419021587);
+        providerList.add(474456246);
         
         
         PostGrabber postGrabber=new PostGrabber(providerList,postListView);
@@ -120,8 +122,7 @@ public class FXMLController implements Initializable {
         */
     }
    
-    
-    
+   
     public void setList (List<String>aaa){
        
         ObservableList observableList = FXCollections.observableArrayList();
@@ -129,9 +130,29 @@ public class FXMLController implements Initializable {
         postListView.setItems(observableList);
     }
     
+   
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        
+       
+         List<String>aaa=new ArrayList<String>();
+         aaa.add("s");
+         List<ConstructorPost> constructorPosts=new ArrayList<>();
+         constructorPosts.add(new ConstructorPost(1,1,1,1,1,"555",1,aaa));
+        
+        final ObservableList<ConstructorPost> observableList = FXCollections.observableArrayList();
+        observableList.setAll(constructorPosts);
+        postListView.setItems(observableList);
+        postListView.setCellFactory(new Callback<ListView<ConstructorPost>,ListCell<ConstructorPost>>() {
+             @Override
+             public ListCell<ConstructorPost> call(ListView<ConstructorPost> param) {
+                 return  new ListViewCell();
+             }
+                  
+                    });
+        
+        
        
     }    
 }

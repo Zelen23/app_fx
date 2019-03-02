@@ -5,7 +5,10 @@
  */
 package com.mycompany.helper;
 
+import com.mycompany.app_fx.Cell_listPostController;
 import com.mycompany.app_fx.FXMLController;
+import com.mycompany.app_fx.ListViewCell;
+import com.mycompany.app_fx.TaskCellFactory;
 import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.objects.base.Geo;
 import com.vk.api.sdk.objects.base.LikesInfo;
@@ -24,8 +27,10 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 /**
  *
@@ -47,7 +52,7 @@ public class PostGrabber extends Thread {
         this.providerList = providerList;
         this.postListView = postListView;
     }
-//529989036
+    //529989036
 
     /*цикл в час в этом цикле каждые 10мин перебираю*/
     @Override
@@ -160,31 +165,31 @@ public class PostGrabber extends Thread {
     }
 
     void viewInListView(List<ConstructorPost> listPost) {
-        List<String> aaa = new ArrayList<String>();
-        for (int i = 0; i < listPost.size(); i++) {
-            aaa.add(listPost.get(i).provId + "   " + listPost.get(i).postdate + "\n"
-                    + listPost.get(i).postId + "   " + listPost.get(i).provId + "\n "
-                    + listPost.get(i).text + " \n "
-                    + listPost.get(i).listPhoto.toString());
+        
+        System.out.println("04040404");
+        
 
-            /*System.err.println(listPost.get(i).provId + "   " + listPost.get(i).postdate + "\n"
-                    + listPost.get(i).postId + "   " + listPost.get(i).provId + "\n "
-                    + listPost.get(i).text + " \n "
-                    + listPost.get(i).listPhoto.toString());
-             */
-        }
-
-        final ObservableList observableList = FXCollections.observableArrayList();
-        observableList.setAll(aaa);
+        final ObservableList<ConstructorPost> observableList = FXCollections.observableArrayList();
+        
+        observableList.setAll(listPost);
         Platform.runLater(new Runnable() {
 
             @Override
             public void run() {
                 postListView.setItems(observableList);
+                postListView.setCellFactory(new Callback<ListView<ConstructorPost>,ListCell<ConstructorPost>>() {
+             @Override
+             public ListCell<ConstructorPost> call(ListView<ConstructorPost> param) {
+                 return  new ListViewCell();
+             }
+                  
+                    });
+                
             }
         });
 
     }
+    
 
     //_______________________  
     ConstructorPost addtoWallsList(GetResponse getwalls) {
@@ -210,4 +215,31 @@ public class PostGrabber extends Thread {
 
     }
 
+    void viewInListView2(List<ConstructorPost> listPost) {
+        List<String> aaa = new ArrayList<String>();
+        for (int i = 0; i < listPost.size(); i++) {
+            aaa.add(listPost.get(i).provId + "   " + listPost.get(i).postdate + "\n"
+                    + listPost.get(i).postId + "   " + listPost.get(i).provId + "\n "
+                    + listPost.get(i).text + " \n "
+                    + listPost.get(i).listPhoto.toString());
+
+            /*System.err.println(listPost.get(i).provId + "   " + listPost.get(i).postdate + "\n"
+                    + listPost.get(i).postId + "   " + listPost.get(i).provId + "\n "
+                    + listPost.get(i).text + " \n "
+                    + listPost.get(i).listPhoto.toString());
+             */
+        }
+
+        final ObservableList observableList = FXCollections.observableArrayList();
+        observableList.setAll(aaa);
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                postListView.setItems(observableList);
+                
+            }
+        });
+
+    }
 }
