@@ -96,10 +96,13 @@ public class FXMLController implements Initializable {
     private void handleButtonAction2(ActionEvent event){
         
         List<Integer> providerList=new ArrayList<>();
-       // providerList.add(529989036);
+      // providerList.add(529989036);
        // providerList.add(411014340);
        // providerList.add(408902013);
+       //providerList.add(344417917);
+       
        providerList.add(419021587);
+       providerList.add(474456246);
         
         
         PostGrabber postGrabber=new PostGrabber(providerList,postListView);
