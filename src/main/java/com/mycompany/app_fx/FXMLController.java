@@ -12,6 +12,11 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -27,10 +32,13 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.MultipleSelectionModel;
+import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Callback;
+import javafx.util.Pair;
 
 public class FXMLController implements Initializable {
     
@@ -139,8 +147,10 @@ public class FXMLController implements Initializable {
          List<String>aaa=new ArrayList<String>();
          aaa.add("s");
          List<ConstructorPost> constructorPosts=new ArrayList<>();
-         constructorPosts.add(new ConstructorPost(1,1,1,1,1,"555",1,aaa));
-        
+         constructorPosts.add(new ConstructorPost(1,1,new Long(11),1,1,"555",1,aaa,false));
+         
+    
+       
         final ObservableList<ConstructorPost> observableList = FXCollections.observableArrayList();
         observableList.setAll(constructorPosts);
         postListView.setItems(observableList);
@@ -152,7 +162,23 @@ public class FXMLController implements Initializable {
                   
                     });
         
+        /*
+        final MultipleSelectionModel<ConstructorPost> selectionModel=postListView.getSelectionModel();
         
-       
+        selectionModel.selectedItemProperty().addListener(new ChangeListener<ConstructorPost>(){
+             @Override
+             public void changed(ObservableValue<? extends ConstructorPost> observable, ConstructorPost oldValue, ConstructorPost newValue) {
+                  int item= selectionModel.getSelectedIndex();
+                 System.err.println("item"+newValue.postId+" index "+item);
+             
+             }
+         });
+        
+        */
     }    
+        public class CheckedListViewCheckObserver<T> extends SimpleObjectProperty<Pair<T, Boolean>> {
+
+   
+}
+
 }

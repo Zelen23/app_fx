@@ -6,7 +6,9 @@
 package com.mycompany.helper;
 
 import com.vk.api.sdk.objects.wall.responses.GetResponse;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,6 +33,17 @@ public class Helper {
         }
 
          return list_blank;
+    }
+    
+    public String convertTime(Long time){
+       Date date = new Date();
+       date.setTime((long)time*1000);
+       
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String times=    simpleDateFormat.format(date);
+        
+       // System.out.println("long "+time+" ");
+    return times ;
     }
     
     public void addWallsList(GetResponse getwalls){

@@ -82,7 +82,7 @@ public class PostGrabber extends Thread {
         ConstructorPost post = null;
         Integer provId = null;
         Integer postId = null;
-        Integer postdate = null;
+        Long postdate = null;
         Integer postViews = 0;
         Integer postLikes = 0;
         String text = "";
@@ -109,7 +109,7 @@ public class PostGrabber extends Thread {
                         };
                         provId = getwalls.getItems().get(i).getOwnerId();
                         postId = getwalls.getItems().get(i).getId();
-                        postdate = getwalls.getItems().get(i).getDate();
+                        postdate = getwalls.getItems().get(i).getDate().longValue();
                         text = getwalls.getItems().get(i).getText();
                         
                         listPhoto = new ArrayList<String>();
@@ -120,7 +120,7 @@ public class PostGrabber extends Thread {
 
                 }
                 //проверяю входит ди запись в массив записей 
-                addtoListPost(new ConstructorPost(provId, postId, postdate,postViews, postLikes, text, count_itemsAttach, listPhoto));
+                addtoListPost(new ConstructorPost(provId, postId, postdate,postViews, postLikes, text, count_itemsAttach, listPhoto,false));
 
             }
 
@@ -130,7 +130,7 @@ public class PostGrabber extends Thread {
 
     void addtoListPost(ConstructorPost addtoWallsList) {
 
-        System.out.println("addtoWallsList " + addtoWallsList.postId);
+     //   System.out.println("addtoWallsList " + addtoWallsList.postId);
 
         if (addtoWallsList != null) {
             Boolean isExist = false;
@@ -166,9 +166,6 @@ public class PostGrabber extends Thread {
 
     void viewInListView(List<ConstructorPost> listPost) {
         
-        System.out.println("04040404");
-        
-
         final ObservableList<ConstructorPost> observableList = FXCollections.observableArrayList();
         
         observableList.setAll(listPost);
@@ -198,7 +195,8 @@ public class PostGrabber extends Thread {
         //тут падаем если нет какого-то поля нужно обходить 
         Integer provId = getwalls.getItems().get(0).getOwnerId();
         Integer postId = getwalls.getItems().get(0).getId();
-        Integer postdate = getwalls.getItems().get(0).getDate();
+        Long postdate = getwalls.getItems().get(0).getDate().longValue();
+       
 //        Integer postViews = getwalls.getItems().get(0).getViews().getCount();
 //        Integer postLikes = getwalls.getItems().get(0).getLikes().getCount();
 
@@ -211,7 +209,7 @@ public class PostGrabber extends Thread {
                     getwalls.getItems().get(0).getAttachments().get(j).getPhoto().getPhoto807());
         }
 
-        return new ConstructorPost(provId, postId, postdate, 1, 1, text, count_photo, listPhoto);
+        return new ConstructorPost(provId, postId, postdate, 1, 1, text, count_photo, listPhoto,false);
 
     }
 
