@@ -7,6 +7,7 @@ package com.mycompany.helper;
 
 import com.vk.api.sdk.objects.wall.responses.GetResponse;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -44,6 +45,10 @@ public class Helper {
         
        // System.out.println("long "+time+" ");
     return times ;
+    }
+    
+    public long unixTime(){  
+      return Instant.now().getEpochSecond();
     }
     
     public void addWallsList(GetResponse getwalls){

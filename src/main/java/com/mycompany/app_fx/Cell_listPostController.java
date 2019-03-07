@@ -7,8 +7,11 @@ package com.mycompany.app_fx;
 
 import com.mycompany.helper.ConstructorPost;
 import com.mycompany.helper.Helper;
+import com.mycompany.helper.PostGrabber;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -96,13 +99,12 @@ public class Cell_listPostController
         check_toPost.setSelected(string.flag);
         WebEngine webEngine = postPicture.getEngine();
         webEngine.load(string.listPhoto.get(0));
+        
        /* 
         postPicture.setOnScroll(new EventHandler<ScrollEvent>(){
             @Override
-            public void handle(ScrollEvent event) {
-               
-                System.err.println(event.getDeltaY());
-               
+            public void handle(ScrollEvent event) {    
+                System.err.println(event.getDeltaY());          
             }
         });
         */
@@ -111,9 +113,16 @@ public class Cell_listPostController
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 string.setSelected(newValue);
+<<<<<<< HEAD
                 System.out.println("CheckBox для " +string.postId+ " изменен с " + oldValue + " в " + newValue);
                 /*1 слушать модель если чекбокс включен */
                 
+=======
+                string.setText(text.getText());
+                /* тут же вносить именения в текст
+                        (поправить сравняшку в постграббере и внести изменения в конструктор)*/
+
+>>>>>>> ButtonToPost
                 }
             });
     }

@@ -26,7 +26,12 @@ public class ConstructorPost  {
         
     public void setSelected(boolean selected) {
             this.flag=selected;
-        }    
+        }
+    
+    public void setText(String posttext){
+        this.text=posttext;
+        // потом этот же текст должен прилетать в обьект attaches
+    }
 
     public ConstructorPost( Integer provId,Integer postId, Long postdate,Integer postViews, Integer postLikes, String text, Integer count_photo, List<String> listPhoto, boolean flag) {
         this.provId = provId;
