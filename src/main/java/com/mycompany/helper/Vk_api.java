@@ -38,7 +38,10 @@ public class Vk_api {
     String url = "https://oauth.vk.com/authorize?client_id=" + pref.getPref(CLIENT_ID)
             + "&display=page&redirect_uri=https://oauth.vk.com/blank.html"
             + "&scope=friends&response_type=token&v=5.52";
-
+    String urlWall = "https://oauth.vk.com/authorize?client_id=" + pref.getPref(CLIENT_ID)
+            + "&display=page&redirect_uri=https://oauth.vk.com/blank.html"
+            + "&scope=wall&response_type=token&v=5.52";
+    
     public UserActor getActor(Integer user_id, String token) {
         UserActor actor = new UserActor(user_id, token);
 
@@ -90,6 +93,23 @@ public class Vk_api {
         }
 
         return walls;
+    }
+    
+    public void setPost(UserActor actor, String mess,Integer pubdate){
+        try {
+            TransportClient transportClient = HttpTransportClient.getInstance();
+            VkApiClient vk = new VkApiClient(transportClient);
+            vk.wall().post(actor)
+                    .ownerId(418739533)
+                    .publishDate(pubdate)
+                    .message(mess)
+                    .execute();
+        } catch (ApiException ex) {
+            Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClientException ex) {
+            Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+        }
+                    
     }
 
     public void openVK(Integer APP_ID, String REDIRECT_URI, String CLIENT_SECRET, String code) {

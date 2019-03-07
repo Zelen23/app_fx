@@ -5,6 +5,7 @@ import com.mycompany.helper.PostGrabber;
 import com.mycompany.helper.Vk_api;
 import com.mycompany.helper.Vk_preferences;
 import com.sun.javafx.scene.control.skin.VirtualFlow;
+import com.vk.api.sdk.client.actors.UserActor;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -101,6 +102,12 @@ public class FXMLController implements Initializable {
     private void handleButtonAction(ActionEvent event) {
         System.out.println("You clicked me!");
         label.setText("Hello World!");
+        
+        Vk_api vk_api = new Vk_api();
+    UserActor userActor = vk_api.getActor(Integer.parseInt(
+            new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
+            new Vk_preferences().getPref(Vk_preferences.TOKEN));
+        vk_api.setPost(userActor,"rrrr",1551919860);
      
     } 
     @FXML
