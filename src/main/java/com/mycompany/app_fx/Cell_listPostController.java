@@ -64,8 +64,6 @@ public class Cell_listPostController
     CheckBox check_toPost;
     
     Helper help=new Helper();
-    
-    public List<ConstructorPost> wallPost= new ArrayList<ConstructorPost>();
    
     /**
      * Initializes the controller class.
@@ -115,11 +113,10 @@ public class Cell_listPostController
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 string.setSelected(newValue);
-                
-               
-                
-                
-                System.out.println("sizeWallPost: " +wallPost.size());
+                string.setText(text.getText());
+                /* тут же вносить именения в текст
+                        (поправить сравняшку в постграббере и внести изменения в конструктор)*/
+
                 }
             });
     }

@@ -41,100 +41,92 @@ import javafx.util.Callback;
 import javafx.util.Pair;
 
 public class FXMLController implements Initializable {
-    
 
-    
+    PostGrabber postGrabber;
+
     @FXML
     private MenuBar menuBar;
     @FXML
-    private Menu menuFile;  
+    private Menu menuFile;
     @FXML
     private MenuItem m_itemAuth;
     @FXML
     private MenuItem m_itemApiKey;
-     @FXML
+    @FXML
     private MenuItem m_itemProviders;
-     @FXML
+    @FXML
     private ListView postListView;
-     
-    
-    @FXML
-    private void handle_itemAuth(ActionEvent event){
-        
-        try {
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/AuthWebView.fxml"));
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add("/styles/Styles.css");
-        Stage stage = new Stage();
-        stage.setTitle("Get_token");
-        stage.setScene(scene);
-        stage.show();
-        } catch (IOException ex) {
-            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    @FXML
-    private void handle_itemPreferences(ActionEvent event){
-        
-        try {
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/Preferences.fxml"));
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add("/styles/Styles.css");
-        Stage stage = new Stage();
-        stage.setTitle("Pref");
-        stage.setScene(scene);
-        stage.show();
-        } catch (IOException ex) {
-            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    Cell_listPostController cellCtrl=new Cell_listPostController();
-    PostGrabber postGrabber;
     @FXML
     private Label label;
     @FXML
     private Button button;
     @FXML
     private Button button2;
+
+    @FXML
+    private void handle_itemAuth(ActionEvent event) {
+
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/AuthWebView.fxml"));
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add("/styles/Styles.css");
+            Stage stage = new Stage();
+            stage.setTitle("Get_token");
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @FXML
+    private void handle_itemPreferences(ActionEvent event) {
+
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/Preferences.fxml"));
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add("/styles/Styles.css");
+            Stage stage = new Stage();
+            stage.setTitle("Pref");
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     @FXML
     private void handleButtonAction(ActionEvent event) {
-       
-        label.setText("text: ");
-        
-        List<ConstructorPost> toWall=new Cell_listPostController().wallPost ;
-     
-        for(ConstructorPost elt:postGrabber.listPost){
-            if(elt.flag){
-                       System.out.println("text: "+elt.provId);
+
+        for (ConstructorPost elt : postGrabber.listPost) {
+            if (elt.flag) {
+                /*
+                Собрать все элементы послать в постер
+                который от текущей даты(или от даты посоедго поста)
+                нахерачит в очередь постов
+                */
+                
+                System.out.println("text: " + elt.text);
             }
-     
-            
+
         }
-        
-            
-       
-     
-     
-    } 
+
+    }
+
     @FXML
-    private void handleButtonAction2(ActionEvent event){
-        
-        List<Integer> providerList=new ArrayList<>();
+    private void handleButtonAction2(ActionEvent event) {
+
+        List<Integer> providerList = new ArrayList<>();
         providerList.add(529989036);
         providerList.add(411014340);
         providerList.add(408902013);
         providerList.add(344417917);
         providerList.add(419021587);
         providerList.add(474456246);
-        
-        
-        postGrabber=new PostGrabber(providerList,postListView);
+
+        postGrabber = new PostGrabber(providerList, postListView);
         postGrabber.start();
-    
-        
-      
+
         /*
          Vk_api vk_api=new Vk_api();
          vk_api.getwalls(vk_api.getActor(Integer.parseInt(
@@ -142,41 +134,28 @@ public class FXMLController implements Initializable {
                  new Vk_preferences().getPref(Vk_preferences.TOKEN)),
                  529989036
                );
-        */
+         */
     }
-   
-   
-    public void setList (List<String>aaa){
-       
-        ObservableList observableList = FXCollections.observableArrayList();
-        observableList.setAll(aaa);
-        postListView.setItems(observableList);
-    }
-    
-   
-    
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
-       
-         List<String>aaa=new ArrayList<String>();
-         aaa.add("s");
-         List<ConstructorPost> constructorPosts=new ArrayList<>();
-         constructorPosts.add(new ConstructorPost(1,1,new Long(11),1,1,"555",1,aaa,false));
-         
-    
-       
+
+        List<String> aaa = new ArrayList<String>();
+        aaa.add("s");
+        List<ConstructorPost> constructorPosts = new ArrayList<>();
+        constructorPosts.add(new ConstructorPost(1, 1, new Long(11), 1, 1, "555", 1, aaa, false));
+
         final ObservableList<ConstructorPost> observableList = FXCollections.observableArrayList();
         observableList.setAll(constructorPosts);
         postListView.setItems(observableList);
-        postListView.setCellFactory(new Callback<ListView<ConstructorPost>,ListCell<ConstructorPost>>() {
-             @Override
-             public ListCell<ConstructorPost> call(ListView<ConstructorPost> param) {
-                 return  new ListViewCell();
-             }
-                  
-                    });
-        
+        postListView.setCellFactory(new Callback<ListView<ConstructorPost>, ListCell<ConstructorPost>>() {
+            @Override
+            public ListCell<ConstructorPost> call(ListView<ConstructorPost> param) {
+                return new ListViewCell();
+            }
+
+        });
+
         /*
         final MultipleSelectionModel<ConstructorPost> selectionModel=postListView.getSelectionModel();
         
@@ -189,11 +168,16 @@ public class FXMLController implements Initializable {
              }
          });
         
-        */
-    }    
-        public class CheckedListViewCheckObserver<T> extends SimpleObjectProperty<Pair<T, Boolean>> {
+         */
+    }
 
-   
-}
+    public class CheckedListViewCheckObserver<T> extends SimpleObjectProperty<Pair<T, Boolean>> {
 
+    }
+    
+    public void setList(List<String> aaa) {
+        ObservableList observableList = FXCollections.observableArrayList();
+        observableList.setAll(aaa);
+        postListView.setItems(observableList);
+    }
 }
