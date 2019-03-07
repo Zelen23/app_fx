@@ -46,7 +46,7 @@ public class PostGrabber extends Thread {
             new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
             new Vk_preferences().getPref(Vk_preferences.TOKEN));
     List<GetResponse> massiveGetResponses = new ArrayList<GetResponse>();
-    List<ConstructorPost> listPost = new ArrayList<ConstructorPost>();
+    public List<ConstructorPost> listPost = new ArrayList<ConstructorPost>();
 
     public PostGrabber(List<Integer> providerList, ListView postListView) {
         this.providerList = providerList;
@@ -141,7 +141,7 @@ public class PostGrabber extends Thread {
                 for (int i = 0; i < listPost.size(); i++) {
                     if (listPost.get(i).postdate.equals(addtoWallsList.postdate)
                             && listPost.get(i).postId.equals(addtoWallsList.postId)
-                            && listPost.get(i).text.equals(addtoWallsList.text)
+                        //    && listPost.get(i).text.equals(addtoWallsList.text)
                             && listPost.get(i).provId.equals(addtoWallsList.provId)) {
                         isExist = true;
                     }

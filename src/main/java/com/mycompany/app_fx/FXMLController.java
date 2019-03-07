@@ -90,7 +90,8 @@ public class FXMLController implements Initializable {
         }
     }
     
-    
+    Cell_listPostController cellCtrl=new Cell_listPostController();
+    PostGrabber postGrabber;
     @FXML
     private Label label;
     @FXML
@@ -99,8 +100,22 @@ public class FXMLController implements Initializable {
     private Button button2;
     @FXML
     private void handleButtonAction(ActionEvent event) {
-        System.out.println("You clicked me!");
-        label.setText("Hello World!");
+       
+        label.setText("text: ");
+        
+        List<ConstructorPost> toWall=new Cell_listPostController().wallPost ;
+     
+        for(ConstructorPost elt:postGrabber.listPost){
+            if(elt.flag){
+                       System.out.println("text: "+elt.provId);
+            }
+     
+            
+        }
+        
+            
+       
+     
      
     } 
     @FXML
@@ -115,7 +130,7 @@ public class FXMLController implements Initializable {
         providerList.add(474456246);
         
         
-        PostGrabber postGrabber=new PostGrabber(providerList,postListView);
+        postGrabber=new PostGrabber(providerList,postListView);
         postGrabber.start();
     
         
