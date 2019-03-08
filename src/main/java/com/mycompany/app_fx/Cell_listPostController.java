@@ -113,16 +113,11 @@ public class Cell_listPostController
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 string.setSelected(newValue);
-<<<<<<< HEAD
-                System.out.println("CheckBox для " +string.postId+ " изменен с " + oldValue + " в " + newValue);
-                /*1 слушать модель если чекбокс включен */
-                
-=======
+
                 string.setText(text.getText());
                 /* тут же вносить именения в текст
                         (поправить сравняшку в постграббере и внести изменения в конструктор)*/
 
->>>>>>> ButtonToPost
                 }
             });
     }

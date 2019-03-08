@@ -6,21 +6,52 @@
 package com.mycompany.helper;
 
 import com.vk.api.sdk.client.actors.UserActor;
+import java.util.List;
 
 /**
  *
  * @author adolf
  */
 public class Poster extends Thread{
+    
+    
+    List<ConstructorPost> listPost;
 
-    Vk_api vk_api=new Vk_api();
+    public Poster(List<ConstructorPost> listPost) {
+        this.listPost = listPost;
+    }
+    
+    
+     Helper helper=new Helper();
+       
+       Vk_api vk_api = new Vk_api();
+        UserActor userActor = vk_api.getActor(Integer.parseInt(
+            new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
+            new Vk_preferences().getPref(Vk_preferences.TOKEN));
+       // System.out.println("text: "+ helper.unixTime());
+       
+   /*Получаю массив считаю колличество элементов*/
+
+
     @Override
     public void run() {
         //дата время
         //интервал
         //цикл в коллиество строк на отправку
      
-    // vk_api.setPost(new UserActor(1212,"wewe"),"mess",1551919860);
+    int i=10;  
+    for(ConstructorPost elt:listPost){
+        
+        Long time= helper.timeadd(helper.unixTime(), i);
+        new Vk_api().setPost(userActor,
+                elt.text,
+                time);
+        
+         i=i+10;
+    
+    }
+     
+    
 
 //To change body of generated methods, choose Tools | Templates.
     }

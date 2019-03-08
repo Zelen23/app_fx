@@ -95,15 +95,17 @@ public class Vk_api {
         return walls;
     }
     
-    public void setPost(UserActor actor, String mess,Integer pubdate){
+    public void setPost(UserActor actor, String mess,Long pubdate){
         try {
             TransportClient transportClient = HttpTransportClient.getInstance();
             VkApiClient vk = new VkApiClient(transportClient);
             vk.wall().post(actor)
                     .ownerId(418739533)
-                    .publishDate(pubdate)
+                    .publishDate(pubdate.intValue())
                     .message(mess)
                     .execute();
+            
+            System.out.println("date_in_setPost "+ pubdate.intValue());
         } catch (ApiException ex) {
             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClientException ex) {

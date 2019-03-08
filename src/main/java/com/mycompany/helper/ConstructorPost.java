@@ -26,7 +26,7 @@ public class ConstructorPost  {
         
     public void setSelected(boolean selected) {
             this.flag=selected;
-        }
+    }
     
     public void setText(String posttext){
         this.text=posttext;

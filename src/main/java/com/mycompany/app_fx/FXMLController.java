@@ -1,10 +1,11 @@
 package com.mycompany.app_fx;
 
 import com.mycompany.helper.ConstructorPost;
+import com.mycompany.helper.Helper;
 import com.mycompany.helper.PostGrabber;
+import com.mycompany.helper.Poster;
 import com.mycompany.helper.Vk_api;
 import com.mycompany.helper.Vk_preferences;
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import com.vk.api.sdk.client.actors.UserActor;
 import java.io.IOException;
 import java.net.URL;
@@ -13,11 +14,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -33,11 +30,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.MultipleSelectionModel;
-import javafx.scene.control.cell.CheckBoxListCell;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import javafx.util.Pair;
 
@@ -98,35 +91,18 @@ public class FXMLController implements Initializable {
 
     @FXML
     private void handleButtonAction(ActionEvent event) {
-<<<<<<< HEAD
-        System.out.println("You clicked me!");
-        label.setText("Hello World!");
-        
-        Vk_api vk_api = new Vk_api();
-    UserActor userActor = vk_api.getActor(Integer.parseInt(
-            new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
-            new Vk_preferences().getPref(Vk_preferences.TOKEN));
-        vk_api.setPost(userActor,"rrrr",1551919860);
-     
-    } 
-=======
+
+        List<ConstructorPost> list = new ArrayList<ConstructorPost>();
 
         for (ConstructorPost elt : postGrabber.listPost) {
             if (elt.flag) {
-                /*
-                Собрать все элементы послать в постер
-                который от текущей даты(или от даты посоедго поста)
-                нахерачит в очередь постов
-                */
-                
-                System.out.println("text: " + elt.text);
+                list.add(elt);
             }
-
         }
-
+        Poster poster = new Poster(list);
+        poster.start();
     }
 
->>>>>>> ButtonToPost
     @FXML
     private void handleButtonAction2(ActionEvent event) {
 
@@ -188,7 +164,7 @@ public class FXMLController implements Initializable {
     public class CheckedListViewCheckObserver<T> extends SimpleObjectProperty<Pair<T, Boolean>> {
 
     }
-    
+
     public void setList(List<String> aaa) {
         ObservableList observableList = FXCollections.observableArrayList();
         observableList.setAll(aaa);

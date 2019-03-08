@@ -8,9 +8,12 @@ package com.mycompany.helper;
 import com.vk.api.sdk.objects.wall.responses.GetResponse;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -18,7 +21,7 @@ import java.util.List;
  *  https://oauth.vk.com/blank.html#access_token=14ec12b80e6b981fe2a6c5fb589b754935425fcb32cca37f2c87e13d23f6fc7f1318aad719a4486fc4c65&expires_in=86400&user_id=418739533
  */
 public class Helper {
-    
+    static final long ONE_MINUTE_IN_MILLIS=60;
     
     public List<String> parseUrl(String url){
         List<String> list_blank= new ArrayList<>();
@@ -48,8 +51,20 @@ public class Helper {
     }
     
     public long unixTime(){  
-      return Instant.now().getEpochSecond();
+    //Instant.now().getEpochSecond()
+    ZoneId zoneId = ZoneId.of( "Europe/Moscow" );
+    ZonedDateTime zdt = ZonedDateTime.ofInstant( Instant.now() , zoneId );
+    return zdt.toEpochSecond();
     }
+    
+    
+    public long  timeadd(Long time, int minute){
+     
+     return time+Integer.toUnsignedLong(minute)*60;
+    }
+    
+   
+        
     
     public void addWallsList(GetResponse getwalls){
     }
