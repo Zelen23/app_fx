@@ -14,9 +14,13 @@ import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import com.vk.api.sdk.objects.UserAuthResponse;
 import com.vk.api.sdk.objects.ads.Client;
+import com.vk.api.sdk.objects.photos.Photo;
+import com.vk.api.sdk.objects.photos.PhotoUpload;
+import com.vk.api.sdk.objects.photos.responses.WallUploadResponse;
 import com.vk.api.sdk.objects.users.UserXtrCounters;
 import com.vk.api.sdk.objects.wall.responses.GetResponse;
 import com.vk.api.sdk.queries.wall.WallGetFilter;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -103,6 +107,7 @@ public class Vk_api {
                     .ownerId(418739533)
                     .publishDate(pubdate.intValue())
                     .message(mess)
+                  //  .attachments(attach)
                     .execute();
             
             System.out.println("date_in_setPost "+ pubdate.intValue());
@@ -139,6 +144,39 @@ public class Vk_api {
             java.util.logging.Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+    }
+    
+    
+    public void addPhoto(UserActor actor,List<String> listPhoto){
+        //получаю лист со ссылками фоток
+        // воозвращаю лист
+         TransportClient transportClient = HttpTransportClient.getInstance();
+         VkApiClient vk = new VkApiClient(transportClient);
+         
+        for (String elt : listPhoto) {
+             try {
+                 File file=new Helper().saveFile(elt);
+                 /*скачать фото
+                 загоузить фото
+                 сформаровать строку вида
+                 "photo"+{owner_id}+"_"+{photo_id} photo34_408897832.
+                 */
+                 PhotoUpload serverResponse = vk.photos().getWallUploadServer(actor).execute();
+                 WallUploadResponse uploadResponse = vk.upload().photoWall(serverResponse.getUploadUrl(), file).execute();
+                 List<Photo> photoList = vk.photos().saveWallPhoto(actor, uploadResponse.getPhoto())
+                         .server(uploadResponse.getServer())
+                         .hash(uploadResponse.getHash())
+                         .execute();
+                 
+                 Photo photo = photoList.get(0); 
+                 String attachId = "photo" + photo.getOwnerId() + "_" + photo.getId();
+             } catch (ApiException ex) {
+                 Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+             } catch (ClientException ex) {
+                 Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+             }
+            
+        }
     }
 
 }

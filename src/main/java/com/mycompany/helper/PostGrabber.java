@@ -113,9 +113,9 @@ public class PostGrabber extends Thread {
                         text = getwalls.getItems().get(i).getText();
                         
                         listPhoto = new ArrayList<String>();
-
                         listPhoto.add(
                                 getwalls.getItems().get(i).getAttachments().get(j).getPhoto().getPhoto807());
+                        
                     }
 
                 }

@@ -6,6 +6,10 @@
 package com.mycompany.helper;
 
 import com.vk.api.sdk.objects.wall.responses.GetResponse;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -14,6 +18,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.io.FileUtils;
 
 /**
  *
@@ -64,7 +71,22 @@ public class Helper {
     }
     
    
+    public File saveFile(String link){
+        // имя взять от ссылки
+        String path = "C:" + File.separator + "vkTest" + File.separator + "1111.jpg";
+        File file=new File(path);
+            file.getParentFile().mkdirs(); 
+            
+            
+            try {
+               file.createNewFile();
+               FileUtils.copyURLToFile(new URL(link),file);
+            } catch (IOException ex) {
+                Logger.getLogger(Helper.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return new File("/");
         
+    }   
     
     public void addWallsList(GetResponse getwalls){
     }

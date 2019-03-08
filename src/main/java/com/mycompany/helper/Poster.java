@@ -6,7 +6,9 @@
 package com.mycompany.helper;
 
 import com.vk.api.sdk.client.actors.UserActor;
+import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.collections4.list.AbstractLinkedList;
 
 /**
  *
@@ -32,20 +34,23 @@ public class Poster extends Thread{
        
    /*Получаю массив считаю колличество элементов*/
 
-
+    List<String>pppp=new ArrayList<>();
+    
     @Override
     public void run() {
         //дата время
         //интервал
         //цикл в коллиество строк на отправку
-     
+    
     int i=10;  
-    for(ConstructorPost elt:listPost){
-        
+    for(ConstructorPost elt:listPost){    
         Long time= helper.timeadd(helper.unixTime(), i);
-        new Vk_api().setPost(userActor,
+        new Vk_api().setPost(
+                userActor,
                 elt.text,
-                time);
+                time
+                //в метод передаю массив ссылок на фотку 
+        );
         
          i=i+10;
     
