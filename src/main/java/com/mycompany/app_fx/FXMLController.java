@@ -97,11 +97,13 @@ public class FXMLController implements Initializable {
         for (ConstructorPost elt : postGrabber.listPost) {
             if (elt.flag) {
                 list.add(elt);
-                new Helper().saveFile(elt.listPhoto.get(0));
+               // new Helper().saveFile(elt.listPhoto.get(0));
+               //System.err.println(elt.listPhoto);
             }
         }
-       // Poster poster = new Poster(list);
-      //  poster.start();
+        Poster poster = new Poster(list);
+        poster.start();
+       
     }
 
     @FXML

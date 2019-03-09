@@ -34,7 +34,7 @@ public class Poster extends Thread{
        
    /*Получаю массив считаю колличество элементов*/
 
-    List<String>pppp=new ArrayList<>();
+  
     
     @Override
     public void run() {
@@ -44,16 +44,20 @@ public class Poster extends Thread{
     
     int i=10;  
     for(ConstructorPost elt:listPost){    
+         
         Long time= helper.timeadd(helper.unixTime(), i);
+      
         new Vk_api().setPost(
                 userActor,
                 elt.text,
-                time
+                time,
+                new Vk_api().addPhoto(userActor, elt.listPhoto)
                 //в метод передаю массив ссылок на фотку 
         );
         
          i=i+10;
-    
+        
+        
     }
      
     

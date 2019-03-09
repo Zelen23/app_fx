@@ -87,7 +87,7 @@ public class PostGrabber extends Thread {
         Integer postLikes = 0;
         String text = "";
         Integer count_itemsAttach = null;
-        List<String> listPhoto = null;
+        List<String> listPhoto = new ArrayList<String>();
 
         for (int i = 0; i < getwalls.getItems().size(); i++) {
             List<WallpostAttachment> attachments = getwalls.getItems().get(i).getAttachments();
@@ -112,7 +112,6 @@ public class PostGrabber extends Thread {
                         postdate = getwalls.getItems().get(i).getDate().longValue();
                         text = getwalls.getItems().get(i).getText();
                         
-                        listPhoto = new ArrayList<String>();
                         listPhoto.add(
                                 getwalls.getItems().get(i).getAttachments().get(j).getPhoto().getPhoto807());
                         

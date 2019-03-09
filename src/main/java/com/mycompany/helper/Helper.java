@@ -72,8 +72,9 @@ public class Helper {
     
    
     public File saveFile(String link){
-        // имя взять от ссылки
-        String path = "C:" + File.separator + "vkTest" + File.separator + "1111.jpg";
+
+        String[]parseUrl=link.split("/");
+        String path = "C:" + File.separator + "vkTest" + File.separator + parseUrl[6];
         File file=new File(path);
             file.getParentFile().mkdirs(); 
             
@@ -84,7 +85,7 @@ public class Helper {
             } catch (IOException ex) {
                 Logger.getLogger(Helper.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return new File("/");
+            return file;
         
     }   
     

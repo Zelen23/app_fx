@@ -51,7 +51,7 @@ public class FXMLControllerAuth implements Initializable {
 
         String vk_url = "https://oauth.vk.com/authorize?client_id=" + pref.getPref(Vk_preferences.CLIENT_ID)
                 + "&display=page&redirect_uri=https://oauth.vk.com/blank.html"
-                + "&scope=wall&response_type=token&v=5.52";
+                + "&scope=wall,photos&response_type=token&v=5.52";
 
         WebEngine webEngine = webView.getEngine();
         webEngine.load(vk_url);
