@@ -34,13 +34,15 @@ public static String table=
 "  [provider] INTEGER NOT NULL, \n" +
 "  [name] VARCHAR, \n" +
 "  [flag_post] BOOLEAN NOT NULL ON CONFLICT REPLACE DEFAULT true, \n" +
-"  [create_at] DATETIME);\n" +
+"  [create_at] DATETIME, \n" +
+"  [plase] VARCHAR);\n" +
 "\n" +
 "\n" +
 "CREATE TABLE [settings] (\n" +
 "  [key] CHAR, \n" +
 "  [value] CHAR, \n" +
-"  [id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT);";
+"  [id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT);"
+;
 
 
 public static Connection DBconnect(){
@@ -99,8 +101,8 @@ public List<ConstructorProvider> providerDB(){
         
         while (resultSet.next()) {
         String name=resultSet.getString("name");
-        String plase="--";//resultSet.getString("");    
-        Integer id=resultSet.getInt("provider");;
+        String plase=resultSet.getString("plase");    
+        Integer id=resultSet.getInt("provider");
         Boolean flag=resultSet.getBoolean("flag_post");;
             
            prov.add(new ConstructorProvider(name, plase, id, flag));             
