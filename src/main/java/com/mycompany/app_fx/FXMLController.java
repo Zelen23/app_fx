@@ -1,6 +1,7 @@
 package com.mycompany.app_fx;
 
 import com.mycompany.helper.ConstructorPost;
+import com.mycompany.helper.DbHandler;
 import com.mycompany.helper.Helper;
 import com.mycompany.helper.PostGrabber;
 import com.mycompany.helper.Poster;
@@ -157,6 +158,7 @@ public class FXMLController implements Initializable {
 
         final ObservableList<ConstructorPost> observableList = FXCollections.observableArrayList();
         observableList.setAll(constructorPosts);
+        
         postListView.setItems(observableList);
         postListView.setCellFactory(new Callback<ListView<ConstructorPost>, ListCell<ConstructorPost>>() {
             @Override
@@ -165,7 +167,7 @@ public class FXMLController implements Initializable {
             }
 
         });
-
+        new DbHandler().CreateDB();
         /*
         final MultipleSelectionModel<ConstructorPost> selectionModel=postListView.getSelectionModel();
         

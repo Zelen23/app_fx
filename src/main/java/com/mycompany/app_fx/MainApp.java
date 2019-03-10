@@ -1,5 +1,6 @@
 package com.mycompany.app_fx;
 
+import com.mycompany.helper.DbHandler;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.fxml.FXMLLoader;
