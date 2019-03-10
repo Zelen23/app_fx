@@ -72,6 +72,23 @@ public class FXMLController implements Initializable {
             Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+     @FXML
+    private void handle_itemProviders(ActionEvent event) {
+
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/Provider.fxml"));
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add("/styles/Styles.css");
+            Stage stage = new Stage();
+            stage.setTitle("AddProviders");
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    //
 
     @FXML
     private void handle_itemPreferences(ActionEvent event) {

@@ -23,7 +23,7 @@
             <items>
                   <MenuItem fx:id="m_itemAuth" mnemonicParsing="false" onAction="#handle_itemAuth" text="Authorization" />
                   <MenuItem fx:id="m_itemApiKey" mnemonicParsing="false" onAction="#handle_itemPreferences" text="API key" />
-                  <MenuItem fx:id="m_itemProviders" mnemonicParsing="false" text="Providers" />
+                  <MenuItem fx:id="m_itemProviders" mnemonicParsing="false" onAction="#handle_itemProviders" text="Providers" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">

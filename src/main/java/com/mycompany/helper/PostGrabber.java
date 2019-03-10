@@ -107,10 +107,10 @@ public class PostGrabber extends Thread {
                         if(likesInfo!=null){
                             postLikes=likesInfo.getCount();
                         };
-                        provId = getwalls.getItems().get(i).getOwnerId();
-                        postId = getwalls.getItems().get(i).getId();
+                        provId   = getwalls.getItems().get(i).getOwnerId();
+                        postId   = getwalls.getItems().get(i).getId();
                         postdate = getwalls.getItems().get(i).getDate().longValue();
-                        text = getwalls.getItems().get(i).getText();
+                        text     = getwalls.getItems().get(i).getText();
                         
                         listPhoto.add(
                                 getwalls.getItems().get(i).getAttachments().get(j).getPhoto().getPhoto807());
