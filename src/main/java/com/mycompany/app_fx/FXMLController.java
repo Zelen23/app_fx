@@ -3,12 +3,8 @@ package com.mycompany.app_fx;
 import com.mycompany.helper.ConstructorPost;
 import com.mycompany.helper.ConstructorProvider;
 import com.mycompany.helper.DbHandler;
-import com.mycompany.helper.Helper;
 import com.mycompany.helper.PostGrabber;
 import com.mycompany.helper.Poster;
-import com.mycompany.helper.Vk_api;
-import com.mycompany.helper.Vk_preferences;
-import com.vk.api.sdk.client.actors.UserActor;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -68,6 +64,21 @@ public class FXMLController implements Initializable {
             scene.getStylesheets().add("/styles/Styles.css");
             Stage stage = new Stage();
             stage.setTitle("Get_token");
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+     @FXML
+    private void onSettingsAction(ActionEvent event) {
+
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/Settings.fxml"));
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add("/styles/Styles.css");
+            Stage stage = new Stage();
+            stage.setTitle("Settings");
             stage.setScene(scene);
             stage.show();
         } catch (IOException ex) {

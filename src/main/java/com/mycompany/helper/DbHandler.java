@@ -36,8 +36,9 @@ public static String table=
 "  [flag_post] BOOLEAN NOT NULL ON CONFLICT REPLACE DEFAULT true, \n" +
 "  [create_at] DATETIME, \n" +
 "  [plase] VARCHAR);\n" +
-"\n" +
-"\n" +
+"CREATE TABLE [settings]"
+;
+public static String table2=
 "CREATE TABLE [settings] (\n" +
 "  [key] CHAR, \n" +
 "  [value] CHAR, \n" +
@@ -69,6 +70,20 @@ public void insertInProvider(Integer provID){
         Connection conn=this.DBconnect();
         PreparedStatement preparedStatement=conn.prepareStatement(inserString);
         preparedStatement.setInt(1, provID);
+        preparedStatement.executeUpdate(); 
+        
+    } catch (SQLException ex) {
+        Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
+    }
+}
+
+public void insertSettings(String key,String value){
+    try {
+        String inserString="Insert into settings (key,value)values (?,?)";
+        Connection conn=this.DBconnect();
+        PreparedStatement preparedStatement=conn.prepareStatement(inserString);
+        preparedStatement.setString(1, key);
+        preparedStatement.setString(2, value);
         preparedStatement.executeUpdate(); 
         
     } catch (SQLException ex) {
@@ -132,6 +147,7 @@ public static void CreateDB(){
         conn=DriverManager.getConnection(url);
         statmt = conn.createStatement();
         statmt.execute(table);
+        statmt.execute(table2);
         System.out.println("Соединения закрыты");
     } catch (SQLException ex) {
         Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);

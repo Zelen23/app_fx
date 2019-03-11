@@ -64,6 +64,8 @@ public class FXMLContrlollerProvider implements Initializable {
         // stage.close();
         
         new DbHandler().insertInProvider(Integer.parseInt(fieldProvider.getText()));
+         List<ConstructorProvider>list= new DbHandler().providerDB();
+         setListViewProvider(list);
     }
     
          @FXML
@@ -73,18 +75,20 @@ public class FXMLContrlollerProvider implements Initializable {
         // do what you have to do
         // stage.close();
         new DbHandler().deleteProvider(Integer.parseInt(fieldProvider.getText()));
+         List<ConstructorProvider>list= new DbHandler().providerDB();
+         setListViewProvider(list);
     }
     
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        /*ВЫвод 
-        id,
-        name
-        plase
-        flag
-        */
+       
         List<ConstructorProvider>list= new DbHandler().providerDB();
+        setListViewProvider(list);
+       
+    }
+
+    public void setListViewProvider( List<ConstructorProvider>list){
         final ObservableList<ConstructorProvider> observableList = FXCollections.observableArrayList();
         observableList.setAll(list);
         ListAddProviders.setItems(observableList);
@@ -94,7 +98,6 @@ public class FXMLContrlollerProvider implements Initializable {
                 return new ListProvCell();
             }
         });
-        
-    }    
+}    
     
 }

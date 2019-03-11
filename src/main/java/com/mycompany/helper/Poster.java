@@ -51,7 +51,8 @@ public class Poster extends Thread{
                 userActor,
                 elt.text,
                 time,
-                new Vk_api().addPhoto(userActor, elt.listPhoto)
+                new Vk_api().addPhoto(userActor, elt.listPhoto),
+                418739533
                 //в метод передаю массив ссылок на фотку 
         );
         

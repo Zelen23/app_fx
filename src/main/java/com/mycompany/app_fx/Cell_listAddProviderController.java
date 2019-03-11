@@ -78,7 +78,7 @@ public class Cell_listAddProviderController  {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                     
-               new DbHandler().updflag_post(newValue,item.id);
+                new DbHandler().updflag_post(newValue,item.id);
                     
                 }
             });
