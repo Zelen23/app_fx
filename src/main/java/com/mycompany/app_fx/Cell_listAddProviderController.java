@@ -8,6 +8,7 @@ package com.mycompany.app_fx;
 
 import com.mycompany.helper.ConstructorPost;
 import com.mycompany.helper.ConstructorProvider;
+import com.mycompany.helper.DbHandler;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -68,21 +69,20 @@ public class Cell_listAddProviderController  {
         return hBoxAddProv;
     }
 
-    void setInfo(ConstructorProvider item) {
+    void setInfo(final ConstructorProvider item) {
          provName.setText(item.name);
          provPlase.setText(item.plase);
          provID.setText(String.valueOf(item.id));
          flag_prov.setSelected(item.flag);
-
-       /* 
-        check_toPost.selectedProperty().addListener(new ChangeListener<Boolean>(){
+         flag_prov.selectedProperty().addListener(new ChangeListener<Boolean>(){
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-               
+                    
+               new DbHandler().updflag_post(newValue,item.id);
                     
                 }
             });
-*/
+
     }
     
 }

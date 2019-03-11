@@ -89,6 +89,20 @@ public void deleteProvider(Integer provID){
 
 }
 
+public void updflag_post(Boolean flag_post, Integer provID){
+     String deleteString="Update main set flag_post= ? where provider= ?";
+    try {
+        Connection conn=this.DBconnect();
+        PreparedStatement preparedStatement=conn.prepareStatement(deleteString);
+        preparedStatement.setBoolean(1, flag_post); 
+        preparedStatement.setInt(2, provID); 
+        preparedStatement.executeUpdate();
+    } catch (SQLException ex) {
+        Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
+    }
+
+}
+
 public List<ConstructorProvider> providerDB(){
     List<ConstructorProvider> prov=new ArrayList<ConstructorProvider>();
     String selectString="Select name,provider,flag_post,plase from main";
