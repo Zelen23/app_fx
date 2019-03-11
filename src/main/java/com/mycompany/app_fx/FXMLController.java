@@ -1,6 +1,7 @@
 package com.mycompany.app_fx;
 
 import com.mycompany.helper.ConstructorPost;
+import com.mycompany.helper.ConstructorProvider;
 import com.mycompany.helper.DbHandler;
 import com.mycompany.helper.Helper;
 import com.mycompany.helper.PostGrabber;
@@ -126,15 +127,23 @@ public class FXMLController implements Initializable {
 
     @FXML
     private void handleButtonAction2(ActionEvent event) {
-
+        
+        List<ConstructorProvider> listProvDB=new DbHandler().providerDB();
         List<Integer> providerList = new ArrayList<>();
+        for(ConstructorProvider elt:listProvDB){
+            if(elt.flag){
+                 providerList.add(elt.id);
+            }
+       
+        }
+       /* 
         providerList.add(529989036);
         providerList.add(411014340);
         providerList.add(408902013);
         providerList.add(344417917);
         providerList.add(419021587);
         providerList.add(474456246);
-
+        */
         postGrabber = new PostGrabber(providerList, postListView);
         postGrabber.start();
 

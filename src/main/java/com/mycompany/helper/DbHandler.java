@@ -91,7 +91,7 @@ public void deleteProvider(Integer provID){
 
 public List<ConstructorProvider> providerDB(){
     List<ConstructorProvider> prov=new ArrayList<ConstructorProvider>();
-    String selectString="Select name,provider,flag_post from main";
+    String selectString="Select name,provider,flag_post,plase from main";
 
     try {
         
@@ -103,7 +103,7 @@ public List<ConstructorProvider> providerDB(){
         String name=resultSet.getString("name");
         String plase=resultSet.getString("plase");    
         Integer id=resultSet.getInt("provider");
-        Boolean flag=resultSet.getBoolean("flag_post");;
+        Boolean flag=resultSet.getBoolean("flag_post");
             
            prov.add(new ConstructorProvider(name, plase, id, flag));             
         }  
