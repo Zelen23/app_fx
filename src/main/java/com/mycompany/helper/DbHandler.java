@@ -45,6 +45,21 @@ public static String table2=
 "  [id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT);"
 ;
 
+public static String trig=
+"CREATE TRIGGER [chekInput]\n" +
+"BEFORE INSERT\n" +
+"ON [settings]\n" +
+"FOR EACH ROW\n" +
+"WHEN EXISTS (Select * From \n" +
+"settings where \n" +
+"key1=new.key1)\n" +
+"BEGIN\n" +
+"delete from settings\n" +
+"where\n" +
+"new.key1 = key1 \n" +
+"and new.value1<>value1;\n" +
+"END;";
+
 
 public static Connection DBconnect(){
     try {
@@ -173,6 +188,7 @@ public static void CreateDB(){
         statmt = conn.createStatement();
         statmt.execute(table);
         statmt.execute(table2);
+        statmt.execute(trig);
         System.out.println("Соединения закрыты");
     } catch (SQLException ex) {
         Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
