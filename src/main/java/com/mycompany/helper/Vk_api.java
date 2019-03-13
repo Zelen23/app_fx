@@ -100,12 +100,12 @@ public class Vk_api {
         return walls;
     }
     
-    public void setPost(UserActor actor, String mess,Long pubdate,List<String>attach){
+    public void setPost(UserActor actor, String mess,Long pubdate,List<String>attach,Integer owner_id){
         try {
             TransportClient transportClient = HttpTransportClient.getInstance();
             VkApiClient vk = new VkApiClient(transportClient);
             vk.wall().post(actor)
-                    .ownerId(418739533)
+                    .ownerId(owner_id)
                     .publishDate(pubdate.intValue())
                     .message(mess)
                     .attachments(attach)

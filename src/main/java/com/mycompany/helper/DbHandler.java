@@ -104,6 +104,8 @@ public void deleteProvider(Integer provID){
 
 }
 
+
+
 public void updflag_post(Boolean flag_post, Integer provID){
      String deleteString="Update main set flag_post= ? where provider= ?";
     try {
@@ -140,6 +142,29 @@ public List<ConstructorProvider> providerDB(){
         Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
     }
     return prov;
+}
+
+public List<String> settingsList(String key){
+    List<String> settings=new ArrayList<String>();
+    String selectString="Select value from settings where key= '"+key+"'";
+  
+
+    try {
+        
+        Connection conn=this.DBconnect();
+        Statement statement=conn.createStatement();
+        ResultSet resultSet=statement.executeQuery(selectString);
+        
+        while (resultSet.next()) {
+        String value=resultSet.getString("value");    
+        
+           settings.add(value);  
+       
+        }  
+    } catch (SQLException ex) {
+        Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return settings;
 }
 
 public static void CreateDB(){

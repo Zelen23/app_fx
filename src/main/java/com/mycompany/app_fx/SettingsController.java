@@ -30,10 +30,11 @@ public class SettingsController implements Initializable {
     @FXML
     Button b_saveSettings;
     
+    DbHandler db=new DbHandler();
     
     @FXML
      private void handler_saveSettings(ActionEvent event) {
-     DbHandler db=new DbHandler();
+     
      db.insertSettings("TimeInterval",editTimeInterval.getText());    
      db.insertSettings("NumbersOfPosts",editNumOfPosts.getText());
      db.insertSettings("User_id",editUser_id.getText());       
@@ -46,7 +47,10 @@ public class SettingsController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        editTimeInterval.setText(db.settingsList("TimeInterval").get(0));
+        editNumOfPosts.setText(db.settingsList("NumbersOfPosts").get(0));
+        editUser_id.setText(db.settingsList("User_id").get(0));
+       
     }    
     
 }
