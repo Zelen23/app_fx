@@ -47,9 +47,9 @@ public class SettingsController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        editTimeInterval.setText(db.settingsList("TimeInterval").get(0));
-        editNumOfPosts.setText(db.settingsList("NumbersOfPosts").get(0));
-        editUser_id.setText(db.settingsList("User_id").get(0));
+        editTimeInterval.setText(db.settingsList("TimeInterval"));
+        editNumOfPosts.setText(db.settingsList("NumbersOfPosts"));
+        editUser_id.setText(db.settingsList("User_id"));
        
     }    
     

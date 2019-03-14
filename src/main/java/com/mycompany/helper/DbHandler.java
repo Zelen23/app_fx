@@ -40,8 +40,8 @@ public static String table=
 ;
 public static String table2=
 "CREATE TABLE [settings] (\n" +
-"  [key] CHAR, \n" +
-"  [value] CHAR, \n" +
+"  [key1] CHAR, \n" +
+"  [value1] CHAR, \n" +
 "  [id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT);"
 ;
 
@@ -94,7 +94,7 @@ public void insertInProvider(Integer provID){
 
 public void insertSettings(String key,String value){
     try {
-        String inserString="Insert into settings (key,value)values (?,?)";
+        String inserString="Insert into settings (key1,value1)values (?,?)";
         Connection conn=this.DBconnect();
         PreparedStatement preparedStatement=conn.prepareStatement(inserString);
         preparedStatement.setString(1, key);
@@ -159,11 +159,10 @@ public List<ConstructorProvider> providerDB(){
     return prov;
 }
 
-public List<String> settingsList(String key){
-    List<String> settings=new ArrayList<String>();
-    String selectString="Select value from settings where key= '"+key+"'";
+public String settingsList(String key){
+    String settings = null;
+    String selectString="Select value1 from settings where key1= '"+key+"'";
   
-
     try {
         
         Connection conn=this.DBconnect();
@@ -171,9 +170,9 @@ public List<String> settingsList(String key){
         ResultSet resultSet=statement.executeQuery(selectString);
         
         while (resultSet.next()) {
-        String value=resultSet.getString("value");    
+        String value=resultSet.getString("value1");    
         
-           settings.add(value);  
+           settings=value;  
        
         }  
     } catch (SQLException ex) {
