@@ -57,8 +57,23 @@ public class FXMLController implements Initializable {
 
     @FXML
     private void handle_itemAuth(ActionEvent event) {
-
-        try {
+        // если в настройках есть УЗ и в реестре храним user_id то открыть
+        // если нет- окно добавления пользователя
+        Boolean flag=false;
+        if(!flag){
+             try {
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/AddUser_id.fxml"));
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add("/styles/Styles.css");
+            Stage stage = new Stage();
+            stage.setTitle("Get_token");
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        }else{
+            try {
             Parent root = FXMLLoader.load(getClass().getResource("/fxml/AuthWebView.fxml"));
             Scene scene = new Scene(root);
             scene.getStylesheets().add("/styles/Styles.css");
@@ -69,6 +84,8 @@ public class FXMLController implements Initializable {
         } catch (IOException ex) {
             Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        }
+        
     }
      @FXML
     private void onSettingsAction(ActionEvent event) {
@@ -170,6 +187,12 @@ public class FXMLController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        
+        /*при инициализации если в не выбрана учетка пользователя
+        не давать открыть handle_itemAuth 
+        если есть то  в prividerList и auth-выставляем данные по пользователю из параметров
+        все запросы к vkApi делать через выбраного пользоватея
+        */
 
         List<String> aaa = new ArrayList<String>();
         aaa.add("s");

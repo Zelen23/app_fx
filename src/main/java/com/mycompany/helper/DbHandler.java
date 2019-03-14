@@ -34,6 +34,7 @@ public static String table=
 "  [provider] INTEGER NOT NULL, \n" +
 "  [name] VARCHAR, \n" +
 "  [flag_post] BOOLEAN NOT NULL ON CONFLICT REPLACE DEFAULT true, \n" +
+"  [user_id] VARCHAR, \n" +
 "  [create_at] DATETIME, \n" +
 "  [plase] VARCHAR);\n" +
 "CREATE TABLE [settings]"
@@ -42,6 +43,14 @@ public static String table2=
 "CREATE TABLE [settings] (\n" +
 "  [key1] CHAR, \n" +
 "  [value1] CHAR, \n" +
+"  [id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT);"
+;
+
+public static String table3=
+"CREATE TABLE [user] (\n" +
+"  [token] CHAR, \n" +
+"  [vk_id] INTEGER NOT NULL, \n" +
+"  [create_at] DATETIME, \n" +      
 "  [id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT);"
 ;
 
@@ -60,6 +69,19 @@ public static String trig=
 "and new.value1<>value1;\n" +
 "END;";
 
+public static void CreateDB(){
+    try {
+        conn=DriverManager.getConnection(url);
+        statmt = conn.createStatement();
+        statmt.execute(table);
+        statmt.execute(table2);
+        statmt.execute(table3);
+        statmt.execute(trig);
+        System.out.println("Соединения закрыты");
+    } catch (SQLException ex) {
+        Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
+    }
+}
 
 public static Connection DBconnect(){
     try {
@@ -118,7 +140,6 @@ public void deleteProvider(Integer provID){
     }
 
 }
-
 
 
 public void updflag_post(Boolean flag_post, Integer provID){
@@ -181,16 +202,5 @@ public String settingsList(String key){
     return settings;
 }
 
-public static void CreateDB(){
-    try {
-        conn=DriverManager.getConnection(url);
-        statmt = conn.createStatement();
-        statmt.execute(table);
-        statmt.execute(table2);
-        statmt.execute(trig);
-        System.out.println("Соединения закрыты");
-    } catch (SQLException ex) {
-        Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
-    }
-}       
+  
 }

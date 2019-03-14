@@ -62,6 +62,7 @@ public class FXMLControllerAuth implements Initializable {
 
                     String token = helper.parseUrl(newValue).get(0);
                     pref.putPref(Vk_preferences.TOKEN, token);
+                    
                     String user_id = helper.parseUrl(newValue).get(2);
                     pref.putPref(Vk_preferences.VK_USER_ID, user_id);
 
