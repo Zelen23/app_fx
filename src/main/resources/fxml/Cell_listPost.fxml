@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+ <?import javafx.scene.layout.HBox?>
+ <?import javafx.scene.web.WebView?>
+ <?import javafx.scene.control.Label?>
+ <?import javafx.scene.control.CheckBox?>
+<?import com.mycompany.app_fx.Cell_listPostController?>
+
+
+
+<HBox xmlns:fx="http://javafx.com/fxml" fx:id="hBox"  maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="333.0" prefWidth="600.0">
+<children>
+   <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="333.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TextArea fx:id="text" layoutX="19.0" layoutY="79.0" prefHeight="239.0" prefWidth="304.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="11.0" AnchorPane.topAnchor="79.0" />
+      <TextField fx:id="provideText" layoutX="10.0" layoutY="37.0" AnchorPane.leftAnchor="11.0" />
+      <WebView fx:id="postPicture" layoutX="450.0" layoutY="19.0"  prefHeight="302.0" prefWidth="256.0" AnchorPane.bottomAnchor="11.600006103515625" AnchorPane.leftAnchor="332.0" AnchorPane.rightAnchor="12.0" AnchorPane.topAnchor="18.999993896484398" />
+      <Label fx:id="l_likes" layoutX="38.0" layoutY="10.0" prefHeight="18.0" prefWidth="100.0" text="like" />
+      <Label fx:id="l_viewers" layoutX="110.0" layoutY="10.0" prefHeight="18.0" prefWidth="100.0" text="view" />
+      <CheckBox fx:id="check_toPost" layoutX="11.0" layoutY="10.0" mnemonicParsing="false" AnchorPane.bottomAnchor="305.4" AnchorPane.leftAnchor="11.0" />
+      <Label fx:id="l_date" layoutX="200.0" layoutY="41.0" text="date" />
+   </children>
+</AnchorPane>
+   </children>
+</HBox>
+

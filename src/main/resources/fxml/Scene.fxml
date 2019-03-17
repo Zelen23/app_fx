@@ -3,31 +3,32 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="AnchorPane" prefHeight="609.0" prefWidth="861.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.app_fx.FXMLController">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="609.0" prefWidth="861.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.app_fx.FXMLController">
     <children>
-        <Button fx:id="button" layoutX="726.0" layoutY="376.0" onAction="#handleButtonAction" text="Click Me!" />
-        <Button fx:id="button2" layoutX="726.0" layoutY="417.0" onAction="#handleButtonAction2" text="Click Me!" />
-        <Label fx:id="label" layoutX="126" layoutY="120" minHeight="16" minWidth="69" />
-      <CheckBox layoutX="726.0" layoutY="346.0" mnemonicParsing="false" text="CheckBox" />
+        <Button fx:id="button" layoutX="771.0" layoutY="514.0" onAction="#handleButtonAction" text="Click Me!" AnchorPane.bottomAnchor="63.0" AnchorPane.rightAnchor="19.599999999999994" />
+        <Button fx:id="button2" layoutX="771.0" layoutY="563.0" onAction="#handleButtonAction2" text="Click Me!" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="19.599999999999994" />
+        <Label fx:id="label" layoutX="723.0" layoutY="319.0" minHeight="16" minWidth="69" />
+      <CheckBox layoutX="771.0" layoutY="472.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="70.0" text="CheckBox" AnchorPane.bottomAnchor="112.0" AnchorPane.rightAnchor="20.0" />
       
       
-      <MenuBar fx:id="menuBar" layoutY="1.0" prefHeight="26.0" prefWidth="861.0">
+      <MenuBar fx:id="menuBar" layoutY="1.0" prefHeight="26.0" prefWidth="861.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-0.6000000000000227" AnchorPane.topAnchor="1.0">
         <menus>
           <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
             <items>
                   <MenuItem fx:id="m_itemAuth" mnemonicParsing="false" onAction="#handle_itemAuth" text="Authorization" />
                   <MenuItem fx:id="m_itemApiKey" mnemonicParsing="false" onAction="#handle_itemPreferences" text="API key" />
-                  <MenuItem fx:id="m_itemProviders" mnemonicParsing="false" text="Providers" />
+                  <MenuItem fx:id="m_itemProviders" mnemonicParsing="false" onAction="#handle_itemProviders" text="Providers" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">
             <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
+              <MenuItem mnemonicParsing="false" onAction="#onSettingsAction" text="Settings" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
@@ -37,5 +38,8 @@
           </Menu>
         </menus>
       </MenuBar>
+      <ListView fx:id="postListView" layoutX="14.0" layoutY="42.0" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="556.0" prefWidth="686.0" AnchorPane.bottomAnchor="11.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="160.60000000000002" AnchorPane.topAnchor="42.0">
+         
+       </ListView>
     </children>
 </AnchorPane>

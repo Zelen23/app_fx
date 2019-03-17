@@ -1,10 +1,20 @@
 package com.mycompany.app_fx;
 
+import com.mycompany.helper.ConstructorPost;
+import com.mycompany.helper.ConstructorProvider;
+import com.mycompany.helper.DbHandler;
+import com.mycompany.helper.PostGrabber;
+import com.mycompany.helper.Poster;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,99 +23,216 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import javafx.util.Callback;
+import javafx.util.Pair;
 
 public class FXMLController implements Initializable {
-    
 
-    
+    PostGrabber postGrabber;
+
     @FXML
     private MenuBar menuBar;
     @FXML
-    private Menu menuFile;  
+    private Menu menuFile;
     @FXML
     private MenuItem m_itemAuth;
     @FXML
     private MenuItem m_itemApiKey;
-     @FXML
-    private MenuItem m_itemProviders;
-    
     @FXML
-    private void handle_itemAuth(ActionEvent event){
-        
-        try {
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/AuthWebView.fxml"));
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add("/styles/Styles.css");
-        Stage stage = new Stage();
-        stage.setTitle("Get_token");
-        stage.setScene(scene);
-        stage.show();
-        } catch (IOException ex) {
-            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
- 
-    
-      @FXML
-    private void handle_itemPreferences(ActionEvent event){
-        
-        try {
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/Preferences.fxml"));
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add("/styles/Styles.css");
-        Stage stage = new Stage();
-        stage.setTitle("Pref");
-        stage.setScene(scene);
-        stage.show();
-        } catch (IOException ex) {
-            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    
-    
-    
-    
-    
+    private MenuItem m_itemProviders;
+    @FXML
+    private ListView postListView;
     @FXML
     private Label label;
     @FXML
     private Button button;
     @FXML
     private Button button2;
+
     @FXML
-    private void handleButtonAction(ActionEvent event) {
-        System.out.println("You clicked me!");
-        label.setText("Hello World!");
-    } 
-    @FXML
-    private void handleButtonAction2(ActionEvent event){
-         try {
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/FXML.fxml"));
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add("/styles/Styles.css");
-        Stage stage = new Stage();
-        stage.setTitle("JavaFX and Maven");
-        stage.setScene(scene);
-        stage.show();
- 
+    private void handle_itemAuth(ActionEvent event) {
+        // если в настройках есть УЗ и в реестре храним user_id то открыть
+        // если нет- окно добавления пользователя
+        Boolean flag=true;
+        if(!flag){
+             try {
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/AddUser_id.fxml"));
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add("/styles/Styles.css");
+            Stage stage = new Stage();
+            stage.setTitle("Get_token");
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        }else{
+            try {
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/AuthWebView.fxml"));
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add("/styles/Styles.css");
+            Stage stage = new Stage();
+            stage.setTitle("Get_token");
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        }
+        
+    }
+     @FXML
+    private void onSettingsAction(ActionEvent event) {
+
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/Settings.fxml"));
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add("/styles/Styles.css");
+            Stage stage = new Stage();
+            stage.setTitle("Settings");
+            stage.setScene(scene);
+            stage.show();
         } catch (IOException ex) {
             Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-   
     
-    
-    
-    
+     @FXML
+    private void handle_itemProviders(ActionEvent event) {
+
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/Provider.fxml"));
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add("/styles/Styles.css");
+            Stage stage = new Stage();
+            stage.setTitle("AddProviders");
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    //
+
+    @FXML
+    private void handle_itemPreferences(ActionEvent event) {
+
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/Preferences.fxml"));
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add("/styles/Styles.css");
+            Stage stage = new Stage();
+            stage.setTitle("Pref");
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @FXML
+    private void handleButtonAction(ActionEvent event) {
+
+        List<ConstructorPost> list = new ArrayList<ConstructorPost>();
+
+        for (ConstructorPost elt : postGrabber.listPost) {
+            if (elt.flag) {
+                list.add(elt);
+               // new Helper().saveFile(elt.listPhoto.get(0));
+               //System.err.println(elt.listPhoto);
+            }
+        }
+        Poster poster = new Poster(list);
+        poster.start();
+       
+    }
+
+    @FXML
+    private void handleButtonAction2(ActionEvent event) {
+        
+        List<ConstructorProvider> listProvDB=new DbHandler().providerDB();
+        List<Integer> providerList = new ArrayList<>();
+        for(ConstructorProvider elt:listProvDB){
+            if(elt.flag){
+                 providerList.add(elt.id);
+            }
+       
+        }
+       /* 
+        providerList.add(529989036);
+        providerList.add(411014340);
+        providerList.add(408902013);
+        providerList.add(344417917);
+        providerList.add(419021587);
+        providerList.add(474456246);
+        */
+        postGrabber = new PostGrabber(providerList, postListView);
+        postGrabber.start();
+
+        /*
+         Vk_api vk_api=new Vk_api();
+         vk_api.getwalls(vk_api.getActor(Integer.parseInt(
+                 new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),  
+                 new Vk_preferences().getPref(Vk_preferences.TOKEN)),
+                 529989036
+               );
+         */
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-    }    
+        
+        /*при инициализации если в не выбрана учетка пользователя
+        не давать открыть handle_itemAuth 
+        если есть то  в prividerList и auth-выставляем данные по пользователю из параметров
+        все запросы к vkApi делать через выбраного пользоватея
+        */
+
+        List<String> aaa = new ArrayList<String>();
+        aaa.add("s");
+        List<ConstructorPost> constructorPosts = new ArrayList<>();
+        constructorPosts.add(new ConstructorPost(1, 1, new Long(11), 1, 1, "555", 1, aaa, false));
+
+        final ObservableList<ConstructorPost> observableList = FXCollections.observableArrayList();
+        observableList.setAll(constructorPosts);
+        
+        postListView.setItems(observableList);
+        postListView.setCellFactory(new Callback<ListView<ConstructorPost>, ListCell<ConstructorPost>>() {
+            @Override
+            public ListCell<ConstructorPost> call(ListView<ConstructorPost> param) {
+                return new ListViewCell();
+            }
+
+        });
+        new DbHandler().CreateDB();
+        /*
+        final MultipleSelectionModel<ConstructorPost> selectionModel=postListView.getSelectionModel();
+        
+        selectionModel.selectedItemProperty().addListener(new ChangeListener<ConstructorPost>(){
+             @Override
+             public void changed(ObservableValue<? extends ConstructorPost> observable, ConstructorPost oldValue, ConstructorPost newValue) {
+                  int item= selectionModel.getSelectedIndex();
+                 System.err.println("item"+newValue.postId+" index "+item);
+             
+             }
+         });
+        
+         */
+    }
+
+    public class CheckedListViewCheckObserver<T> extends SimpleObjectProperty<Pair<T, Boolean>> {
+
+    }
+
+    public void setList(List<String> aaa) {
+        ObservableList observableList = FXCollections.observableArrayList();
+        observableList.setAll(aaa);
+        postListView.setItems(observableList);
+    }
 }

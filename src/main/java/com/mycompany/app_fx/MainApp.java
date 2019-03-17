@@ -1,13 +1,15 @@
 package com.mycompany.app_fx;
 
+import com.mycompany.helper.DbHandler;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.slf4j.LoggerFactory;
 
-
+//UH6sYetv5n
 public class MainApp extends Application {
 
     @Override
@@ -32,6 +34,8 @@ public class MainApp extends Application {
      */
     public static void main(String[] args) {
         launch(args);
+        
+    
     }
 
 }

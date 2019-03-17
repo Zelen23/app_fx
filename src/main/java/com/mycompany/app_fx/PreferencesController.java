@@ -5,6 +5,12 @@
  */
 package com.mycompany.app_fx;
 
+import com.mycompany.helper.Vk_preferences;
+import static com.mycompany.helper.Vk_preferences.CLIENT_ID;
+import static com.mycompany.helper.Vk_preferences.SECRET_KEY;
+import static com.mycompany.helper.Vk_preferences.SERVICES_KEY;
+import static com.mycompany.helper.Vk_preferences.TOKEN;
+import static com.mycompany.helper.Vk_preferences.VK_USER_ID;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -13,7 +19,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.slf4j.LoggerFactory;
 
+//UH6sYetv5n
 /**
  * FXML Controller class
  *
@@ -24,6 +32,9 @@ public class PreferencesController implements Initializable {
     /**
      * Initializes the controller class.
      */
+    
+    Vk_preferences pref=new Vk_preferences();
+    
     @FXML
     TextField edit_token;
     @FXML
@@ -41,6 +52,13 @@ public class PreferencesController implements Initializable {
          @FXML
     private void handleSavePrefButton(ActionEvent event) {
        // get a handle to the stage
+
+    pref.putPref(TOKEN, edit_token.getText());
+    pref.putPref(VK_USER_ID,edit_vk_id.getText());
+    pref.putPref(SERVICES_KEY,edit_sevices_key.getText());
+    pref.putPref(SECRET_KEY,edit_secret_key.getText());
+    pref.putPref(CLIENT_ID,edit_client_id.getText());
+    
     Stage stage = (Stage) b_saveProperties.getScene().getWindow();
     // do what you have to do
     stage.close();
@@ -48,7 +66,15 @@ public class PreferencesController implements Initializable {
             
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+               
+        org.slf4j.Logger logger = LoggerFactory.getLogger(PreferencesController.class);
+        logger.info("test");
+        
+        edit_token.setText(pref.getPref(TOKEN));
+        edit_vk_id.setText(pref.getPref(VK_USER_ID));
+        edit_sevices_key.setText(pref.getPref(SERVICES_KEY));
+        edit_secret_key.setText(pref.getPref(SECRET_KEY));
+        edit_client_id.setText(pref.getPref(CLIENT_ID));
     }    
     
 }
