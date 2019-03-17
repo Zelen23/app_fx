@@ -1,12 +1,10 @@
 package com.mycompany.app_fx;
 
 import com.mycompany.helper.ConstructorPost;
-import com.mycompany.helper.Helper;
+import com.mycompany.helper.ConstructorProvider;
+import com.mycompany.helper.DbHandler;
 import com.mycompany.helper.PostGrabber;
 import com.mycompany.helper.Poster;
-import com.mycompany.helper.Vk_api;
-import com.mycompany.helper.Vk_preferences;
-import com.vk.api.sdk.client.actors.UserActor;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -59,8 +57,23 @@ public class FXMLController implements Initializable {
 
     @FXML
     private void handle_itemAuth(ActionEvent event) {
-
-        try {
+        // если в настройках есть УЗ и в реестре храним user_id то открыть
+        // если нет- окно добавления пользователя
+        Boolean flag=true;
+        if(!flag){
+             try {
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/AddUser_id.fxml"));
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add("/styles/Styles.css");
+            Stage stage = new Stage();
+            stage.setTitle("Get_token");
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        }else{
+            try {
             Parent root = FXMLLoader.load(getClass().getResource("/fxml/AuthWebView.fxml"));
             Scene scene = new Scene(root);
             scene.getStylesheets().add("/styles/Styles.css");
@@ -71,7 +84,41 @@ public class FXMLController implements Initializable {
         } catch (IOException ex) {
             Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        }
+        
     }
+     @FXML
+    private void onSettingsAction(ActionEvent event) {
+
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/Settings.fxml"));
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add("/styles/Styles.css");
+            Stage stage = new Stage();
+            stage.setTitle("Settings");
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+     @FXML
+    private void handle_itemProviders(ActionEvent event) {
+
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/Provider.fxml"));
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add("/styles/Styles.css");
+            Stage stage = new Stage();
+            stage.setTitle("AddProviders");
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    //
 
     @FXML
     private void handle_itemPreferences(ActionEvent event) {
@@ -108,15 +155,23 @@ public class FXMLController implements Initializable {
 
     @FXML
     private void handleButtonAction2(ActionEvent event) {
-
+        
+        List<ConstructorProvider> listProvDB=new DbHandler().providerDB();
         List<Integer> providerList = new ArrayList<>();
+        for(ConstructorProvider elt:listProvDB){
+            if(elt.flag){
+                 providerList.add(elt.id);
+            }
+       
+        }
+       /* 
         providerList.add(529989036);
         providerList.add(411014340);
         providerList.add(408902013);
         providerList.add(344417917);
         providerList.add(419021587);
         providerList.add(474456246);
-
+        */
         postGrabber = new PostGrabber(providerList, postListView);
         postGrabber.start();
 
@@ -132,6 +187,12 @@ public class FXMLController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        
+        /*при инициализации если в не выбрана учетка пользователя
+        не давать открыть handle_itemAuth 
+        если есть то  в prividerList и auth-выставляем данные по пользователю из параметров
+        все запросы к vkApi делать через выбраного пользоватея
+        */
 
         List<String> aaa = new ArrayList<String>();
         aaa.add("s");
@@ -140,6 +201,7 @@ public class FXMLController implements Initializable {
 
         final ObservableList<ConstructorPost> observableList = FXCollections.observableArrayList();
         observableList.setAll(constructorPosts);
+        
         postListView.setItems(observableList);
         postListView.setCellFactory(new Callback<ListView<ConstructorPost>, ListCell<ConstructorPost>>() {
             @Override
@@ -148,7 +210,7 @@ public class FXMLController implements Initializable {
             }
 
         });
-
+        new DbHandler().CreateDB();
         /*
         final MultipleSelectionModel<ConstructorPost> selectionModel=postListView.getSelectionModel();
         

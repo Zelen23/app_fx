@@ -53,26 +53,6 @@ public class Vk_api {
         return actor;
     }
 
-    public void getuser(UserActor actor) {
-
-        try {
-            TransportClient transportClient = HttpTransportClient.getInstance();
-            VkApiClient vk = new VkApiClient(transportClient);
-
-            com.vk.api.sdk.objects.friends.responses.GetResponse user = vk.friends().get(actor)
-                    .execute();
-
-            System.out.println(user.getItems());
-
-        } catch (ApiException ex) {
-            java.util.logging.Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println("Token");
-        } catch (ClientException ex) {
-            java.util.logging.Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println("ping");
-        }
-    }
-
     public GetResponse getwalls(UserActor actor, Integer provider_id,int count,int offset) {
         GetResponse walls = new GetResponse();
         try {
@@ -100,12 +80,12 @@ public class Vk_api {
         return walls;
     }
     
-    public void setPost(UserActor actor, String mess,Long pubdate,List<String>attach){
+    public void setPost(UserActor actor, String mess,Long pubdate,List<String>attach,Integer owner_id){
         try {
             TransportClient transportClient = HttpTransportClient.getInstance();
             VkApiClient vk = new VkApiClient(transportClient);
             vk.wall().post(actor)
-                    .ownerId(418739533)
+                    .ownerId(owner_id)
                     .publishDate(pubdate.intValue())
                     .message(mess)
                     .attachments(attach)
@@ -118,6 +98,65 @@ public class Vk_api {
             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
         }
                     
+    }
+    
+    public List<String> addPhoto(UserActor actor,List<String> listPhoto){
+      
+            //получаю лист со ссылками фоток
+            // воозвращаю лист
+            List<String>ouList=new ArrayList<String>();
+            TransportClient transportClient = HttpTransportClient.getInstance();
+            VkApiClient vk = new VkApiClient(transportClient);
+            
+            for (String elt : listPhoto) {
+                try {
+                    
+                    File file=new Helper().saveFile(elt);
+         
+                    PhotoUpload serverResponse = vk.photos().getWallUploadServer(actor).execute();
+                    WallUploadResponse  uploadResponse = vk.upload().photoWall(serverResponse.getUploadUrl(), file).execute();  
+                    
+                    List<Photo> photoList = vk.photos().saveWallPhoto(actor, uploadResponse.getPhoto())
+                            .server(uploadResponse.getServer())
+                            .hash(uploadResponse.getHash())
+                            .execute();
+                    
+                     Photo photo = photoList.get(0);
+                     ouList.add("photo" + photo.getOwnerId() + "_" + photo.getId());
+                     Thread.sleep(1500);
+                } catch (ApiException ex) {
+                    Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClientException ex) {
+                    Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                    
+            }
+        System.err.println(ouList);
+        return ouList;
+    }
+    
+    
+    //__________________________________
+    public void getuser(UserActor actor) {
+
+        try {
+            TransportClient transportClient = HttpTransportClient.getInstance();
+            VkApiClient vk = new VkApiClient(transportClient);
+
+            com.vk.api.sdk.objects.friends.responses.GetResponse user = vk.friends().get(actor)
+                    .execute();
+
+            System.out.println(user.getItems());
+
+        } catch (ApiException ex) {
+            java.util.logging.Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Token");
+        } catch (ClientException ex) {
+            java.util.logging.Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("ping");
+        }
     }
 
     public void openVK(Integer APP_ID, String REDIRECT_URI, String CLIENT_SECRET, String code) {
@@ -146,47 +185,4 @@ public class Vk_api {
         }
 
     }
-    
-    
-    public List<String> addPhoto(UserActor actor,List<String> listPhoto){
-      
-            //получаю лист со ссылками фоток
-            // воозвращаю лист
-            List<String>ouList=new ArrayList<String>();
-            TransportClient transportClient = HttpTransportClient.getInstance();
-            VkApiClient vk = new VkApiClient(transportClient);
-            System.err.println("addPhoto "+listPhoto.size());
-            for (String elt : listPhoto) {
-                try {
-                    System.err.println("addPhotoelt "+elt);
-                    File file=new Helper().saveFile(elt);
-                    /*скачать фото
-                    загоузить фото
-                    сформаровать строку вида
-                    "photo"+{owner_id}+"_"+{photo_id} photo34_408897832.
-                    */
-                    PhotoUpload serverResponse = vk.photos().getWallUploadServer(actor).execute();
-                    WallUploadResponse  uploadResponse = vk.upload().photoWall(serverResponse.getUploadUrl(), file).execute();  
-                    
-                    List<Photo> photoList = vk.photos().saveWallPhoto(actor, uploadResponse.getPhoto())
-                            .server(uploadResponse.getServer())
-                            .hash(uploadResponse.getHash())
-                            .execute();
-                    
-                     Photo photo = photoList.get(0);
-                     ouList.add("photo" + photo.getOwnerId() + "_" + photo.getId());
-                     Thread.sleep(1500);
-                } catch (ApiException ex) {
-                    Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (ClientException ex) {
-                    Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                    
-            }
-        System.err.println(ouList);
-        return ouList;
-    }
-
 }

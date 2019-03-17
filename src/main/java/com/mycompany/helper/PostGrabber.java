@@ -53,16 +53,20 @@ public class PostGrabber extends Thread {
         this.postListView = postListView;
     }
     //529989036
+    Vk_preferences pref = new Vk_preferences();
+    Integer NumbersOfPosts=new DbHandler().settingsList("NumbersOfPosts",
+            Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID)));
+    
 
     /*цикл в час в этом цикле каждые 10мин перебираю*/
     @Override
     public void run() {
-
+       
         while (true) {
             try {
                 for (int i = 0; i < providerList.size(); i++) {
 
-                    filterDataInPost(vk_api.getwalls(userActor, providerList.get(i), 2, 0));
+                    filterDataInPost(vk_api.getwalls(userActor, providerList.get(i), NumbersOfPosts, 0));
                 }
                 sleep(50000);
 
@@ -87,18 +91,21 @@ public class PostGrabber extends Thread {
         Integer postLikes = 0;
         String text = "";
         Integer count_itemsAttach = null;
-        List<String> listPhoto = new ArrayList<String>();
+       
 
         for (int i = 0; i < getwalls.getItems().size(); i++) {
             List<WallpostAttachment> attachments = getwalls.getItems().get(i).getAttachments();
             // если данные удовлетворяют могу добавить в listPost
             if (getwalls.getItems().get(i).getIsPinned()==null&&attachments != null) {
                 count_itemsAttach = getwalls.getItems().get(i).getAttachments().size();
+                List<String> listPhoto = new ArrayList<String>();
 
                 for (int j = 0; j < count_itemsAttach; j++) {
                     Photo isPhoto       = getwalls.getItems().get(i).getAttachments().get(j).getPhoto();
+                    
                     Views views         = getwalls.getItems().get(i).getViews();
                     LikesInfo likesInfo = getwalls.getItems().get(i).getLikes();
+                    
                     
                     if (isPhoto != null) {
                         if(views!=null){
@@ -107,14 +114,14 @@ public class PostGrabber extends Thread {
                         if(likesInfo!=null){
                             postLikes=likesInfo.getCount();
                         };
-                        provId = getwalls.getItems().get(i).getOwnerId();
-                        postId = getwalls.getItems().get(i).getId();
+                        provId   = getwalls.getItems().get(i).getOwnerId();
+                        postId   = getwalls.getItems().get(i).getId();
                         postdate = getwalls.getItems().get(i).getDate().longValue();
-                        text = getwalls.getItems().get(i).getText();
+                        text     = getwalls.getItems().get(i).getText();
                         
                         listPhoto.add(
                                 getwalls.getItems().get(i).getAttachments().get(j).getPhoto().getPhoto807());
-                        
+                           
                     }
 
                 }
@@ -150,7 +157,7 @@ public class PostGrabber extends Thread {
                     listPost.add(addtoWallsList);
                     viewInListView(listPost);
 
-                    //System.out.println("addToListPost " + addtoWallsList.postId + " from " + addtoWallsList.provId);
+                  
                 } else {
                     // System.out.println("row " + addtoWallsList.postId + " from " + addtoWallsList.provId + "noUnique");
                 }

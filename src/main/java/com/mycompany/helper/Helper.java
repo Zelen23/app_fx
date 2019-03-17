@@ -92,4 +92,9 @@ public class Helper {
     public void addWallsList(GetResponse getwalls){
     }
     
+    public int stringToInt(String value){
+        // exseption defaultValue
+    return Integer.valueOf(value);
+    }
+    
 }

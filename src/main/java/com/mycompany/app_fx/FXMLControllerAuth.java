@@ -5,6 +5,7 @@
  */
 package com.mycompany.app_fx;
 
+import com.mycompany.helper.DbHandler;
 import com.mycompany.helper.Helper;
 import com.mycompany.helper.Vk_preferences;
 import java.net.URL;
@@ -62,8 +63,13 @@ public class FXMLControllerAuth implements Initializable {
 
                     String token = helper.parseUrl(newValue).get(0);
                     pref.putPref(Vk_preferences.TOKEN, token);
+                    
                     String user_id = helper.parseUrl(newValue).get(2);
                     pref.putPref(Vk_preferences.VK_USER_ID, user_id);
+                    
+                    String time = helper.parseUrl(newValue).get(1);
+                    // записали в базу токен и Ид пользователя
+                    new DbHandler().insUser(Integer.valueOf(user_id), token, time);
 
                     Stage stage = (Stage) close.getScene().getWindow();
                     stage.close();
