@@ -34,7 +34,7 @@ public static String table=
 "  [provider] INTEGER NOT NULL, \n" +
 "  [name] VARCHAR, \n" +
 "  [flag_post] BOOLEAN NOT NULL ON CONFLICT REPLACE DEFAULT true, \n" +
-"  [user_id] VARCHAR, \n" +
+"  [user_id] INTEGER, \n" +
 "  [create_at] DATETIME, \n" +
 "  [plase] VARCHAR);\n" +
 "CREATE TABLE [settings]"
@@ -50,8 +50,10 @@ public static String table3=
 "CREATE TABLE [user] (\n" +
 "  [token] CHAR, \n" +
 "  [vk_id] INTEGER NOT NULL, \n" +
-"  [create_at] DATETIME, \n" +      
-"  [id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT);"
+"  [create_at] DATETIME, \n" +
+"  [id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \n" +
+"  [TimeInterval] INT NOT NULL ON CONFLICT REPLACE DEFAULT 30, \n" +
+"  [NumbersOfPosts] INT NOT NULL ON CONFLICT REPLACE DEFAULT 10);"
 ;
 
 public static String trig=
@@ -69,6 +71,18 @@ public static String trig=
 "and new.value1<>value1;\n" +
 "END;";
 
+public static String trig2="CREATE TRIGGER [insertVk_id]\n" +
+"BEFORE INSERT\n" +
+"ON [user]\n" +
+"FOR EACH ROW\n" +
+"WHEN EXISTS (Select * From user where vk_id=new.vk_id)\n" +
+"BEGIN\n" +
+"delete from user\n" +
+"where\n" +
+"new.vk_id = vk_id \n" +
+"and new.token<>token;\n" +
+"END;";
+
 public static void CreateDB(){
     try {
         conn=DriverManager.getConnection(url);
@@ -77,6 +91,7 @@ public static void CreateDB(){
         statmt.execute(table2);
         statmt.execute(table3);
         statmt.execute(trig);
+        statmt.execute(trig2);
         System.out.println("Соединения закрыты");
     } catch (SQLException ex) {
         Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -101,26 +116,13 @@ public static void CloseDB() throws ClassNotFoundException, SQLException{
     System.out.println("Соединения закрыты");
 }
 
-public void insertInProvider(Integer provID){
+public void insertInProvider(Integer provID,Integer user_id){
     try {
-        String inserString="Insert into main (provider)values (?)";
+        String inserString="Insert into main (provider,user_id)values (?,?)";
         Connection conn=this.DBconnect();
         PreparedStatement preparedStatement=conn.prepareStatement(inserString);
         preparedStatement.setInt(1, provID);
-        preparedStatement.executeUpdate(); 
-        
-    } catch (SQLException ex) {
-        Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
-    }
-}
-
-public void insertSettings(String key,String value){
-    try {
-        String inserString="Insert into settings (key1,value1)values (?,?)";
-        Connection conn=this.DBconnect();
-        PreparedStatement preparedStatement=conn.prepareStatement(inserString);
-        preparedStatement.setString(1, key);
-        preparedStatement.setString(2, value);
+        preparedStatement.setInt(2, user_id);
         preparedStatement.executeUpdate(); 
         
     } catch (SQLException ex) {
@@ -141,7 +143,6 @@ public void deleteProvider(Integer provID){
 
 }
 
-
 public void updflag_post(Boolean flag_post, Integer provID){
      String deleteString="Update main set flag_post= ? where provider= ?";
     try {
@@ -156,7 +157,7 @@ public void updflag_post(Boolean flag_post, Integer provID){
 
 }
 
-public List<ConstructorProvider> providerDB(){
+public List <ConstructorProvider> providerDB(){
     List<ConstructorProvider> prov=new ArrayList<ConstructorProvider>();
     String selectString="Select name,provider,flag_post,plase from main";
 
@@ -180,10 +181,25 @@ public List<ConstructorProvider> providerDB(){
     return prov;
 }
 
-public String settingsList(String key){
-    String settings = null;
-    String selectString="Select value1 from settings where key1= '"+key+"'";
-  
+public void insertSettings(String key,String value, int vk_id){
+    try {
+        String inserString="update user set "+key+" = ? Where vk_id = ?";
+        System.out.println("---- "+inserString);
+        Connection conn=this.DBconnect();
+        PreparedStatement preparedStatement=conn.prepareStatement(inserString);
+        preparedStatement.setString(1, value);
+        preparedStatement.setInt(2, vk_id);
+        preparedStatement.executeUpdate(); 
+        
+    } catch (SQLException ex) {
+        Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
+    }
+}
+
+public Integer settingsList(String key,int vk_id){
+    Integer settings = null;
+    String selectString="Select "+key+" from user where vk_id ="+vk_id;
+    System.out.println("---- "+selectString);
     try {
         
         Connection conn=this.DBconnect();
@@ -191,7 +207,7 @@ public String settingsList(String key){
         ResultSet resultSet=statement.executeQuery(selectString);
         
         while (resultSet.next()) {
-        String value=resultSet.getString("value1");    
+        int value=resultSet.getInt(key);    
         
            settings=value;  
        
@@ -200,6 +216,22 @@ public String settingsList(String key){
         Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
     }
     return settings;
+}
+
+public void insUser(Integer user_id,String token, String time){
+    try {
+        String inserString="Insert into user (vk_id,token,create_at)values (?,?,?)";
+        Connection conn=this.DBconnect();
+        PreparedStatement preparedStatement=conn.prepareStatement(inserString);
+        preparedStatement.setInt(1, user_id);
+        preparedStatement.setString(2, token);
+        preparedStatement.setString(3, time);
+        preparedStatement.executeUpdate(); 
+        
+    } catch (SQLException ex) {
+        Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    
 }
 
   

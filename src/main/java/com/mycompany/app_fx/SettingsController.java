@@ -6,6 +6,7 @@
 package com.mycompany.app_fx;
 
 import com.mycompany.helper.DbHandler;
+import com.mycompany.helper.Vk_preferences;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -31,13 +32,18 @@ public class SettingsController implements Initializable {
     Button b_saveSettings;
     
     DbHandler db=new DbHandler();
+   
+    Vk_preferences pref = new Vk_preferences();
+    int vk_id=Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
     
     @FXML
      private void handler_saveSettings(ActionEvent event) {
+         /*[TimeInterval]+
+           [NumbersOfPosts]*/
      
-     db.insertSettings("TimeInterval",editTimeInterval.getText());    
-     db.insertSettings("NumbersOfPosts",editNumOfPosts.getText());
-     db.insertSettings("User_id",editUser_id.getText());       
+     db.insertSettings("TimeInterval",editTimeInterval.getText(),vk_id);    
+     db.insertSettings("NumbersOfPosts",editNumOfPosts.getText(),vk_id);
+          
      Stage stage = (Stage) b_saveSettings.getScene().getWindow();
      stage.close();
      }
@@ -47,9 +53,9 @@ public class SettingsController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        editTimeInterval.setText(db.settingsList("TimeInterval"));
-        editNumOfPosts.setText(db.settingsList("NumbersOfPosts"));
-        editUser_id.setText(db.settingsList("User_id"));
+        editTimeInterval.setText(""+db.settingsList("TimeInterval",vk_id));
+        editNumOfPosts.setText(""+db.settingsList("NumbersOfPosts",vk_id));
+       
        
     }    
     

@@ -53,26 +53,6 @@ public class Vk_api {
         return actor;
     }
 
-    public void getuser(UserActor actor) {
-
-        try {
-            TransportClient transportClient = HttpTransportClient.getInstance();
-            VkApiClient vk = new VkApiClient(transportClient);
-
-            com.vk.api.sdk.objects.friends.responses.GetResponse user = vk.friends().get(actor)
-                    .execute();
-
-            System.out.println(user.getItems());
-
-        } catch (ApiException ex) {
-            java.util.logging.Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println("Token");
-        } catch (ClientException ex) {
-            java.util.logging.Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println("ping");
-        }
-    }
-
     public GetResponse getwalls(UserActor actor, Integer provider_id,int count,int offset) {
         GetResponse walls = new GetResponse();
         try {
@@ -156,8 +136,30 @@ public class Vk_api {
         System.err.println(ouList);
         return ouList;
     }
+    
+    
+    //__________________________________
+    public void getuser(UserActor actor) {
 
-     public void openVK(Integer APP_ID, String REDIRECT_URI, String CLIENT_SECRET, String code) {
+        try {
+            TransportClient transportClient = HttpTransportClient.getInstance();
+            VkApiClient vk = new VkApiClient(transportClient);
+
+            com.vk.api.sdk.objects.friends.responses.GetResponse user = vk.friends().get(actor)
+                    .execute();
+
+            System.out.println(user.getItems());
+
+        } catch (ApiException ex) {
+            java.util.logging.Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Token");
+        } catch (ClientException ex) {
+            java.util.logging.Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("ping");
+        }
+    }
+
+    public void openVK(Integer APP_ID, String REDIRECT_URI, String CLIENT_SECRET, String code) {
         try {
             TransportClient transportClient = HttpTransportClient.getInstance();
             VkApiClient vk = new VkApiClient(transportClient);

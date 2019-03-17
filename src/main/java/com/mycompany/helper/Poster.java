@@ -33,8 +33,10 @@ public class Poster extends Thread{
        // System.out.println("text: "+ helper.unixTime());
        
    /*Получаю массив считаю колличество элементов*/
-
-  
+   Vk_preferences pref = new Vk_preferences();
+   
+   Integer TimeInterval=new DbHandler().settingsList("TimeInterval",
+           Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID)));
     
     @Override
     public void run() {
@@ -42,9 +44,9 @@ public class Poster extends Thread{
         //интервал
         //цикл в коллиество строк на отправку
     
-    int i=10;  
+    int i=1;  
     for(ConstructorPost elt:listPost){    
-         
+        i=i+TimeInterval;
         Long time= helper.timeadd(helper.unixTime(), i);
       
         new Vk_api().setPost(
@@ -52,11 +54,11 @@ public class Poster extends Thread{
                 elt.text,
                 time,
                 new Vk_api().addPhoto(userActor, elt.listPhoto),
-                418739533
+                userActor.getId()
                 //в метод передаю массив ссылок на фотку 
         );
         
-         i=i+10;
+         
         
         
     }

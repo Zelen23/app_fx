@@ -8,6 +8,7 @@ package com.mycompany.app_fx;
 import com.mycompany.helper.ConstructorPost;
 import com.mycompany.helper.ConstructorProvider;
 import com.mycompany.helper.DbHandler;
+import com.mycompany.helper.Vk_preferences;
 import java.beans.ConstructorProperties;
 import java.net.URL;
 import java.util.ArrayList;
@@ -44,8 +45,7 @@ public class FXMLContrlollerProvider implements Initializable {
      * 
      * 
      */
-    
-    
+        
     @FXML
     ListView ListAddProviders;
     
@@ -62,10 +62,11 @@ public class FXMLContrlollerProvider implements Initializable {
         // Stage stage = (Stage) okProviders.getScene().getWindow();
         // do what you have to do
         // stage.close();
-        
-        new DbHandler().insertInProvider(Integer.parseInt(fieldProvider.getText()));
-         List<ConstructorProvider>list= new DbHandler().providerDB();
-         setListViewProvider(list);
+        Vk_preferences pref = new Vk_preferences();
+        int vk_id=Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
+        new DbHandler().insertInProvider(Integer.parseInt(fieldProvider.getText()),vk_id);
+        List<ConstructorProvider>list= new DbHandler().providerDB();
+        setListViewProvider(list);
     }
     
          @FXML

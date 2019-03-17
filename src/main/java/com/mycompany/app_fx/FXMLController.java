@@ -59,7 +59,7 @@ public class FXMLController implements Initializable {
     private void handle_itemAuth(ActionEvent event) {
         // если в настройках есть УЗ и в реестре храним user_id то открыть
         // если нет- окно добавления пользователя
-        Boolean flag=false;
+        Boolean flag=true;
         if(!flag){
              try {
             Parent root = FXMLLoader.load(getClass().getResource("/fxml/AddUser_id.fxml"));
