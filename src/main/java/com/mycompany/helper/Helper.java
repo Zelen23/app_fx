@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -57,11 +58,38 @@ public class Helper {
     return times ;
     }
     
+    public Long convertStrTimeToLong(String time){
+     
+        try {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            Date date=simpleDateFormat.parse(time);
+ 
+            Long ldate=date.getTime()/1000;
+            if(ldate<unixTime()){
+               ldate=unixTime();
+            }
+            
+            return ldate;
+            
+        } catch (ParseException ex) {
+            Logger.getLogger(Helper.class.getName()).log(Level.SEVERE, null, ex);
+            return unixTime();
+        }
+    
+    }
+    
     public long unixTime(){  
     //Instant.now().getEpochSecond()
     ZoneId zoneId = ZoneId.of( "Europe/Moscow" );
     ZonedDateTime zdt = ZonedDateTime.ofInstant( Instant.now() , zoneId );
     return zdt.toEpochSecond();
+    }
+    
+    public void parseunixTime(Long time){
+        
+        System.err.println("time "+convertTime(time));
+        
+        
     }
     
     
