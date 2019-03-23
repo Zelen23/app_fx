@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="609.0" prefWidth="861.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.app_fx.FXMLController">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="609.0" prefWidth="890.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.app_fx.FXMLController">
     <children>
-        <Button fx:id="button" layoutX="771.0" layoutY="514.0" onAction="#handleButtonAction" text="Click Me!" AnchorPane.bottomAnchor="63.0" AnchorPane.rightAnchor="19.599999999999994" />
-        <Button fx:id="button2" layoutX="771.0" layoutY="563.0" onAction="#handleButtonAction2" text="Click Me!" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="19.599999999999994" />
-        <Label fx:id="label" layoutX="723.0" layoutY="319.0" minHeight="16" minWidth="69" />
-      <CheckBox layoutX="771.0" layoutY="472.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="70.0" text="CheckBox" AnchorPane.bottomAnchor="112.0" AnchorPane.rightAnchor="20.0" />
+        <Button fx:id="button" layoutX="771.0" layoutY="514.0" onAction="#handleButtonAction" prefHeight="32.0" prefWidth="116.0" text="Post To Wall" AnchorPane.bottomAnchor="63.0" AnchorPane.rightAnchor="20.0" />
+        <Button fx:id="button2" layoutX="771.0" layoutY="563.0" onAction="#handleButtonAction2" prefHeight="32.0" prefWidth="116.0" text="Get Post" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="20.0" />
       
       
       <MenuBar fx:id="menuBar" layoutY="1.0" prefHeight="26.0" prefWidth="861.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-0.6000000000000227" AnchorPane.topAnchor="1.0">
@@ -38,8 +37,14 @@
           </Menu>
         </menus>
       </MenuBar>
-      <ListView fx:id="postListView" layoutX="14.0" layoutY="42.0" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="556.0" prefWidth="686.0" AnchorPane.bottomAnchor="11.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="160.60000000000002" AnchorPane.topAnchor="42.0">
+      <ListView fx:id="postListView" layoutX="14.0" layoutY="76.0" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="522.0" prefWidth="691.0" AnchorPane.bottomAnchor="11.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="185.0" AnchorPane.topAnchor="76.0">
          
        </ListView>
+      <DatePicker fx:id="datePick" editable="false" layoutX="690.0" layoutY="38.0" prefHeight="26.0" prefWidth="160.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="38.0" />
+      <TextField fx:id="eH" layoutX="611.0" layoutY="38.0" prefHeight="26.0" prefWidth="44.0" text="08" AnchorPane.rightAnchor="243.0" AnchorPane.topAnchor="38.0" />
+      <TextField fx:id="eM" layoutX="661.0" layoutY="38.0" prefHeight="26.0" prefWidth="44.0" text="00" AnchorPane.rightAnchor="188.0" AnchorPane.topAnchor="38.0" />
+      <Label layoutX="651.0" layoutY="42.0" prefHeight="18.0" prefWidth="9.0" text=":" AnchorPane.rightAnchor="228.0" AnchorPane.topAnchor="42.0" />
+      <Label layoutX="425.0" layoutY="42.0" text="TimeInterval: " />
+      <TextField fx:id="eTimeInterval" layoutX="509.0" layoutY="38.0" prefHeight="26.0" prefWidth="70.0" />
     </children>
 </AnchorPane>

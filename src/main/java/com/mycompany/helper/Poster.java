@@ -18,9 +18,11 @@ public class Poster extends Thread{
     
     
     List<ConstructorPost> listPost;
+    Long times;
 
-    public Poster(List<ConstructorPost> listPost) {
+    public Poster(List<ConstructorPost> listPost,Long times) {
         this.listPost = listPost;
+        this.times=times;
     }
     
     
@@ -47,7 +49,8 @@ public class Poster extends Thread{
     int i=1;  
     for(ConstructorPost elt:listPost){    
         i=i+TimeInterval;
-        Long time= helper.timeadd(helper.unixTime(), i);
+       // Long time= helper.timeadd(helper.unixTime(), i);
+        Long time= helper.timeadd(times, i);
       
         new Vk_api().setPost(
                 userActor,
