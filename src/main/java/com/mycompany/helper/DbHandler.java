@@ -173,7 +173,32 @@ public List <ConstructorProvider> providerDB(){
         Integer id=resultSet.getInt("provider");
         Boolean flag=resultSet.getBoolean("flag_post");
             
-           prov.add(new ConstructorProvider(name, plase, id, flag));             
+      
+        prov.add(new ConstructorProvider("-", plase, id, flag));             
+        }  
+    } catch (SQLException ex) {
+        Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return prov;
+}
+
+public List <ConstructorProvider> userDB(){
+    List<ConstructorProvider> prov=new ArrayList<ConstructorProvider>();
+    String selectString="Select vk_id,create_at,TimeInterval from user";
+
+    try {
+        
+        Connection conn=this.DBconnect();
+        Statement statement=conn.createStatement();
+        ResultSet resultSet=statement.executeQuery(selectString);
+        
+        while (resultSet.next()) {
+        Integer vk_id=resultSet.getInt("vk_id");
+        String create_at=resultSet.getString("create_at");    
+        Integer TimeInterval=resultSet.getInt("TimeInterval");
+        
+            
+           prov.add(new ConstructorProvider("--", create_at, vk_id, false));             
         }  
     } catch (SQLException ex) {
         Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -227,6 +252,8 @@ public void insUser(Integer user_id,String token, String time){
         preparedStatement.setString(2, token);
         preparedStatement.setString(3, time);
         preparedStatement.executeUpdate(); 
+        
+        System.err.println(inserString);
         
     } catch (SQLException ex) {
         Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);

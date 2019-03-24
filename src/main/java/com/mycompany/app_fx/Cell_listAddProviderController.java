@@ -77,8 +77,20 @@ public class Cell_listAddProviderController  {
          flag_prov.selectedProperty().addListener(new ChangeListener<Boolean>(){
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                    // добавить параметр в конструктор для оперделениия таблицы
+                    switch(item.name){
+                    case "--":
+                        // установить флаг только на одной записи-везде снять
+                        // очистить хеш браузера для получения токена
+                        // pref.putPref(Vk_preferences.VK_USER_ID, user_id);
+                        // так же дополнить эксепшен выводом сообщенния об одстутствии токена
+                    break;
                     
-                new DbHandler().updflag_post(newValue,item.id);
+                    default:
+                         new DbHandler().updflag_post(newValue,item.id);
+                         break;
+                    }
+               
                     
                 }
             });

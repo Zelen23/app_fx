@@ -73,13 +73,29 @@ public class FXMLController implements Initializable {
     private TextField eH;
     @FXML
     private TextField eM;
-    
     @FXML
     private TextField eTimeInterval;
-    
     @FXML
     DatePicker datePick;
-
+    
+    
+    @FXML
+    private void handle_itemUsers(ActionEvent event) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/AddUser_id.fxml"));
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add("/styles/Styles.css");
+            Stage stage = new Stage();
+            stage.setTitle("AddUser");
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+       
+        
+        
+    }
     @FXML
     private void handle_itemAuth(ActionEvent event) {
         // если в настройках есть УЗ и в реестре храним user_id то открыть
@@ -112,23 +128,7 @@ public class FXMLController implements Initializable {
         }
         
     }
-     @FXML
-    private void onSettingsAction(ActionEvent event) {
-
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/fxml/Settings.fxml"));
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add("/styles/Styles.css");
-            Stage stage = new Stage();
-            stage.setTitle("Settings");
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException ex) {
-            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-     @FXML
+    @FXML
     private void handle_itemProviders(ActionEvent event) {
 
         try {
@@ -143,8 +143,21 @@ public class FXMLController implements Initializable {
             Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    //
+    @FXML
+    private void onSettingsAction(ActionEvent event) {
 
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/Settings.fxml"));
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add("/styles/Styles.css");
+            Stage stage = new Stage();
+            stage.setTitle("Settings");
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     @FXML
     private void handle_itemPreferences(ActionEvent event) {
 
@@ -161,6 +174,7 @@ public class FXMLController implements Initializable {
         }
     }
 
+    
     @FXML
     private void handleButtonAction(ActionEvent event) {
 
@@ -179,7 +193,6 @@ public class FXMLController implements Initializable {
         
        
     }
-
     @FXML
     private void handleButtonAction2(ActionEvent event) {
         
@@ -205,6 +218,8 @@ public class FXMLController implements Initializable {
          */
     }
 
+    
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         
@@ -285,13 +300,13 @@ public class FXMLController implements Initializable {
     return  new Helper().convertStrTimeToLong(strDateTime);
     }
 
-    public class CheckedListViewCheckObserver<T> extends SimpleObjectProperty<Pair<T, Boolean>> {
-
-    }
-
     public void setList(List<String> aaa) {
         ObservableList observableList = FXCollections.observableArrayList();
         observableList.setAll(aaa);
         postListView.setItems(observableList);
+    }
+    
+    public class CheckedListViewCheckObserver<T> extends SimpleObjectProperty<Pair<T, Boolean>> {
+
     }
 }
