@@ -44,8 +44,11 @@ import javafx.util.Pair;
 
 /*! вывод в лог в файл
 если нет токена выкидывать окно
-*/
 
+назвать кнопки как положено
+в лог вывести каждое нажатие
+initialize привести в порядок
+ */
 public class FXMLController implements Initializable {
 
     PostGrabber postGrabber;
@@ -68,7 +71,7 @@ public class FXMLController implements Initializable {
     private Button button;
     @FXML
     private Button button2;
-    
+
     @FXML
     private TextField eH;
     @FXML
@@ -77,8 +80,8 @@ public class FXMLController implements Initializable {
     private TextField eTimeInterval;
     @FXML
     DatePicker datePick;
-    
-    
+
+    Vk_preferences pref = new Vk_preferences();
     @FXML
     private void handle_itemUsers(ActionEvent event) {
         try {
@@ -92,42 +95,42 @@ public class FXMLController implements Initializable {
         } catch (IOException ex) {
             Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
         }
-       
-        
-        
+
     }
+
     @FXML
     private void handle_itemAuth(ActionEvent event) {
         // если в настройках есть УЗ и в реестре храним user_id то открыть
         // если нет- окно добавления пользователя
-        Boolean flag=true;
-        if(!flag){
-             try {
-            Parent root = FXMLLoader.load(getClass().getResource("/fxml/AddUser_id.fxml"));
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add("/styles/Styles.css");
-            Stage stage = new Stage();
-            stage.setTitle("Get_token");
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException ex) {
-            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        }else{
+        Boolean flag = true;
+        if (!flag) {
             try {
-            Parent root = FXMLLoader.load(getClass().getResource("/fxml/AuthWebView.fxml"));
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add("/styles/Styles.css");
-            Stage stage = new Stage();
-            stage.setTitle("Get_token");
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException ex) {
-            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+                Parent root = FXMLLoader.load(getClass().getResource("/fxml/AddUser_id.fxml"));
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add("/styles/Styles.css");
+                Stage stage = new Stage();
+                stage.setTitle("Get_token");
+                stage.setScene(scene);
+                stage.show();
+            } catch (IOException ex) {
+                Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            try {
+                Parent root = FXMLLoader.load(getClass().getResource("/fxml/AuthWebView.fxml"));
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add("/styles/Styles.css");
+                Stage stage = new Stage();
+                stage.setTitle("Get_token");
+                stage.setScene(scene);
+                stage.show();
+            } catch (IOException ex) {
+                Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
-        }
-        
+
     }
+
     @FXML
     private void handle_itemProviders(ActionEvent event) {
 
@@ -143,6 +146,7 @@ public class FXMLController implements Initializable {
             Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
     @FXML
     private void onSettingsAction(ActionEvent event) {
 
@@ -158,6 +162,7 @@ public class FXMLController implements Initializable {
             Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
     @FXML
     private void handle_itemPreferences(ActionEvent event) {
 
@@ -174,40 +179,38 @@ public class FXMLController implements Initializable {
         }
     }
 
-    
     @FXML
     private void handleButtonAction(ActionEvent event) {
 
         List<ConstructorPost> list = new ArrayList<ConstructorPost>();
-        Vk_preferences pref = new Vk_preferences();
-        int vk_id=Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
+        
+        int vk_id = Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
         for (ConstructorPost elt : postGrabber.listPost) {
             if (elt.flag) {
                 list.add(elt);
-               // new Helper().saveFile(elt.listPhoto.get(0));
-               //System.err.println(elt.listPhoto);
+                // new Helper().saveFile(elt.listPhoto.get(0));
+                //System.err.println(elt.listPhoto);
             }
         }
-        Poster poster = new Poster(list,getDateTimeinEdit(),vk_id);
+        Poster poster = new Poster(list, getDateTimeinEdit(), vk_id);
         poster.start();
-        System.err.println("rrr "+vk_id);
-       
-        
-       
+        System.err.println("rrr " + vk_id);
+
     }
+
     @FXML
     private void handleButtonAction2(ActionEvent event) {
-        Vk_preferences pref = new Vk_preferences();
-        int vk_id=Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
-        List<ConstructorProvider> listProvDB=new DbHandler().providerDB(vk_id);
-        List<Integer> providerList = new ArrayList<>();
-        for(ConstructorProvider elt:listProvDB){
-            if(elt.flag){
-                 providerList.add(elt.id);
-            }
        
+        int vk_id = Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
+        List<ConstructorProvider> listProvDB = new DbHandler().providerDB(vk_id);
+        List<Integer> providerList = new ArrayList<>();
+        for (ConstructorProvider elt : listProvDB) {
+            if (elt.flag) {
+                providerList.add(elt.id);
+            }
+
         }
-     
+
         postGrabber = new PostGrabber(providerList, postListView);
         postGrabber.start();
 
@@ -221,17 +224,14 @@ public class FXMLController implements Initializable {
          */
     }
 
-    
-    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
+
         /*при инициализации если в не выбрана учетка пользователя
         не давать открыть handle_itemAuth 
         если есть то  в prividerList и auth-выставляем данные по пользователю из параметров
         все запросы к vkApi делать через выбраного пользоватея
-        */
-       
+         */
         setDateTime();
         List<String> aaa = new ArrayList<String>();
         aaa.add("s");
@@ -240,7 +240,7 @@ public class FXMLController implements Initializable {
 
         final ObservableList<ConstructorPost> observableList = FXCollections.observableArrayList();
         observableList.setAll(constructorPosts);
-        
+
         postListView.setItems(observableList);
         postListView.setCellFactory(new Callback<ListView<ConstructorPost>, ListCell<ConstructorPost>>() {
             @Override
@@ -264,43 +264,40 @@ public class FXMLController implements Initializable {
         
          */
     }
-    
-    public void setDateTime(){
-        
-         Helper nowDate=new Helper();
-         String date[]=nowDate.convertTime(nowDate.unixTime()).split(" ");
-         String hours=date[1].split(":")[0];
-         String min=date[1].split(":")[1];
-      
+
+    public void setDateTime() {
+
+        Helper nowDate = new Helper();
+        String date[] = nowDate.convertTime(nowDate.unixTime()).split(" ");
+        String hours = date[1].split(":")[0];
+        String min = date[1].split(":")[1];
+
         datePick.setValue(LocalDate.parse(date[0], DateTimeFormatter.ISO_LOCAL_DATE));
         eH.setText(hours);
         eM.setText(min);
-   
-        Vk_preferences pref = new Vk_preferences();
-        final int vk_id=Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
-        final DbHandler db=new DbHandler();
-        eTimeInterval.setText(""+db.settingsList("TimeInterval",vk_id));
-        eTimeInterval.textProperty().addListener(new ChangeListener<String>(){
-             @Override
-             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                 db.insertSettings("TimeInterval",eTimeInterval.getText(),vk_id);   
-             }
-         });
+
+       
+        final int vk_id = Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
+        final DbHandler db = new DbHandler();
+        eTimeInterval.setText("" + db.settingsList("TimeInterval", vk_id));
+        eTimeInterval.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                db.insertSettings("TimeInterval", eTimeInterval.getText(), vk_id);
+            }
+        });
     }
-    
-    public Long getDateTimeinEdit(){
-       // "yyyy-MM-dd HH:mm"
-       LocalDate localDate=datePick.getValue();
-       String hh=eH.getText();
-       String mm=eM.getText();
-       String strDateTime= localDate+" "+hh+":"+mm;
-       
-       
-        
-      
-       System.err.println("local d "+strDateTime);
-    
-    return  new Helper().convertStrTimeToLong(strDateTime);
+
+    public Long getDateTimeinEdit() {
+        // "yyyy-MM-dd HH:mm"
+        LocalDate localDate = datePick.getValue();
+        String hh = eH.getText();
+        String mm = eM.getText();
+        String strDateTime = localDate + " " + hh + ":" + mm;
+
+        System.err.println("local d " + strDateTime);
+
+        return new Helper().convertStrTimeToLong(strDateTime);
     }
 
     public void setList(List<String> aaa) {
@@ -308,7 +305,7 @@ public class FXMLController implements Initializable {
         observableList.setAll(aaa);
         postListView.setItems(observableList);
     }
-    
+
     public class CheckedListViewCheckObserver<T> extends SimpleObjectProperty<Pair<T, Boolean>> {
 
     }
