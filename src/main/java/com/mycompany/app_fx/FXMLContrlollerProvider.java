@@ -55,17 +55,17 @@ public class FXMLContrlollerProvider implements Initializable {
     @FXML
     TextField fieldProvider;
     
-    
+     Vk_preferences pref = new Vk_preferences();
+        int vk_id=Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
      @FXML
     private void ButtProvClose(ActionEvent event) {
         // get a handle to the stage
         // Stage stage = (Stage) okProviders.getScene().getWindow();
         // do what you have to do
         // stage.close();
-        Vk_preferences pref = new Vk_preferences();
-        int vk_id=Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
+       
         new DbHandler().insertInProvider(Integer.parseInt(fieldProvider.getText()),vk_id);
-        List<ConstructorProvider>list= new DbHandler().providerDB();
+        List<ConstructorProvider>list= new DbHandler().providerDB(vk_id);
         setListViewProvider(list);
     }
     
@@ -76,7 +76,7 @@ public class FXMLContrlollerProvider implements Initializable {
         // do what you have to do
         // stage.close();
         new DbHandler().deleteProvider(Integer.parseInt(fieldProvider.getText()));
-         List<ConstructorProvider>list= new DbHandler().providerDB();
+         List<ConstructorProvider>list= new DbHandler().providerDB(vk_id);
          setListViewProvider(list);
     }
     
@@ -84,7 +84,7 @@ public class FXMLContrlollerProvider implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
        
-        List<ConstructorProvider>list= new DbHandler().providerDB();
+        List<ConstructorProvider>list= new DbHandler().providerDB(vk_id);
         setListViewProvider(list);
        
     }

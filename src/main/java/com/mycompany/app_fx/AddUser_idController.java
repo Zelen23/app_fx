@@ -8,6 +8,7 @@ package com.mycompany.app_fx;
 import com.mycompany.helper.ConstructorProvider;
 import com.mycompany.helper.DbHandler;
 import com.mycompany.helper.Helper;
+import com.mycompany.helper.Vk_preferences;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -55,9 +56,8 @@ public class AddUser_idController implements Initializable {
        // stage.close();
        dbHandler.insUser(Integer.valueOf(fieldUser.getText()), "",String.valueOf(helper.unixTime()));
        List<ConstructorProvider>list= dbHandler.userDB();
-       setListViewProvider(list);
-        
-       
+       setListViewProvider(setSelectedVK_id(list));
+           
     }
     
          @FXML
@@ -75,7 +75,7 @@ public class AddUser_idController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        setListViewProvider(dbHandler.userDB());
+        setListViewProvider(setSelectedVK_id(dbHandler.userDB()));
        
     }    
     
@@ -90,5 +90,23 @@ public class AddUser_idController implements Initializable {
                 return new ListProvCell();
             }
         });
-}    
+}  
+   
+    public List<ConstructorProvider> setSelectedVK_id( List<ConstructorProvider>list){
+        
+    // отметить флагом тот ид что сохранен в настройках
+    Integer user_id=Integer.valueOf(new Vk_preferences().getPref(Vk_preferences.VK_USER_ID));
+    
+    for(int i=0;i<list.size();i++){
+        System.err.println(list.get(i).id);
+        if(list.get(i).id-user_id==0){
+            
+        list.get(i).flag=true;
+        
+        }
+    }
+  
+    return list;
+    }
+    
 }

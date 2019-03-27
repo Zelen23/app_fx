@@ -9,6 +9,7 @@ package com.mycompany.app_fx;
 import com.mycompany.helper.ConstructorPost;
 import com.mycompany.helper.ConstructorProvider;
 import com.mycompany.helper.DbHandler;
+import com.mycompany.helper.Vk_preferences;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -22,6 +23,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.web.WebEngine;
+import javafx.stage.Stage;
 
 /**
  * FXML Controller class
@@ -78,17 +80,28 @@ public class Cell_listAddProviderController  {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                     // добавить параметр в конструктор для оперделениия таблицы
-                    switch(item.name){
-                    case "--":
+                    switch(item.type){
+                    case "user_vk":
+                        
+                        if(newValue){
+                             System.err.println(item.id); 
+                          new Vk_preferences().putPref(Vk_preferences.VK_USER_ID, String.valueOf(item.id));
+                           // get a handle to the stage
+        Stage stage = (Stage) flag_prov.getScene().getWindow();
+        // do what you have to do
+         stage.close();
+                        }
                         // установить флаг только на одной записи-везде снять
                         // очистить хеш браузера для получения токена
                         // pref.putPref(Vk_preferences.VK_USER_ID, user_id);
-                        // так же дополнить эксепшен выводом сообщенния об одстутствии токена
+                        // так же дополнить эксепшен выводом сообщенния об отстутствии токена
+                        System.err.println("user_vk");
                     break;
-                    
-                    default:
-                         new DbHandler().updflag_post(newValue,item.id);
-                         break;
+                    case "provider":
+                        new DbHandler().updflag_post(newValue,item.id);
+                    break;  
+                        
+                   
                     }
                
                     

@@ -179,7 +179,8 @@ public class FXMLController implements Initializable {
     private void handleButtonAction(ActionEvent event) {
 
         List<ConstructorPost> list = new ArrayList<ConstructorPost>();
-
+        Vk_preferences pref = new Vk_preferences();
+        int vk_id=Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
         for (ConstructorPost elt : postGrabber.listPost) {
             if (elt.flag) {
                 list.add(elt);
@@ -187,16 +188,18 @@ public class FXMLController implements Initializable {
                //System.err.println(elt.listPhoto);
             }
         }
-        Poster poster = new Poster(list,getDateTimeinEdit());
+        Poster poster = new Poster(list,getDateTimeinEdit(),vk_id);
         poster.start();
+        System.err.println("rrr "+vk_id);
        
         
        
     }
     @FXML
     private void handleButtonAction2(ActionEvent event) {
-        
-        List<ConstructorProvider> listProvDB=new DbHandler().providerDB();
+        Vk_preferences pref = new Vk_preferences();
+        int vk_id=Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
+        List<ConstructorProvider> listProvDB=new DbHandler().providerDB(vk_id);
         List<Integer> providerList = new ArrayList<>();
         for(ConstructorProvider elt:listProvDB){
             if(elt.flag){

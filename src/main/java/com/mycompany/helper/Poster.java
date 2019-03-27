@@ -19,33 +19,43 @@ public class Poster extends Thread{
     
     List<ConstructorPost> listPost;
     Long times;
+    int vk_id;
 
-    public Poster(List<ConstructorPost> listPost,Long times) {
+    public Poster(List<ConstructorPost> listPost,Long times, int vk_id) {
         this.listPost = listPost;
         this.times=times;
+        this.vk_id=vk_id;
     }
     
     
      Helper helper=new Helper();
        
-       Vk_api vk_api = new Vk_api();
-        UserActor userActor = vk_api.getActor(Integer.parseInt(
-            new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
-            new Vk_preferences().getPref(Vk_preferences.TOKEN));
+ //       Vk_api vk_api = new Vk_api();
+ //       UserActor userActor = vk_api.getActor(Integer.parseInt(
+//            new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
+ //           new Vk_preferences().getPref(Vk_preferences.TOKEN));
        // System.out.println("text: "+ helper.unixTime());
        
    /*Получаю массив считаю колличество элементов*/
-   Vk_preferences pref = new Vk_preferences();
+  // Vk_preferences pref = new Vk_preferences();
    
-   Integer TimeInterval=new DbHandler().settingsList("TimeInterval",
-           Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID)));
+   
     
+   public UserActor Actor(){
+     Vk_api vk_api = new Vk_api();
+        UserActor userActor = vk_api.getActor(Integer.parseInt(
+            new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
+           new DbHandler().getToken(vk_id));
+   return userActor;
+   }
+   
     @Override
     public void run() {
         //дата время
         //интервал
         //цикл в коллиество строк на отправку
-    
+  System.out.println("TimeInterval "+ vk_id);
+    Integer TimeInterval=new DbHandler().settingsList("TimeInterval", vk_id);
     int i=1;  
     for(ConstructorPost elt:listPost){    
         i=i+TimeInterval;
@@ -53,11 +63,11 @@ public class Poster extends Thread{
         Long time= helper.timeadd(times, i);
       
         new Vk_api().setPost(
-                userActor,
+                Actor(),
                 elt.text,
                 time,
-                new Vk_api().addPhoto(userActor, elt.listPhoto),
-                userActor.getId()
+                new Vk_api().addPhoto(Actor(), elt.listPhoto),
+                Actor().getId()
                 //в метод передаю массив ссылок на фотку 
         );
         

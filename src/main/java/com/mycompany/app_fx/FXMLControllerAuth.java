@@ -47,15 +47,22 @@ public class FXMLControllerAuth implements Initializable {
         stage.close();
     }
 
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
+        
+ 
         String vk_url = "https://oauth.vk.com/authorize?client_id=" + pref.getPref(Vk_preferences.CLIENT_ID)
                 + "&display=page&redirect_uri=https://oauth.vk.com/blank.html"
                 + "&scope=wall,photos&response_type=token&v=5.52";
 
         WebEngine webEngine = webView.getEngine();
+        // Delete cache for navigate back
+        webEngine.load("about:blank");
+        // Delete cookies 
+        java.net.CookieHandler.setDefault(new java.net.CookieManager());
         webEngine.load(vk_url);
+        
         webView.getEngine().locationProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
