@@ -19,6 +19,12 @@ import java.util.logging.Logger;
 /**
  *
  * @author adolf
+ * 
+ * всегда передавать vk_user_id
+ * insUser сохранять время получения токена и время жизни
+ * новая таблица для хранения client_ID
+ * переименовать названия таблиц
+ * 
  */
 public class DbHandler {
 

@@ -24,6 +24,11 @@ import javafx.stage.Stage;
  * FXML Controller class
  *
  * @author adolf
+ * 
+ * текущие настройи хранить в реестре
+Добавляем пользоваетеля сохраняем его в реестре и базе
+
+ 
  */
 public class FXMLControllerAuth implements Initializable {
 
