@@ -48,11 +48,13 @@ import javafx.util.Pair;
 назвать кнопки как положено
 в лог вывести каждое нажатие
 initialize привести в порядок
+
+        //529989036
+        //344417917
  */
 public class FXMLController implements Initializable {
 
     
-
     @FXML
     private MenuBar menuBar;
     @FXML
@@ -192,47 +194,39 @@ public class FXMLController implements Initializable {
     @FXML
     private void handle_Button_SendPOST(ActionEvent event) {
 
-        List<ConstructorPost> list = new ArrayList<ConstructorPost>();
-        
+        List<ConstructorPost> list = new ArrayList<ConstructorPost>(); 
         int vk_id = Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
+        
         for (ConstructorPost elt : postGrabber.listPost) {
             if (elt.flag) {
                 list.add(elt);
-                // new Helper().saveFile(elt.listPhoto.get(0));
-                //System.err.println(elt.listPhoto);
+               
             }
         }
         Poster poster = new Poster(list, getDateTimeinEdit(), vk_id);
         poster.start();
-        System.err.println("rrr " + vk_id);
+        System.err.println("handle_Button_SendPOST " + vk_id);
 
     }
     @FXML
     private void handle_Button_GetPostProviders(ActionEvent event) {
        
         int vk_id = Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
+        
         List<ConstructorProvider> listProvDB = new DbHandler().providerDB(vk_id);
         List<Integer> providerList = new ArrayList<>();
+        
         for (ConstructorProvider elt : listProvDB) {
             if (elt.flag) {
                 providerList.add(elt.id);
             }
-
         }
 
         postGrabber = new PostGrabber(providerList, postListView);
         postGrabber.start();
-
-        /*
-         Vk_api vk_api=new Vk_api();
-         vk_api.getwalls(vk_api.getActor(Integer.parseInt(
-                 new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),  
-                 new Vk_preferences().getPref(Vk_preferences.TOKEN)),
-                 529989036
-               );
-         */
+        
+        System.err.println("handle_Button_GetPostProviders " + providerList);
     }
-    
     
 
 //=====================================View=====================================    
@@ -245,36 +239,9 @@ public class FXMLController implements Initializable {
         все запросы к vkApi делать через выбраного пользоватея
          */
         setDateTime();
-        List<String> aaa = new ArrayList<String>();
-        aaa.add("s");
-        List<ConstructorPost> constructorPosts = new ArrayList<>();
-        constructorPosts.add(new ConstructorPost(1, 1, new Long(11), 1, 1, "555", 1, aaa, false));
-
-        final ObservableList<ConstructorPost> observableList = FXCollections.observableArrayList();
-        observableList.setAll(constructorPosts);
-
-        postListView.setItems(observableList);
-        postListView.setCellFactory(new Callback<ListView<ConstructorPost>, ListCell<ConstructorPost>>() {
-            @Override
-            public ListCell<ConstructorPost> call(ListView<ConstructorPost> param) {
-                return new ListViewCell();
-            }
-
-        });
+        // если файл создан то не пытаться создавать
         new DbHandler().CreateDB();
-        /*
-        final MultipleSelectionModel<ConstructorPost> selectionModel=postListView.getSelectionModel();
-        
-        selectionModel.selectedItemProperty().addListener(new ChangeListener<ConstructorPost>(){
-             @Override
-             public void changed(ObservableValue<? extends ConstructorPost> observable, ConstructorPost oldValue, ConstructorPost newValue) {
-                  int item= selectionModel.getSelectedIndex();
-                 System.err.println("item"+newValue.postId+" index "+item);
-             
-             }
-         });
-        
-         */
+       
     }
     
 
@@ -308,8 +275,6 @@ public class FXMLController implements Initializable {
         String mm = eM.getText();
         String strDateTime = localDate + " " + hh + ":" + mm;
 
-        System.err.println("local d " + strDateTime);
-
         return new Helper().convertStrTimeToLong(strDateTime);
     }
 
@@ -319,7 +284,5 @@ public class FXMLController implements Initializable {
         postListView.setItems(observableList);
     }
 
-    public class CheckedListViewCheckObserver<T> extends SimpleObjectProperty<Pair<T, Boolean>> {
-
-    }
+   
 }

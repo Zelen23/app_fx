@@ -38,7 +38,7 @@ import javafx.stage.Stage;
  * токен
  * 
  */
-public class Cell_listAddProviderController  {
+public class Cell_vkSubject_Controller  {
 
     /**
      * Initializes the controller class.
@@ -46,7 +46,7 @@ public class Cell_listAddProviderController  {
     
     @FXML
     HBox hBoxAddProv;
-    
+   
     @FXML
     CheckBox flag_prov;        
     @FXML
@@ -58,7 +58,7 @@ public class Cell_listAddProviderController  {
       
       
     
-    public Cell_listAddProviderController() {
+    public Cell_vkSubject_Controller() {
         loadFXML();
     }
 
@@ -87,27 +87,31 @@ public class Cell_listAddProviderController  {
          flag_prov.selectedProperty().addListener(new ChangeListener<Boolean>(){
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    // добавить параметр в конструктор для оперделениия таблицы
+                    //+ добавить параметр в конструктор для оперделениия таблицы
+                    //- установить флаг только на одной записи-везде снять
+                    //+ очистить хеш браузера для получения токена
+                    //+ pref.putPref(Vk_preferences.VK_USER_ID, user_id);
+                    //- так же дополнить эксепшен выводом сообщенния об отстутствии токена
                     switch(item.type){
-                    case "user_vk":
+                        case "user_vk":
+                            if(newValue){
+                            
+                            new Vk_preferences().putPref(
+                                Vk_preferences.VK_USER_ID, String.valueOf(item.id));
                         
-                        if(newValue){
-                             System.err.println(item.id); 
-                          new Vk_preferences().putPref(Vk_preferences.VK_USER_ID, String.valueOf(item.id));
-                           // get a handle to the stage
-        Stage stage = (Stage) flag_prov.getScene().getWindow();
-        // do what you have to do
-         stage.close();
-                        }
-                        // установить флаг только на одной записи-везде снять
-                        // очистить хеш браузера для получения токена
-                        // pref.putPref(Vk_preferences.VK_USER_ID, user_id);
-                        // так же дополнить эксепшен выводом сообщенния об отстутствии токена
-                        System.err.println("user_vk");
-                    break;
-                    case "provider":
-                        new DbHandler().updflag_post(newValue,item.id);
-                    break;  
+                            new Vk_preferences().putPref(
+                                Vk_preferences.TOKEN, new DbHandler().getToken(item.id));
+                            
+                            System.err.println("Cell_vkSubject_Controller "+item.id);
+                        
+                            Stage stage = (Stage) flag_prov.getScene().getWindow();
+                            stage.close();
+                            }
+                        break;
+                    
+                        case "provider":
+                            new DbHandler().updflag_post(newValue,item.id);
+                        break;  
                         
                    
                     }
