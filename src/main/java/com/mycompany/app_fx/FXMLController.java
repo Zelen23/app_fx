@@ -51,26 +51,19 @@ initialize привести в порядок
  */
 public class FXMLController implements Initializable {
 
-    PostGrabber postGrabber;
+    
 
     @FXML
     private MenuBar menuBar;
     @FXML
     private Menu menuFile;
-    @FXML
-    private MenuItem m_itemAuth;
-    @FXML
-    private MenuItem m_itemApiKey;
-    @FXML
-    private MenuItem m_itemProviders;
+    
+   
     @FXML
     private ListView postListView;
     @FXML
     private Label label;
-    @FXML
-    private Button button;
-    @FXML
-    private Button button2;
+  
 
     @FXML
     private TextField eH;
@@ -79,11 +72,23 @@ public class FXMLController implements Initializable {
     @FXML
     private TextField eTimeInterval;
     @FXML
+            
     DatePicker datePick;
-
     Vk_preferences pref = new Vk_preferences();
+    PostGrabber postGrabber;
+    
+ //====================================FILE=====================================   
+     @FXML
+    private MenuItem m_file_Users;
     @FXML
-    private void handle_itemUsers(ActionEvent event) {
+    private MenuItem m_file_Auth;
+    @FXML
+    private MenuItem m_file_ApiKey;
+    @FXML
+    private MenuItem m_file_Providers;
+    
+    @FXML
+    private void handle_file_Users(ActionEvent event) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/fxml/AddUser_id.fxml"));
             Scene scene = new Scene(root);
@@ -97,9 +102,8 @@ public class FXMLController implements Initializable {
         }
 
     }
-
     @FXML
-    private void handle_itemAuth(ActionEvent event) {
+    private void handle_file_Authorization(ActionEvent event) {
         // если в настройках есть УЗ и в реестре храним user_id то открыть
         // если нет- окно добавления пользователя
         Boolean flag = true;
@@ -130,9 +134,23 @@ public class FXMLController implements Initializable {
         }
 
     }
-
     @FXML
-    private void handle_itemProviders(ActionEvent event) {
+    private void handle_file_ApiKey(ActionEvent event) {
+
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/Preferences.fxml"));
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add("/styles/Styles.css");
+            Stage stage = new Stage();
+            stage.setTitle("Api key");
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    @FXML
+    private void handle_file_Providers(ActionEvent event) {
 
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/fxml/Provider.fxml"));
@@ -147,8 +165,9 @@ public class FXMLController implements Initializable {
         }
     }
 
+//=====================================EDIT=====================================    
     @FXML
-    private void onSettingsAction(ActionEvent event) {
+    private void handle_edit_Settings(ActionEvent event) {
 
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/fxml/Settings.fxml"));
@@ -163,24 +182,15 @@ public class FXMLController implements Initializable {
         }
     }
 
+    
+//====================================BUTTON====================================
     @FXML
-    private void handle_itemPreferences(ActionEvent event) {
-
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/fxml/Preferences.fxml"));
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add("/styles/Styles.css");
-            Stage stage = new Stage();
-            stage.setTitle("Pref");
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException ex) {
-            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
+    private Button bSendPOST;
     @FXML
-    private void handleButtonAction(ActionEvent event) {
+    private Button bGetPostProviders;
+    
+    @FXML
+    private void handle_Button_SendPOST(ActionEvent event) {
 
         List<ConstructorPost> list = new ArrayList<ConstructorPost>();
         
@@ -197,9 +207,8 @@ public class FXMLController implements Initializable {
         System.err.println("rrr " + vk_id);
 
     }
-
     @FXML
-    private void handleButtonAction2(ActionEvent event) {
+    private void handle_Button_GetPostProviders(ActionEvent event) {
        
         int vk_id = Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
         List<ConstructorProvider> listProvDB = new DbHandler().providerDB(vk_id);
@@ -223,7 +232,10 @@ public class FXMLController implements Initializable {
                );
          */
     }
+    
+    
 
+//=====================================View=====================================    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
@@ -264,6 +276,7 @@ public class FXMLController implements Initializable {
         
          */
     }
+    
 
     public void setDateTime() {
 
