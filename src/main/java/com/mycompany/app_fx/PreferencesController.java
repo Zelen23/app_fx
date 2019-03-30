@@ -31,6 +31,11 @@ public class PreferencesController implements Initializable {
 
     /**
      * Initializes the controller class.
+     * терерт настройки плотно завязаны с бд
+     * явно созранять токен  и пользователя не вариант
+     * 
+     * разбить на 2е части отображаем токен, пользователя и остаток жизни
+     * и то что мы можем записать в реестр и сохранить в бд
      */
     
     Vk_preferences pref=new Vk_preferences();
@@ -55,6 +60,7 @@ public class PreferencesController implements Initializable {
 
     pref.putPref(TOKEN, edit_token.getText());
     pref.putPref(VK_USER_ID,edit_vk_id.getText());
+    
     pref.putPref(SERVICES_KEY,edit_sevices_key.getText());
     pref.putPref(SECRET_KEY,edit_secret_key.getText());
     pref.putPref(CLIENT_ID,edit_client_id.getText());

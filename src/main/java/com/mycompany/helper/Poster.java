@@ -16,37 +16,37 @@ import org.apache.commons.collections4.list.AbstractLinkedList;
  */
 public class Poster extends Thread{
     
-    
     List<ConstructorPost> listPost;
     Long times;
+    int vk_id;
 
-    public Poster(List<ConstructorPost> listPost,Long times) {
+    public Poster(List<ConstructorPost> listPost,Long times, int vk_id) {
         this.listPost = listPost;
         this.times=times;
+        this.vk_id=vk_id;
     }
     
     
-     Helper helper=new Helper();
-       
-       Vk_api vk_api = new Vk_api();
-        UserActor userActor = vk_api.getActor(Integer.parseInt(
-            new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
-            new Vk_preferences().getPref(Vk_preferences.TOKEN));
-       // System.out.println("text: "+ helper.unixTime());
-       
-   /*Получаю массив считаю колличество элементов*/
-   Vk_preferences pref = new Vk_preferences();
-   
-   Integer TimeInterval=new DbHandler().settingsList("TimeInterval",
-           Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID)));
     
+    Helper helper=new Helper();
+       
+    Vk_api vk_api = new Vk_api();
+    UserActor userActor = vk_api.getActor(Integer.parseInt(
+        new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
+        new Vk_preferences().getPref(Vk_preferences.TOKEN));
+   
+
+   
     @Override
     public void run() {
         //дата время
         //интервал
         //цикл в коллиество строк на отправку
+    System.out.println("Poster_RUN_actorID "+ userActor.getId());
     
+    Integer TimeInterval=new DbHandler().settingsList("TimeInterval", vk_id);
     int i=1;  
+    
     for(ConstructorPost elt:listPost){    
         i=i+TimeInterval;
        // Long time= helper.timeadd(helper.unixTime(), i);
@@ -60,10 +60,7 @@ public class Poster extends Thread{
                 userActor.getId()
                 //в метод передаю массив ссылок на фотку 
         );
-        
-         
-        
-        
+              
     }
      
     
@@ -71,7 +68,13 @@ public class Poster extends Thread{
 //To change body of generated methods, choose Tools | Templates.
     }
     
-    
+      public UserActor Actor(){
+     Vk_api vk_api = new Vk_api();
+        UserActor userActor = vk_api.getActor(Integer.parseInt(
+            new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
+            new DbHandler().getToken(vk_id));
+   return userActor;
+   }
     
     
     
