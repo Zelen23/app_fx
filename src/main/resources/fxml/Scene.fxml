@@ -12,22 +12,23 @@
 
 <AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="609.0" prefWidth="890.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.app_fx.FXMLController">
     <children>
-        <Button fx:id="button" layoutX="771.0" layoutY="514.0" onAction="#handleButtonAction" prefHeight="32.0" prefWidth="116.0" text="Post To Wall" AnchorPane.bottomAnchor="63.0" AnchorPane.rightAnchor="20.0" />
-        <Button fx:id="button2" layoutX="771.0" layoutY="563.0" onAction="#handleButtonAction2" prefHeight="32.0" prefWidth="116.0" text="Get Post" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="20.0" />
+        <Button fx:id="bSendPOST" layoutX="771.0" layoutY="514.0" onAction="#handle_Button_SendPOST" prefHeight="32.0" prefWidth="116.0" text="Post To Wall" AnchorPane.bottomAnchor="63.0" AnchorPane.rightAnchor="20.0" />
+        <Button fx:id="bGetPostProviders" layoutX="771.0" layoutY="563.0" onAction="#handle_Button_GetPostProviders" prefHeight="32.0" prefWidth="116.0" text="Get Post" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="20.0" />
       
       
       <MenuBar fx:id="menuBar" layoutY="1.0" prefHeight="26.0" prefWidth="861.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-0.6000000000000227" AnchorPane.topAnchor="1.0">
         <menus>
           <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
             <items>
-                  <MenuItem fx:id="m_itemAuth" mnemonicParsing="false" onAction="#handle_itemAuth" text="Authorization" />
-                  <MenuItem fx:id="m_itemApiKey" mnemonicParsing="false" onAction="#handle_itemPreferences" text="API key" />
-                  <MenuItem fx:id="m_itemProviders" mnemonicParsing="false" onAction="#handle_itemProviders" text="Providers" />
+                  <MenuItem fx:id="m_file_Users" mnemonicParsing="false" onAction="#handle_file_Users" text="Users" />
+                  <MenuItem fx:id="m_file_Auth" mnemonicParsing="false" onAction="#handle_file_Authorization" text="Authorization" />
+                  <MenuItem fx:id="m_file_ApiKey" mnemonicParsing="false" onAction="#handle_file_ApiKey" text="API key" />
+                  <MenuItem fx:id="m_file_Providers" mnemonicParsing="false" onAction="#handle_file_Providers" text="Providers" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">
             <items>
-              <MenuItem mnemonicParsing="false" onAction="#onSettingsAction" text="Settings" />
+              <MenuItem mnemonicParsing="false" onAction="#handle_edit_Settings" text="Settings" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">

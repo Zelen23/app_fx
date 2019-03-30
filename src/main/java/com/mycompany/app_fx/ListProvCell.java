@@ -19,7 +19,7 @@ public class ListProvCell extends ListCell<ConstructorProvider> {
         super.updateItem(item, empty); 
     if(item != null)
         {
-            Cell_listAddProviderController cell_listAddProvider=new Cell_listAddProviderController();
+            Cell_vkSubject_Controller cell_listAddProvider=new Cell_vkSubject_Controller();
             cell_listAddProvider.setInfo(item);
             setGraphic(cell_listAddProvider.getBox());
             

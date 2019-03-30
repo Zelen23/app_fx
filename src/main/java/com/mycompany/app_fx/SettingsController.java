@@ -55,6 +55,7 @@ public class SettingsController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         editTimeInterval.setText(""+db.settingsList("TimeInterval",vk_id));
         editNumOfPosts.setText(""+db.settingsList("NumbersOfPosts",vk_id));
+        editUser_id.setText(""+vk_id);
        
        
     }    

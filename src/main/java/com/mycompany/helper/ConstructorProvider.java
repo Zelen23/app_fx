@@ -15,12 +15,14 @@ public class ConstructorProvider {
   public  String plase;
   public  Integer id;
   public   Boolean flag;
+  public String type;
 
-    public ConstructorProvider(String name, String plase, Integer id, Boolean flag) {
+    public ConstructorProvider(String name, String plase, Integer id, Boolean flag,String type) {
         this.name = name;
         this.plase = plase;
         this.id = id;
         this.flag = flag;
+        this.type=type;
     }
     
         
