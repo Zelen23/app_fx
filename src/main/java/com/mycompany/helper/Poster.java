@@ -56,7 +56,7 @@ public class Poster extends Thread{
                 userActor,
                 elt.text,
                 time,
-                new Vk_api().addPhoto(userActor, elt.listPhoto),
+                new Vk_api().addPhoto(userActor, elt.listPhoto, elt.text),
                 userActor.getId()
                 //в метод передаю массив ссылок на фотку 
         );
@@ -69,7 +69,7 @@ public class Poster extends Thread{
     }
     
       public UserActor Actor(){
-     Vk_api vk_api = new Vk_api();
+      Vk_api vk_api = new Vk_api();
         UserActor userActor = vk_api.getActor(Integer.parseInt(
             new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
             new DbHandler().getToken(vk_id));

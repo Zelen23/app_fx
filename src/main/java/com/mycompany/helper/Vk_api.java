@@ -6,6 +6,8 @@
 package com.mycompany.helper;
 
 import static com.mycompany.helper.Vk_preferences.CLIENT_ID;
+import com.vk.api.sdk.actions.Photos;
+import com.vk.api.sdk.actions.Upload;
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.UserActor;
@@ -14,12 +16,14 @@ import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import com.vk.api.sdk.objects.UserAuthResponse;
 import com.vk.api.sdk.objects.ads.Client;
+import com.vk.api.sdk.objects.base.responses.OkResponse;
 import com.vk.api.sdk.objects.photos.Photo;
 import com.vk.api.sdk.objects.photos.PhotoUpload;
 import com.vk.api.sdk.objects.photos.responses.WallUploadResponse;
 import com.vk.api.sdk.objects.users.UserXtrCounters;
 import com.vk.api.sdk.objects.wall.responses.GetResponse;
 import com.vk.api.sdk.queries.wall.WallGetFilter;
+import com.vk.api.sdk.queries.wall.WallPostQuery;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -100,7 +104,7 @@ public class Vk_api {
                     
     }
     
-    public List<String> addPhoto(UserActor actor,List<String> listPhoto){
+    public List<String> addPhoto(UserActor actor,List<String> listPhoto,String caption ){
       
             //получаю лист со ссылками фоток
             // воозвращаю лист
@@ -117,11 +121,13 @@ public class Vk_api {
                     WallUploadResponse  uploadResponse = vk.upload().photoWall(serverResponse.getUploadUrl(), file).execute();  
                     
                     List<Photo> photoList = vk.photos().saveWallPhoto(actor, uploadResponse.getPhoto())
+                            .caption(caption)
                             .server(uploadResponse.getServer())
                             .hash(uploadResponse.getHash())
                             .execute();
                     
                      Photo photo = photoList.get(0);
+
                      ouList.add("photo" + photo.getOwnerId() + "_" + photo.getId());
                      Thread.sleep(1500);
                 } catch (ApiException ex) {
@@ -136,6 +142,71 @@ public class Vk_api {
         System.err.println(ouList);
         return ouList;
     }
+    
+    public List<String> addPhotoX(UserActor actor,List<String> listPhoto){
+      
+            //получаю лист со ссылками фоток
+            // воозвращаю лист
+            List<String>ouList=new ArrayList<String>();
+            TransportClient transportClient = HttpTransportClient.getInstance();
+            VkApiClient vk = new VkApiClient(transportClient);
+            
+            for (String elt : listPhoto) {
+                try {
+                    
+                    File file=new Helper().saveFile(elt);
+         
+                    PhotoUpload serverResponse = vk.photos()
+                            .getWallUploadServer(actor)
+                            .execute();
+                    WallUploadResponse  uploadResponse = vk.upload()
+                            .photoWall(serverResponse.getUploadUrl(), file)
+                            .execute();  
+                    
+                    List<Photo> photoList = vk.photos()
+                            .saveWallPhoto(actor, uploadResponse.getPhoto())
+                            .server(uploadResponse.getServer())
+                            .hash(uploadResponse.getHash())
+                            .execute();
+                    
+                     Photo photo = photoList.get(0);
+
+                     ouList.add("photo" + photo.getOwnerId() + "_" + photo.getId());
+                     Thread.sleep(1500);
+                } catch (ApiException ex) {
+                    Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClientException ex) {
+                    Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                    
+            }
+        System.err.println(ouList);
+        return ouList;
+    }
+    
+    public void editPhotoX(UserActor actor,Photo photo){
+        
+        try {
+            TransportClient transportClient = HttpTransportClient.getInstance();
+            VkApiClient vk = new VkApiClient(transportClient);
+            OkResponse pp = vk.photos()
+                    .edit(actor, photo.getId())
+                    .ownerId(actor.getId())
+                    .caption("--")
+                    .execute();
+        } catch (ApiException ex) {
+            Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClientException ex) {
+            Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+        }
+                          
+         
+   
+    }
+    
+ 
     
     
     //__________________________________
