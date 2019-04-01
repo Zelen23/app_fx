@@ -85,27 +85,7 @@ public class Vk_api {
 
         return walls;
     }
-    
-    public void setPost(UserActor actor, String mess,Long pubdate,List<String>attach,Integer owner_id){
-        try {
-            TransportClient transportClient = HttpTransportClient.getInstance();
-            VkApiClient vk = new VkApiClient(transportClient);
-            vk.wall().post(actor)
-                    .ownerId(owner_id)
-                    .publishDate(pubdate.intValue())
-                    .message(mess)
-                    .attachments(attach)
-                    .execute();
-            
-            System.out.println("date_in_setPost "+ pubdate.intValue());
-        } catch (ApiException ex) {
-            Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClientException ex) {
-            Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-        }
-                    
-    }
-    
+   
     public List<String> addPhoto(UserActor actor,List<String> listPhoto,String caption ){
       
             //получаю лист со ссылками фоток
@@ -188,6 +168,44 @@ public class Vk_api {
         return ouList;
     }
     
+    public List<UserXtrCounters> getUserInfo(UserActor actor, String vk_id){
+         
+        List<UserXtrCounters> userinfo=null;
+        try {
+            TransportClient transportClient = HttpTransportClient.getInstance();
+            VkApiClient vk = new VkApiClient(transportClient);
+                userinfo = vk.users().get(actor)
+                    .userIds(vk_id)
+                    .fields( UserField.ABOUT)
+                    .execute();
+             
+           
+            
+        } catch (ApiException ex) {
+            Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClientException ex) {
+            Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+         return userinfo;
+    }
+    public List<ConstructorProvider> fromUsertoProvider(List<UserXtrCounters> userinfo){
+     List<ConstructorProvider> vk_Providers = new ArrayList<>();
+     
+     for(UserXtrCounters elt:userinfo){
+      vk_Providers.add(new ConstructorProvider
+        (elt.getFirstName()+" "+elt.getLastName()
+                , "plase"
+                , elt.getId()
+                , Boolean.FALSE
+                , "provider"));
+        System.err.println(elt.getId());
+        System.err.println(elt.getFirstName()+" "+elt.getLastName());
+     }
+        
+    return vk_Providers;
+    }
+    
     public void editPhotoX(UserActor actor,Photo photo){
         
         try {
@@ -208,44 +226,26 @@ public class Vk_api {
    
     }
     
-    public  List<UserXtrCounters> getUserInfo(UserActor actor, String vk_id){
-         
-        List<UserXtrCounters> userinfo=null;
+    public void setPost(UserActor actor, String mess,Long pubdate,List<String>attach,Integer owner_id){
         try {
             TransportClient transportClient = HttpTransportClient.getInstance();
             VkApiClient vk = new VkApiClient(transportClient);
-                userinfo = vk.users().get(actor)
-                    .userIds(vk_id)
-                    .fields( UserField.ABOUT)
+            vk.wall().post(actor)
+                    .ownerId(owner_id)
+                    .publishDate(pubdate.intValue())
+                    .message(mess)
+                    .attachments(attach)
                     .execute();
-             
-           
             
+            System.out.println("date_in_setPost "+ pubdate.intValue());
         } catch (ApiException ex) {
             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClientException ex) {
             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
         }
-        fromUsertoProvider(userinfo);
-         return userinfo;
+                    
     }
     
-    public  List<ConstructorProvider> fromUsertoProvider(List<UserXtrCounters> userinfo){
-     List<ConstructorProvider> vk_Providers = new ArrayList<>();
-     
-     for(UserXtrCounters elt:userinfo){
-      vk_Providers.add(new ConstructorProvider
-        (elt.getFirstName()+" "+elt.getLastName()
-                , "plase"
-                , elt.getId()
-                , Boolean.FALSE
-                , "provider"));
-        System.err.println(elt.getId());
-        System.err.println(elt.getFirstName()+" "+elt.getLastName());
-     }
-        
-    return vk_Providers;
-    }
  
     
     

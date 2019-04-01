@@ -119,13 +119,14 @@ public class DbHandler {
         System.out.println("Соединения закрыты");
     }
 
-    public void insertInProvider(Integer provID, Integer user_id) {
+    public void insertInProvider(Integer provID, Integer user_id,String name) {
         try {
-            String inserString = "Insert into main (provider,user_id)values (?,?)";
+            String inserString = "Insert into main (provider,user_id,name)values (?,?,?)";
             Connection conn = this.DBconnect();
             PreparedStatement preparedStatement = conn.prepareStatement(inserString);
             preparedStatement.setInt(1, provID);
             preparedStatement.setInt(2, user_id);
+            preparedStatement.setString(3, name);
             preparedStatement.executeUpdate();
 
         } catch (SQLException ex) {

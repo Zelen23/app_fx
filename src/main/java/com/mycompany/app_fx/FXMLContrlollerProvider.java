@@ -65,16 +65,12 @@ public class FXMLContrlollerProvider implements Initializable {
         // Stage stage = (Stage) okProviders.getScene().getWindow();
         // do what you have to do
         // stage.close();
-        /*
-        new DbHandler().insertInProvider(Integer.parseInt(fieldProvider.getText()),vk_id);
+   
+        new DbHandler().insertInProvider(Integer.parseInt(fieldProvider.getText()),vk_id,"");
         List<ConstructorProvider>list= new DbHandler().providerDB(vk_id);
         setListViewProvider(list);
-        */
-         Vk_api vk_api = new Vk_api();
-    UserActor userActor = vk_api.getActor(Integer.parseInt(
-        new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
-        new Vk_preferences().getPref(Vk_preferences.TOKEN));
-         System.out.println(new Vk_api().getUserInfo(userActor,fieldProvider.getText()));
+       
+        
        
     
     }
