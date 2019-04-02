@@ -57,7 +57,7 @@ public class AddUser_idController implements Initializable {
        // Stage stage = (Stage) AddUser.getScene().getWindow();
         // do what you have to do
        // stage.close();
-       dbHandler.insUser(Integer.valueOf(fieldUser.getText()), "",String.valueOf(helper.unixTime()));
+       dbHandler.insUser(Integer.valueOf(fieldUser.getText()), "","-",String.valueOf(helper.unixTime()));
        List<ConstructorProvider>list= dbHandler.userDB();
        setListViewProvider(setSelectedVK_id(list));
            

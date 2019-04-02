@@ -54,6 +54,7 @@ public class DbHandler {
             = "CREATE TABLE [user] (\n"
             + "  [token] CHAR, \n"
             + "  [vk_id] INTEGER NOT NULL, \n"
+            + "  [name] VARCHAR), \n"
             + "  [create_at] DATETIME, \n"
             + "  [id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \n"
             + "  [TimeInterval] INT NOT NULL ON CONFLICT REPLACE DEFAULT 30, \n"
@@ -177,7 +178,7 @@ public class DbHandler {
                 Integer id = resultSet.getInt("provider");
                 Boolean flag = resultSet.getBoolean("flag_post");
 
-                prov.add(new ConstructorProvider("-", plase, id, flag, "provider"));
+                prov.add(new ConstructorProvider(name, plase, id, flag, "provider"));
             }
         } catch (SQLException ex) {
             Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -187,7 +188,7 @@ public class DbHandler {
 
     public List<ConstructorProvider> userDB() {
         List<ConstructorProvider> prov = new ArrayList<ConstructorProvider>();
-        String selectString = "Select vk_id,create_at,TimeInterval from user";
+        String selectString = "Select vk_id,name,create_at,TimeInterval from user";
 
         try {
 
@@ -197,10 +198,11 @@ public class DbHandler {
 
             while (resultSet.next()) {
                 Integer vk_id = resultSet.getInt("vk_id");
+                String name = resultSet.getString("name");
                 String create_at = resultSet.getString("create_at");
                 Integer TimeInterval = resultSet.getInt("TimeInterval");
 
-                prov.add(new ConstructorProvider("--", create_at, vk_id, false, "user_vk"));
+                prov.add(new ConstructorProvider(name, create_at, vk_id, false, "user_vk"));
             }
         } catch (SQLException ex) {
             Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -245,14 +247,15 @@ public class DbHandler {
         return settings;
     }
 
-    public void insUser(Integer user_id, String token, String time) {
+    public void insUser(Integer user_id, String token,String name, String time) {
         try {
-            String inserString = "Insert into user (vk_id,token,create_at)values (?,?,?)";
+            String inserString = "Insert into user (vk_id,token,name,create_at)values (?,?,?,?)";
             Connection conn = this.DBconnect();
             PreparedStatement preparedStatement = conn.prepareStatement(inserString);
             preparedStatement.setInt(1, user_id);
             preparedStatement.setString(2, token);
-            preparedStatement.setString(3, time);
+            preparedStatement.setString(3, name);
+            preparedStatement.setString(4, time);
             preparedStatement.executeUpdate();
 
             System.err.println(inserString);

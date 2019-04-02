@@ -5,10 +5,14 @@
  */
 package com.mycompany.app_fx;
 
+import com.mycompany.helper.ConstructorProvider;
 import com.mycompany.helper.DbHandler;
 import com.mycompany.helper.Helper;
+import com.mycompany.helper.Vk_api;
 import com.mycompany.helper.Vk_preferences;
+import com.vk.api.sdk.client.actors.UserActor;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -81,7 +85,21 @@ public class FXMLControllerAuth implements Initializable {
                     
                     String time = helper.parseUrl(newValue).get(1);
                     // записали в базу токен и Ид пользователя
-                    new DbHandler().insUser(Integer.valueOf(user_id), token, time);
+                    
+                    Vk_api vk_api=new Vk_api();
+                    UserActor userActor = vk_api.getActor(Integer.parseInt(
+                    new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
+                    new Vk_preferences().getPref(Vk_preferences.TOKEN));
+
+                    List<ConstructorProvider> userInfo=vk_api.fromUsertoProvider(
+                        vk_api.getUserInfo(userActor, user_id));
+                    new DbHandler().insUser(
+                            Integer.valueOf(user_id),
+                            token,
+                            userInfo.get(0).name,
+                            String.valueOf(new Helper().unixTime()));
+                    
+                   
 
                     Stage stage = (Stage) close.getScene().getWindow();
                     stage.close();

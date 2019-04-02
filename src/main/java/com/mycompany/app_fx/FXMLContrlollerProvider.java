@@ -65,14 +65,27 @@ public class FXMLContrlollerProvider implements Initializable {
         // Stage stage = (Stage) okProviders.getScene().getWindow();
         // do what you have to do
         // stage.close();
-   
-        new DbHandler().insertInProvider(Integer.parseInt(fieldProvider.getText()),vk_id,"");
-        List<ConstructorProvider>list= new DbHandler().providerDB(vk_id);
-        setListViewProvider(list);
-       
+        //https://vk.com/id411014340
+        Vk_api vk_api=new Vk_api();
+        UserActor userActor = vk_api.getActor(Integer.parseInt(
+            new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
+            new Vk_preferences().getPref(Vk_preferences.TOKEN));
         
-       
-    
+        String parseID=fieldProvider.getText();
+        
+        if(parseID.startsWith("https://vk.com/")){
+            parseID=parseID.replace("https://vk.com/", "");
+           
+            List<ConstructorProvider> userInfo=vk_api.fromUsertoProvider(
+                   vk_api.getUserInfo(userActor, parseID));
+           
+            new DbHandler().insertInProvider(userInfo.get(0).id,vk_id,userInfo.get(0).name);
+            List<ConstructorProvider>list= new DbHandler().providerDB(vk_id);
+            setListViewProvider(list);
+        }else{
+            System.err.println("FXMLContrlollerProvider_is_no_linkUser "+parseID);
+        }
+ 
     }
     
          @FXML
