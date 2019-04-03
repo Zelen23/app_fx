@@ -5,17 +5,18 @@
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.control.SplitMenuButton?>
 <?import com.mycompany.app_fx.Cell_vkSubject_Controller?>
 
 
-<HBox xmlns:fx="http://javafx.com/fxml" fx:id="hBoxAddProv"  maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="47.0" prefWidth="503.0">
+<HBox AnchorPane.bottomAnchor="11.0" AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="12.0" xmlns:fx="http://javafx.com/fxml" fx:id="hBoxAddProv"  maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="47.0" prefWidth="503.0">
 <children>
- <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="47.0" prefWidth="503.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <CheckBox fx:id="flag_prov" layoutX="470.0" layoutY="6.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="18.0" AnchorPane.bottomAnchor="14.600000000000001" AnchorPane.leftAnchor="470.0" AnchorPane.topAnchor="6.0" />
-      <Label fx:id="provName" layoutX="152.0" layoutY="10.0" prefHeight="26.0" prefWidth="113.0" text="provName" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="152.0" AnchorPane.rightAnchor="238.0" AnchorPane.topAnchor="10.0" />
-      <TextField fx:id="provPlase" layoutX="24.0" layoutY="10.0" prefHeight="26.0" prefWidth="95.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="24.0" AnchorPane.topAnchor="10.0" />
-      <TextField fx:id="provID" layoutX="275.0" layoutY="9.0" prefHeight="26.0" prefWidth="186.0" AnchorPane.bottomAnchor="12.399999999999999" AnchorPane.leftAnchor="275.0" AnchorPane.topAnchor="9.0" />
+ <AnchorPane AnchorPane.bottomAnchor="11.0" AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="12.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="47.0" prefWidth="503.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+      <CheckBox fx:id="flag_prov" layoutX="449.0" layoutY="10.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="18.0" AnchorPane.bottomAnchor="10.600000000000001" AnchorPane.leftAnchor="449.0" AnchorPane.topAnchor="10.0" />
+      <Label fx:id="provName" layoutX="125.0" layoutY="12.0" prefHeight="26.0" prefWidth="186.0" text="provName" textAlignment="RIGHT" AnchorPane.bottomAnchor="11.0" AnchorPane.leftAnchor="125.0" AnchorPane.rightAnchor="171.0" AnchorPane.topAnchor="12.0" />
+      <TextField fx:id="provPlase" layoutX="14.0" layoutY="9.0" prefHeight="26.0" prefWidth="60.0" AnchorPane.bottomAnchor="11.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="9.0" />
+      <TextField fx:id="provID" layoutX="319.0" layoutY="11.0" prefHeight="26.0" prefWidth="119.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="319.0" AnchorPane.topAnchor="11.0" />
    </children>
 </AnchorPane>
     
