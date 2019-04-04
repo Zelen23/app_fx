@@ -42,13 +42,15 @@ public class DbHandler {
             + "  [flag_post] BOOLEAN NOT NULL ON CONFLICT REPLACE DEFAULT true, \n"
             + "  [user_id] INTEGER, \n"
             + "  [create_at] DATETIME, \n"
-            + "  [plase] VARCHAR);\n"
-            + "CREATE TABLE [settings]";
+            + "  [plase] VARCHAR, \n"
+            + "  [Groups] nvARCHAR);";
+
     public static String table2
-            = "CREATE TABLE [settings] (\n"
-            + "  [key1] CHAR, \n"
-            + "  [value1] CHAR, \n"
-            + "  [id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT);";
+            = "CREATE TABLE [settings] (\n" 
+            +"  [key1] INTEGER, \n"
+            +"  [value1] INTEGER, \n" 
+            +"  [id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT);\n" 
+            +"CREATE UNIQUE INDEX [group] ON [settings] ([key1], [value1]);";
 
     public static String table3
             = "CREATE TABLE [user] (\n"
@@ -59,7 +61,11 @@ public class DbHandler {
             + "  [id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \n"
             + "  [TimeInterval] INT NOT NULL ON CONFLICT REPLACE DEFAULT 30, \n"
             + "  [NumbersOfPosts] INT NOT NULL ON CONFLICT REPLACE DEFAULT 10);";
-
+    
+    public static String table4 ="CREATE TABLE [Groups] (\n" 
+            +"  [id] INTEGER NOT NULL PRIMARY KEY ON CONFLICT IGNORE AUTOINCREMENT, \n" 
+            +"  [GroupName] VARCHAR);\n";
+   //убрал 
     public static String trig
             = "CREATE TRIGGER [chekInput]\n"
             + "BEFORE INSERT\n"
@@ -87,6 +93,8 @@ public class DbHandler {
             + "and new.token<>token;\n"
             + "END;";
 
+    
+   
     public static void CreateDB() {
         try {
             conn = DriverManager.getConnection(url);
@@ -94,7 +102,7 @@ public class DbHandler {
             statmt.execute(table);
             statmt.execute(table2);
             statmt.execute(table3);
-            statmt.execute(trig);
+            //statmt.execute(trig);
             statmt.execute(trig2);
             System.out.println("Соединения закрыты");
         } catch (SQLException ex) {
@@ -161,7 +169,7 @@ public class DbHandler {
         }
 
     }
-
+    //вывод с учетом груп
     public List<ConstructorProvider> providerDB(Integer user_id) {
         List<ConstructorProvider> prov = new ArrayList<ConstructorProvider>();
         String selectString = "Select name,provider,flag_post,plase from main where user_id = '" + user_id + "';";
@@ -284,5 +292,40 @@ public class DbHandler {
         System.err.println(querry);
         return token;
     }
+    
+    
+    // читать список групп
+    
+    //добавить группу провайдеру(группы)
+    /*    
+    insert into settings 
+        (key1,value1)
+    values
+        (111,4),
+        (111,3)
+    */
+    
+    //удалить группу-удалить все связи в settings
+    
+    //добавить группы провайдеру
+    
+    //удалить группу у провайдера
+    
+    //вывести список поставшиков по id группы и пользователю
+    /*  select 
+            main.id,main.provider,main.name,main.[user_id],
+            Groups.[GroupName],Groups.[id],
+            settings.[value1]       
+        from main
+        inner join settings
+        on main.[provider]=settings.[key1]
+
+        inner join Groups
+        on Groups.[id]=settings.[value1]
+        where settings.[value1] in (4,2)  
+        -- and main.[user_id]=419021587
+        -- group by main.provider
+    */
+    
 
 }
