@@ -22,11 +22,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import org.controlsfx.control.CheckComboBox;
 
 /**
  * FXML Controller class
@@ -44,7 +47,11 @@ public class FXMLContrlollerProvider implements Initializable {
      * удалять ид провайдеров
      * сохранять
      * 
-     * 
+     * при сохранении добавлять категории
+     * у провайдера может быть несколько категорий
+     * на форме экспанд-лист счекбоксами для выбора категорий поставщиков
+     * у каждого поставщика так же должен быть этот экспанд 
+     * при выставлении галки в бд летит запист с тегом категории
      * 
      */
         
@@ -57,8 +64,20 @@ public class FXMLContrlollerProvider implements Initializable {
     @FXML
     TextField fieldProvider;
     
-     Vk_preferences pref = new Vk_preferences();
-        int vk_id=Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
+    @FXML
+    CheckComboBox checkComboBox; 
+    
+    
+    
+    Vk_preferences pref = new Vk_preferences();
+    int vk_id=Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
+    
+    String[] groupsProvider={"1","2","3","4"};
+    
+    
+   
+    
+        
      @FXML
     private void ButtProvClose(ActionEvent event) {
         // get a handle to the stage
@@ -105,10 +124,16 @@ public class FXMLContrlollerProvider implements Initializable {
        
         List<ConstructorProvider>list= new DbHandler().providerDB(vk_id);
         setListViewProvider(list);
-       
+    
     }
 
     public void setListViewProvider( List<ConstructorProvider>list){
+        
+        ObservableList <String>value=FXCollections.observableArrayList();
+        value.setAll(groupsProvider);
+        checkComboBox.getItems().addAll(groupsProvider);
+        
+        
         final ObservableList<ConstructorProvider> observableList = FXCollections.observableArrayList();
         observableList.setAll(list);
         ListAddProviders.setItems(observableList);
