@@ -54,7 +54,7 @@ public class DbHandler {
             = "CREATE TABLE [user] (\n"
             + "  [token] CHAR, \n"
             + "  [vk_id] INTEGER NOT NULL, \n"
-            + "  [name] VARCHAR), \n"
+            + "  [name] VARCHAR, \n"
             + "  [create_at] DATETIME, \n"
             + "  [id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \n"
             + "  [TimeInterval] INT NOT NULL ON CONFLICT REPLACE DEFAULT 30, \n"
