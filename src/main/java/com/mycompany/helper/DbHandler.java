@@ -5,6 +5,7 @@
  */
 package com.mycompany.helper;
 
+import com.mycompany.helper.Helper.GroupsProvider;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -113,15 +114,15 @@ public class DbHandler {
         try {
             conn = DriverManager.getConnection(url);
             statmt = conn.createStatement();
-            
+
             statmt.execute(providers);
             statmt.execute(groups);
             statmt.execute(user);
             statmt.execute(gpoup_provider);
-            
+
             statmt.execute(tr_addProviders);
             statmt.execute(tr_insertVk_id);
-            
+
             statmt.execute(uniquIndex);
             statmt.execute(defaultGroupString);
 
@@ -313,6 +314,68 @@ public class DbHandler {
         }
         System.err.println(querry);
         return token;
+    }
+    
+    public List<ConstructorProvider> providerDBX(Integer user_id) {
+        List<ConstructorProvider> prov = new ArrayList<ConstructorProvider>();
+        Integer grind=99;
+        String selectString
+                = " select \n"
+                + "providers.provider,providers.name,providers.user_id,providers.plase,providers.flag_post, \n"
+                + "groups.[GroupName],groups.[id],\n"
+                + "gpoup_provider.[value1]       \n"
+                + "from providers\n"
+                + "inner join gpoup_provider\n"
+                + "on providers.[provider]=gpoup_provider.[key1]\n"
+                + "\n"
+                + "inner join groups\n"
+                + "on groups.[id]=gpoup_provider.[value1]\n"
+                + "where gpoup_provider.[value1] in ("+grind+")  \n"
+                + "and providers.[user_id]="+user_id+" \n"
+                + "group by providers.provider";
+        
+        System.err.println("providerDBX "+selectString);
+
+        try {
+
+            Connection conn = this.DBconnect();
+            Statement statement = conn.createStatement();
+            ResultSet resultSet = statement.executeQuery(selectString);
+
+            while (resultSet.next()) {
+                String name = resultSet.getString("name");
+                String plase = resultSet.getString("plase");
+                Integer id = resultSet.getInt("provider");
+                Boolean flag = resultSet.getBoolean("flag_post");
+
+                prov.add(new ConstructorProvider(name, plase, id, flag, "provider"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        System.err.println("providerDBX_resultprov "+prov.get(0).name);
+        return prov;
+    }
+    
+    public List<GroupsProvider> groupList(){
+         List<GroupsProvider> group = new ArrayList<GroupsProvider>();
+        String selectString = "Select id,GroupName from gpoup_provider";
+
+        try {
+
+            Connection conn = this.DBconnect();
+            Statement statement = conn.createStatement();
+            ResultSet resultSet = statement.executeQuery(selectString);
+
+            while (resultSet.next()) {
+                Integer id = resultSet.getInt("id");
+                String GroupName = resultSet.getString("GroupName");
+                group.add(new GroupsProvider(id, GroupName));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return group;
     }
 
     // читать список групп

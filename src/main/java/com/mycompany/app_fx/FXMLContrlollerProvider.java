@@ -122,7 +122,7 @@ public class FXMLContrlollerProvider implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
        
-        List<ConstructorProvider>list= new DbHandler().providerDB(vk_id);
+        List<ConstructorProvider>list= new DbHandler().providerDBX(vk_id);
         setListViewProvider(list);
     
     }
