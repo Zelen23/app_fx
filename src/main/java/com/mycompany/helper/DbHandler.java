@@ -5,7 +5,6 @@
  */
 package com.mycompany.helper;
 
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -315,10 +314,10 @@ public class DbHandler {
         System.err.println(querry);
         return token;
     }
-    
-    public List<ConstructorProvider> providerDBX(Integer user_id,String id_group) {
+
+    public List<ConstructorProvider> providerDBX(Integer user_id, String id_group) {
         List<ConstructorProvider> prov = new ArrayList<ConstructorProvider>();
-        Integer grind=99;
+        Integer grind = 99;
         String selectString
                 = " select \n"
                 + "providers.provider,providers.name,providers.user_id,providers.plase,providers.flag_post, \n"
@@ -330,11 +329,11 @@ public class DbHandler {
                 + "\n"
                 + "inner join groups\n"
                 + "on groups.[id]=gpoup_provider.[value1]\n"
-                + "where gpoup_provider.[value1] in ("+id_group+")  \n"
-                + "and providers.[user_id]="+user_id+" \n"
+                + "where gpoup_provider.[value1] in (" + id_group + ")  \n"
+                + "and providers.[user_id]=" + user_id + " \n"
                 + "group by providers.provider";
-        
-        System.err.println("providerDBX "+selectString);
+
+        System.err.println("providerDBX " + selectString);
 
         try {
 
@@ -356,8 +355,8 @@ public class DbHandler {
         //System.err.println("providerDBX_resultprov "+prov.get(0).name);
         return prov;
     }
-    
-    public List<GroupsProvider> groupList(){
+
+    public List<GroupsProvider> groupList() {
         List<GroupsProvider> group = new ArrayList<GroupsProvider>();
         String selectString = "Select id,GroupName from groups";
 
@@ -375,8 +374,19 @@ public class DbHandler {
         } catch (SQLException ex) {
             Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return group;
+    }
+
+    public void addProviderToGroup(Integer Provider_id, List<String> id_group) {
+
+        String group="";
+        String insQuerry
+                = "insert into settings \n"
+                + "(key1,value1)\n"
+                + "values\n"
+                + "("+Provider_id+","+group+")";
+
     }
 
     // читать список групп

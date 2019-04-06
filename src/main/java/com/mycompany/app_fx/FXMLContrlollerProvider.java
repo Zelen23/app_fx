@@ -72,12 +72,11 @@ public class FXMLContrlollerProvider implements Initializable {
     CheckComboBox checkComboBox; 
     
     String id_group="99";
-    
-    
-    
+
     Vk_preferences pref = new Vk_preferences();
     int vk_id=Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
-
+    
+    
         
      @FXML
     private void ButtProvClose(ActionEvent event) {
@@ -86,25 +85,34 @@ public class FXMLContrlollerProvider implements Initializable {
         // do what you have to do
         // stage.close();
         //https://vk.com/id411014340
-        Vk_api vk_api=new Vk_api();
-        UserActor userActor = vk_api.getActor(Integer.parseInt(
-            new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
-            new Vk_preferences().getPref(Vk_preferences.TOKEN));
-        
         String parseID=fieldProvider.getText();
         
         if(parseID.startsWith("https://vk.com/")){
+            
             parseID=parseID.replace("https://vk.com/", "");
-           
-            List<ConstructorProvider> userInfo=vk_api.fromUsertoProvider(
-                   vk_api.getUserInfo(userActor, parseID));
-           
-            new DbHandler().insertInProvider(userInfo.get(0).id,vk_id,userInfo.get(0).name);
+            List<ConstructorProvider> userInfo=us_Info(parseID);
+            new DbHandler().insertInProvider(
+                    userInfo.get(0).id,
+                    vk_id,
+                    userInfo.get(0).name);
+            
             setListViewProvider(id_group);
         }else{
             System.err.println("FXMLContrlollerProvider_is_no_linkUser "+parseID);
         }
  
+    }
+    public List<ConstructorProvider> us_Info(String parseID ){
+    Vk_api vk_api=new Vk_api();
+        UserActor userActor = vk_api.getActor(Integer.parseInt(
+            new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
+            new Vk_preferences().getPref(Vk_preferences.TOKEN));
+        
+        List<ConstructorProvider> userInfo=vk_api.fromUsertoProvider(
+                   vk_api.getUserInfo(userActor, parseID));
+           
+       
+    return userInfo;
     }
     
          @FXML
@@ -145,7 +153,6 @@ public class FXMLContrlollerProvider implements Initializable {
     
         ObservableList <String>value=FXCollections.observableArrayList();
         final List<GroupsProvider> group =new DbHandler().groupList();
-        
         List <String> groupName=new ArrayList<>();
         
         for(GroupsProvider elt:group ){
@@ -154,23 +161,21 @@ public class FXMLContrlollerProvider implements Initializable {
         
         value.setAll(groupName);
         checkComboBox.getItems().addAll(value);
-        checkComboBox.getCheckModel().check(0);
+        checkComboBox.getCheckModel().check(0); //default
+
         checkComboBox.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>(){
             @Override
             public void onChanged(ListChangeListener.Change<? extends String> c) {  
                 
-                ArrayList<String> id_group2=new ArrayList<String>();
-                String idString="";
-                ObservableList <Integer>value2=checkComboBox.getCheckModel().getCheckedIndices();
+                ArrayList<String> id_groupList = new ArrayList<String>();
+                ObservableList <Integer>value2 = checkComboBox.getCheckModel().getCheckedIndices();
                  for(Integer elt:value2 ){
                      
-                    id_group2.add(""+group.get(elt).id);
-                   
-                 
+                    id_groupList.add(""+group.get(elt).id);
                  }
-                 String listString = String.join(",", id_group2);
-                 System.out.println("setComBox "+ listString);
-                 setListViewProvider(listString);
+                 id_group= String.join(",", id_groupList);
+                 System.out.println("setComBox "+ id_group);
+                 setListViewProvider(id_group);
       
             }
         });

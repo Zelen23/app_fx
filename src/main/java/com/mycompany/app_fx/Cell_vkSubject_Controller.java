@@ -9,12 +9,18 @@ package com.mycompany.app_fx;
 import com.mycompany.helper.ConstructorPost;
 import com.mycompany.helper.ConstructorProvider;
 import com.mycompany.helper.DbHandler;
+import com.mycompany.helper.GroupsProvider;
 import com.mycompany.helper.Vk_preferences;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -24,6 +30,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.web.WebEngine;
 import javafx.stage.Stage;
+import org.controlsfx.control.CheckComboBox;
+import org.controlsfx.control.IndexedCheckModel;
 
 /**
  * FXML Controller class
@@ -52,7 +60,7 @@ public class Cell_vkSubject_Controller  {
     @FXML
     Label provName;     
     @FXML         
-    TextField provPlase; 
+    CheckComboBox provGroups; 
     @FXML         
     TextField provID;
       
@@ -81,7 +89,12 @@ public class Cell_vkSubject_Controller  {
 
     void setInfo(final ConstructorProvider item) {
          provName.setText(item.name);
-         provPlase.setText(item.plase);
+         //provPlase.setText(item.plase);
+         if(item.type.equals("user_vk")){
+             provGroups.setVisible(false);
+         }
+         setComBox(item.id);
+ 
          provID.setText(String.valueOf(item.id));
          flag_prov.setSelected(item.flag);
          flag_prov.selectedProperty().addListener(new ChangeListener<Boolean>(){
@@ -95,6 +108,7 @@ public class Cell_vkSubject_Controller  {
                     switch(item.type){
                         case "user_vk":
                             if(newValue){
+                              
                             
                             new Vk_preferences().putPref(
                                 Vk_preferences.VK_USER_ID, String.valueOf(item.id));
@@ -122,4 +136,59 @@ public class Cell_vkSubject_Controller  {
 
     }
     
+    
+    
+    public void setComBox(final Integer prov_id){
+    
+        ObservableList <String>value=FXCollections.observableArrayList();
+        final List<GroupsProvider> group =new DbHandler().groupList();
+        List <String> groupName=new ArrayList<>();
+        
+        for(GroupsProvider elt:group ){
+            groupName.add(elt.GroupName);
+        }
+       
+        List<String> jj=new ArrayList<>();
+        jj.add("Нижнее");
+        jj.add("Новые");
+        
+        
+        value.setAll(groupName);
+        provGroups.getItems().addAll(value);
+        
+        
+      
+        for(int i=0;i<value.size();i++){
+            
+            if(jj.contains(provGroups.getCheckModel().getItem(i)))
+            {
+                 provGroups.getCheckModel().check(i);
+            }
+            
+           
+            
+        
+        }
+        
+      
+            //provGroups.getCheckModel().check(1);
+         //default
+        provGroups.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>(){
+            @Override
+            public void onChanged(ListChangeListener.Change<? extends String> c) {  
+                String id_group="";
+                ArrayList<String> id_groupList = new ArrayList<String>();
+                ObservableList <Integer>value2 = provGroups.getCheckModel().getCheckedIndices();
+                 for(Integer elt:value2 ){
+                     
+                    id_groupList.add(""+group.get(elt).id);
+                 }
+                 id_group= String.join(",", id_groupList);
+                 System.out.println("setComBox "+ id_group+"  provider "+prov_id);
+                 
+    
+            }
+        });
+        
+    }
 }
