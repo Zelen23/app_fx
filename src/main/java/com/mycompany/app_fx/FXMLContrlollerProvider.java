@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -32,6 +33,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.controlsfx.control.CheckComboBox;
+
 
 /**
  * FXML Controller class
@@ -69,6 +71,8 @@ public class FXMLContrlollerProvider implements Initializable {
     @FXML
     CheckComboBox checkComboBox; 
     
+    String id_group="99";
+    
     
     
     Vk_preferences pref = new Vk_preferences();
@@ -96,7 +100,7 @@ public class FXMLContrlollerProvider implements Initializable {
                    vk_api.getUserInfo(userActor, parseID));
            
             new DbHandler().insertInProvider(userInfo.get(0).id,vk_id,userInfo.get(0).name);
-            setListViewProvider();
+            setListViewProvider(id_group);
         }else{
             System.err.println("FXMLContrlollerProvider_is_no_linkUser "+parseID);
         }
@@ -110,20 +114,21 @@ public class FXMLContrlollerProvider implements Initializable {
         // do what you have to do
         // stage.close();
         new DbHandler().deleteProvider(Integer.parseInt(fieldProvider.getText()));
-        setListViewProvider();
+        setListViewProvider(id_group);
     }
     
-    
+   
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
         setComBox();
+        setListViewProvider(id_group);
     
     }
 
-    public void setListViewProvider(){
+    public void setListViewProvider(String id_group){
         
-        List<ConstructorProvider>list= new DbHandler().providerDB(vk_id);
+        List<ConstructorProvider>list= new DbHandler().providerDBX(vk_id,id_group);
         final ObservableList<ConstructorProvider> observableList = FXCollections.observableArrayList();
         observableList.setAll(list);
         
@@ -139,8 +144,7 @@ public class FXMLContrlollerProvider implements Initializable {
     public void setComBox(){
     
         ObservableList <String>value=FXCollections.observableArrayList();
-        List<GroupsProvider> group =new ArrayList<GroupsProvider>();
-        group=new DbHandler().groupList();
+        final List<GroupsProvider> group =new DbHandler().groupList();
         
         List <String> groupName=new ArrayList<>();
         
@@ -150,9 +154,30 @@ public class FXMLContrlollerProvider implements Initializable {
         
         value.setAll(groupName);
         checkComboBox.getItems().addAll(value);
+        checkComboBox.getCheckModel().check(0);
+        checkComboBox.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>(){
+            @Override
+            public void onChanged(ListChangeListener.Change<? extends String> c) {  
+                
+                ArrayList<String> id_group2=new ArrayList<String>();
+                String idString="";
+                ObservableList <Integer>value2=checkComboBox.getCheckModel().getCheckedIndices();
+                 for(Integer elt:value2 ){
+                     
+                    id_group2.add(""+group.get(elt).id);
+                   
+                 
+                 }
+                 String listString = String.join(",", id_group2);
+                 System.out.println("setComBox "+ listString);
+                 setListViewProvider(listString);
+      
+            }
+        });
         
         
-         setListViewProvider();
+        
+        
         /*слушать нажатие трушных элементов
         по индексу находить  елемент обьекта групп добавляю его к массиву*/
         

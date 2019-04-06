@@ -316,7 +316,7 @@ public class DbHandler {
         return token;
     }
     
-    public List<ConstructorProvider> providerDBX(Integer user_id) {
+    public List<ConstructorProvider> providerDBX(Integer user_id,String id_group) {
         List<ConstructorProvider> prov = new ArrayList<ConstructorProvider>();
         Integer grind=99;
         String selectString
@@ -330,7 +330,7 @@ public class DbHandler {
                 + "\n"
                 + "inner join groups\n"
                 + "on groups.[id]=gpoup_provider.[value1]\n"
-                + "where gpoup_provider.[value1] in ("+grind+")  \n"
+                + "where gpoup_provider.[value1] in ("+id_group+")  \n"
                 + "and providers.[user_id]="+user_id+" \n"
                 + "group by providers.provider";
         
