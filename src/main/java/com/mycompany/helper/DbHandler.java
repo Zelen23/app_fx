@@ -5,7 +5,7 @@
  */
 package com.mycompany.helper;
 
-import com.mycompany.helper.Helper.GroupsProvider;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -353,13 +353,13 @@ public class DbHandler {
         } catch (SQLException ex) {
             Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.err.println("providerDBX_resultprov "+prov.get(0).name);
+        //System.err.println("providerDBX_resultprov "+prov.get(0).name);
         return prov;
     }
     
     public List<GroupsProvider> groupList(){
-         List<GroupsProvider> group = new ArrayList<GroupsProvider>();
-        String selectString = "Select id,GroupName from gpoup_provider";
+        List<GroupsProvider> group = new ArrayList<GroupsProvider>();
+        String selectString = "Select id,GroupName from groups";
 
         try {
 
@@ -375,6 +375,7 @@ public class DbHandler {
         } catch (SQLException ex) {
             Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
         return group;
     }
 

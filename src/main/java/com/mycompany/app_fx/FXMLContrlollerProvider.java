@@ -8,6 +8,8 @@ package com.mycompany.app_fx;
 import com.mycompany.helper.ConstructorPost;
 import com.mycompany.helper.ConstructorProvider;
 import com.mycompany.helper.DbHandler;
+import com.mycompany.helper.GroupsProvider;
+import com.mycompany.helper.Helper;
 import com.mycompany.helper.Vk_api;
 import com.mycompany.helper.Vk_preferences;
 import com.vk.api.sdk.client.actors.UserActor;
@@ -71,12 +73,7 @@ public class FXMLContrlollerProvider implements Initializable {
     
     Vk_preferences pref = new Vk_preferences();
     int vk_id=Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
-    
-    String[] groupsProvider={"1","2","3","4"};
-    
-    
-   
-    
+
         
      @FXML
     private void ButtProvClose(ActionEvent event) {
@@ -99,8 +96,7 @@ public class FXMLContrlollerProvider implements Initializable {
                    vk_api.getUserInfo(userActor, parseID));
            
             new DbHandler().insertInProvider(userInfo.get(0).id,vk_id,userInfo.get(0).name);
-            List<ConstructorProvider>list= new DbHandler().providerDB(vk_id);
-            setListViewProvider(list);
+            setListViewProvider();
         }else{
             System.err.println("FXMLContrlollerProvider_is_no_linkUser "+parseID);
         }
@@ -114,28 +110,23 @@ public class FXMLContrlollerProvider implements Initializable {
         // do what you have to do
         // stage.close();
         new DbHandler().deleteProvider(Integer.parseInt(fieldProvider.getText()));
-         List<ConstructorProvider>list= new DbHandler().providerDB(vk_id);
-         setListViewProvider(list);
+        setListViewProvider();
     }
     
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-       
-        List<ConstructorProvider>list= new DbHandler().providerDBX(vk_id);
-        setListViewProvider(list);
+
+        setComBox();
     
     }
 
-    public void setListViewProvider( List<ConstructorProvider>list){
+    public void setListViewProvider(){
         
-        ObservableList <String>value=FXCollections.observableArrayList();
-        value.setAll(groupsProvider);
-        checkComboBox.getItems().addAll(groupsProvider);
-        
-        
+        List<ConstructorProvider>list= new DbHandler().providerDB(vk_id);
         final ObservableList<ConstructorProvider> observableList = FXCollections.observableArrayList();
         observableList.setAll(list);
+        
         ListAddProviders.setItems(observableList);
         ListAddProviders.setCellFactory(new Callback<ListView<ConstructorProvider>,ListCell<ConstructorProvider>>(){
             @Override
@@ -143,6 +134,30 @@ public class FXMLContrlollerProvider implements Initializable {
                 return new ListProvCell();
             }
         });
-}    
+}  
+    
+    public void setComBox(){
+    
+        ObservableList <String>value=FXCollections.observableArrayList();
+        List<GroupsProvider> group =new ArrayList<GroupsProvider>();
+        group=new DbHandler().groupList();
+        
+        List <String> groupName=new ArrayList<>();
+        
+        for(GroupsProvider elt:group ){
+            groupName.add(elt.GroupName);
+        }
+        
+        value.setAll(groupName);
+        checkComboBox.getItems().addAll(value);
+        
+        
+         setListViewProvider();
+        /*слушать нажатие трушных элементов
+        по индексу находить  елемент обьекта групп добавляю его к массиву*/
+        
+       
+    
+    }
     
 }
