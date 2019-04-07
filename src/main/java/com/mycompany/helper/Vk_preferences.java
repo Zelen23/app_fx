@@ -20,6 +20,7 @@ public static final String SERVICES_KEY="services_key";
 public static final String SECRET_KEY="secret_key";
 public static final String TOKEN="token";
 public static final String VK_USER_ID="vk_user_id";
+public static final String GROUPS_PROVIDER="groups_provider";
 
 void pref(){
     Preferences preferences=Preferences.userNodeForPackage(Vk_preferences.class);

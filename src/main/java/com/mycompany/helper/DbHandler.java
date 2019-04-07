@@ -378,15 +378,77 @@ public class DbHandler {
         return group;
     }
 
-    public void addProviderToGroup(Integer Provider_id, List<String> id_group) {
+    // уникальность поддерживается эксепшоном
+    public void addProviderToGroup(Integer Provider_id, Integer id_group) {
+        
+    String insQuerry
+                    = "insert into gpoup_provider \n"
+                    + "(key1,value1)\n"
+                    + "values\n"
+                    + "(?,?)";
+    
+     System.out.println("addProviderToGroup " + insQuerry);
+        try {
+            Connection conn = this.DBconnect();
+            PreparedStatement preparedStatement = conn.prepareStatement(insQuerry);
+            preparedStatement.setInt(1, Provider_id);
+            preparedStatement.setInt(2, id_group);
+            preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
-        String group="";
-        String insQuerry
-                = "insert into settings \n"
-                + "(key1,value1)\n"
-                + "values\n"
-                + "("+Provider_id+","+group+")";
+       
+    }
+    
+    public void deleteProviderToGroup(Integer Provider_id){
+        
+        String deleteString = "Delete from gpoup_provider where key1 = ?;";
+        
+        System.err.println("deleteProviderToGroup " + deleteString);
+        
+        try {
+            Connection conn = this.DBconnect();
+            PreparedStatement preparedStatement = conn.prepareStatement(deleteString);
+            preparedStatement.setInt(1, Provider_id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
+    }
+    
+    public List<String>getGroupProvider(Integer Provider_id ){
+        
+        List<String> groupsList = new ArrayList<String>();
+        String selectString 
+                = "Select gpoup_provider.key1,gpoup_provider.value1,\n" 
+                +"groups.[GroupName]\n" 
+                +"\n" 
+                +"from gpoup_provider\n" 
+                +"inner join groups\n" 
+                +"on \n" 
+                +"gpoup_provider.value1=groups.[id]\n" 
+                +"where key1="+Provider_id+";";
+        
+        System.err.println("getGroupProvider " + selectString);
+
+        try {
+
+            Connection conn = this.DBconnect();
+            Statement statement = conn.createStatement();
+            ResultSet resultSet = statement.executeQuery(selectString);
+
+            while (resultSet.next()) {
+                String groupName = resultSet.getString("GroupName");
+                Integer provider = resultSet.getInt("key1");
+
+                groupsList.add(groupName);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return groupsList;
     }
 
     // читать список групп

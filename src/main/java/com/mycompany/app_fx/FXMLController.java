@@ -213,10 +213,13 @@ public class FXMLController implements Initializable {
        
         int vk_id = Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
         
-        List<ConstructorProvider> listProvDB = new DbHandler().providerDB(vk_id);
+        String groups= pref.getPref(Vk_preferences.GROUPS_PROVIDER);
+        List<ConstructorProvider> listProvDBX = new DbHandler().providerDBX(vk_id,groups );
+        
+      //  List<ConstructorProvider> listProvDB = new DbHandler().providerDB(vk_id);
         List<Integer> providerList = new ArrayList<>();
         
-        for (ConstructorProvider elt : listProvDB) {
+        for (ConstructorProvider elt : listProvDBX) {
             if (elt.flag) {
                 providerList.add(elt.id);
             }
@@ -224,8 +227,9 @@ public class FXMLController implements Initializable {
 
         postGrabber = new PostGrabber(providerList, postListView);
         postGrabber.start();
-        
+
         System.err.println("handle_Button_GetPostProviders " + providerList);
+ 
     }
     
 
@@ -241,6 +245,8 @@ public class FXMLController implements Initializable {
         setDateTime();
         // если файл создан то не пытаться создавать
         new DbHandler().CreateDB();
+        //при запуске группы по умолчанию
+        pref.putPref(Vk_preferences.GROUPS_PROVIDER,"99");
        
     }
     

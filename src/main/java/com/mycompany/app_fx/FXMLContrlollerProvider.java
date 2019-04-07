@@ -12,6 +12,7 @@ import com.mycompany.helper.GroupsProvider;
 import com.mycompany.helper.Helper;
 import com.mycompany.helper.Vk_api;
 import com.mycompany.helper.Vk_preferences;
+import static com.mycompany.helper.Vk_preferences.SERVICES_KEY;
 import com.vk.api.sdk.client.actors.UserActor;
 import java.beans.ConstructorProperties;
 import java.net.URL;
@@ -71,7 +72,7 @@ public class FXMLContrlollerProvider implements Initializable {
     @FXML
     CheckComboBox checkComboBox; 
     
-    String id_group="99";
+    public  String id_group="99";
 
     Vk_preferences pref = new Vk_preferences();
     int vk_id=Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
@@ -175,6 +176,8 @@ public class FXMLContrlollerProvider implements Initializable {
                  }
                  id_group= String.join(",", id_groupList);
                  System.out.println("setComBox "+ id_group);
+                 
+                 pref.putPref(Vk_preferences.GROUPS_PROVIDER,id_group);
                  setListViewProvider(id_group);
       
             }
