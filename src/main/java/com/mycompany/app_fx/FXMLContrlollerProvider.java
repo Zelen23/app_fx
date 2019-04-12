@@ -18,19 +18,27 @@ import java.beans.ConstructorProperties;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.controlsfx.control.CheckComboBox;
@@ -72,14 +80,17 @@ public class FXMLContrlollerProvider implements Initializable {
     @FXML
     CheckComboBox checkComboBox; 
     
+    @FXML
+    Button addGroup;
+    
     public  String id_group="99";
 
     Vk_preferences pref = new Vk_preferences();
     int vk_id=Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
     
-    
+    List<GroupsProvider> group =new DbHandler().groupList();
         
-     @FXML
+    @FXML
     private void ButtProvClose(ActionEvent event) {
         // get a handle to the stage
         // Stage stage = (Stage) okProviders.getScene().getWindow();
@@ -98,6 +109,7 @@ public class FXMLContrlollerProvider implements Initializable {
                     userInfo.get(0).name);
             
             setListViewProvider(id_group);
+            fieldProvider.clear();
         }else{
             System.err.println("FXMLContrlollerProvider_is_no_linkUser "+parseID);
         }
@@ -116,7 +128,7 @@ public class FXMLContrlollerProvider implements Initializable {
     return userInfo;
     }
     
-         @FXML
+    @FXML
     private void ButtDellete(ActionEvent event) {
         // get a handle to the stage
         // Stage stage = (Stage) okProviders.getScene().getWindow();
@@ -126,12 +138,43 @@ public class FXMLContrlollerProvider implements Initializable {
         setListViewProvider(id_group);
     }
     
+    @FXML
+    private void buttAddBroup(ActionEvent event) {
+            
+        TextInputDialog  dialog = new TextInputDialog("");
+ 
+        dialog.setTitle("Add new Group");
+        dialog.setHeaderText("add group");
    
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            
+            System.out.println("buttAddBroup "+result.get());
+            new DbHandler().addGroup(result.get());
+            
+            group =new DbHandler().groupList();
+            checkComboBox.getItems().clear();
+            setComBox(group);
+        }
+       
+    }
+    
+   
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        
+        setComBox(group);
+        checkComboBox.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println("click");
 
-        setComBox();
+            }
+        });
+        
         setListViewProvider(id_group);
+        
     
     }
 
@@ -150,10 +193,9 @@ public class FXMLContrlollerProvider implements Initializable {
         });
 }  
     
-    public void setComBox(){
+    public void setComBox(final List<GroupsProvider> group){
     
         ObservableList <String>value=FXCollections.observableArrayList();
-        final List<GroupsProvider> group =new DbHandler().groupList();
         List <String> groupName=new ArrayList<>();
         
         for(GroupsProvider elt:group ){
@@ -161,25 +203,26 @@ public class FXMLContrlollerProvider implements Initializable {
         }
         
         value.setAll(groupName);
+
         checkComboBox.getItems().addAll(value);
         checkComboBox.getCheckModel().check(0); //default
-
         checkComboBox.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>(){
             @Override
-            public void onChanged(ListChangeListener.Change<? extends String> c) {  
-                
+            public void onChanged(ListChangeListener.Change<? extends String> c) { 
+
+                //при добавлении нового эл-та тут косяк
                 ArrayList<String> id_groupList = new ArrayList<String>();
                 ObservableList <Integer>value2 = checkComboBox.getCheckModel().getCheckedIndices();
-                 for(Integer elt:value2 ){
-                     
+                for(Integer elt:value2 ){
+                    System.out.println("setComBox "+ id_group);
                     id_groupList.add(""+group.get(elt).id);
                  }
                  id_group= String.join(",", id_groupList);
-                 System.out.println("setComBox "+ id_group);
+                
                  
                  pref.putPref(Vk_preferences.GROUPS_PROVIDER,id_group);
                  setListViewProvider(id_group);
-      
+                    
             }
         });
         

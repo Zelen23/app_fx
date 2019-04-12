@@ -450,6 +450,23 @@ public class DbHandler {
         }
         return groupsList;
     }
+    
+    public void addGroup(String groupName){
+        
+         try {
+            String inserString = "Insert into groups ('GroupName')values (?)";
+            Connection conn = this.DBconnect();
+            PreparedStatement preparedStatement = conn.prepareStatement(inserString);
+            preparedStatement.setString(1, groupName);
+            preparedStatement.executeUpdate();
+
+            System.err.println(inserString);
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
 
     // читать список групп
     //добавить группу
