@@ -54,14 +54,14 @@ public class PostGrabber extends Thread {
     }
     //529989036
     Vk_preferences pref = new Vk_preferences();
-    Integer NumbersOfPosts=new DbHandler().settingsList("NumbersOfPosts",
+    Integer NumbersOfPosts = new DbHandler().settingsList("NumbersOfPosts",
             Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID)));
-    
+
 
     /*цикл в час в этом цикле каждые 10мин перебираю*/
     @Override
     public void run() {
-       
+
         while (true) {
             try {
                 for (int i = 0; i < providerList.size(); i++) {
@@ -91,53 +91,87 @@ public class PostGrabber extends Thread {
         Integer postLikes = 0;
         String text = "";
         Integer count_itemsAttach = null;
-       
 
         for (int i = 0; i < getwalls.getItems().size(); i++) {
             List<WallpostAttachment> attachments = getwalls.getItems().get(i).getAttachments();
             // если данные удовлетворяют могу добавить в listPost
-            if (getwalls.getItems().get(i).getIsPinned()==null&&attachments != null) {
+            if (getwalls.getItems().get(i).getIsPinned() == null && attachments != null) {
                 count_itemsAttach = getwalls.getItems().get(i).getAttachments().size();
                 List<String> listPhoto = new ArrayList<String>();
 
                 for (int j = 0; j < count_itemsAttach; j++) {
-                    Photo isPhoto       = getwalls.getItems().get(i).getAttachments().get(j).getPhoto();
-                    
-                    Views views         = getwalls.getItems().get(i).getViews();
+                    Photo isPhoto = getwalls.getItems().get(i).getAttachments().get(j).getPhoto();
+
+                    Views views = getwalls.getItems().get(i).getViews();
                     LikesInfo likesInfo = getwalls.getItems().get(i).getLikes();
-                    
-                    
+
                     if (isPhoto != null) {
-                        if(views!=null){
-                            postViews=views.getCount();
+                        if (views != null) {
+                            postViews = views.getCount();
                         };
-                        if(likesInfo!=null){
-                            postLikes=likesInfo.getCount();
+                        if (likesInfo != null) {
+                            postLikes = likesInfo.getCount();
                         };
-                        provId   = getwalls.getItems().get(i).getOwnerId();
-                        postId   = getwalls.getItems().get(i).getId();
+                        provId = getwalls.getItems().get(i).getOwnerId();
+                        postId = getwalls.getItems().get(i).getId();
                         postdate = getwalls.getItems().get(i).getDate().longValue();
-                        text     = getwalls.getItems().get(i).getText();
-                        
-                        listPhoto.add(
-                                getwalls.getItems().get(i).getAttachments().get(j).getPhoto().getPhoto807());
-                           
+                        text = getwalls.getItems().get(i).getText();
+
+                        listPhoto.add(gettingPhoto(isPhoto));
+
                     }
 
                 }
                 //проверяю входит ди запись в массив записей 
-                addtoListPost(new ConstructorPost(provId, postId, postdate,postViews, postLikes, text, count_itemsAttach, listPhoto,false));
+                addtoListPost(new ConstructorPost(provId, postId, postdate, postViews, postLikes, text, count_itemsAttach, listPhoto, false));
 
             }
 
         }
 
     }
+    
+    public String gettingPhoto(Photo photo) {
 
+        String returnPhoto="";
+        if (photo.getPhoto2560()!= null) {
+            System.out.println("photo_2560");
+            returnPhoto=photo.getPhoto2560();
+        } else {
+            if (photo.getPhoto1280() != null) {
+                System.out.println("photo_1280");
+                returnPhoto=photo.getPhoto1280();
+            } else {
+
+                if (photo.getPhoto807() != null) {
+                    System.out.println("photo_807");
+                    returnPhoto=photo.getPhoto807();
+                } else {
+                    if (photo.getPhoto604() != null) {
+                        System.out.println("photo_604");
+                        returnPhoto= photo.getPhoto604();
+                    } else {
+                        if (photo.getPhoto130() != null) {
+                            System.out.println("photo_130");
+                            returnPhoto=photo.getPhoto130();
+                        }
+
+                    }
+                }
+            }
+            
+        }
+
+        //System.out.println(photo.getSizes().get(photo.getSizes().size()-1).getSrc());
+        //System.out.println("getWidth "+photo.getWidth()+"getHight "+photo.getHeight());
+        return returnPhoto;
+
+    }
+
+    // тут можно проводить фильтрацию
     void addtoListPost(ConstructorPost addtoWallsList) {
 
-      System.out.println("addtoWallsList " + addtoWallsList.postId +"provider"+addtoWallsList.provId);
-
+        //  System.out.println("addtoWallsList " + addtoWallsList.postId +"provider"+addtoWallsList.provId);
         if (addtoWallsList != null) {
             Boolean isExist = false;
             if (listPost.isEmpty()) {
@@ -148,7 +182,7 @@ public class PostGrabber extends Thread {
 // addtoWallsList 12835provider429277497
                     if (listPost.get(i).postdate.equals(addtoWallsList.postdate)
                             && listPost.get(i).postId.equals(addtoWallsList.postId)
-                        //    && listPost.get(i).text.equals(addtoWallsList.text)
+                            //    && listPost.get(i).text.equals(addtoWallsList.text)
                             && listPost.get(i).provId.equals(addtoWallsList.provId)) {
                         isExist = true;
                     }
@@ -158,7 +192,6 @@ public class PostGrabber extends Thread {
                     listPost.add(addtoWallsList);
                     viewInListView(listPost);
 
-                  
                 } else {
                     // System.out.println("row " + addtoWallsList.postId + " from " + addtoWallsList.provId + "noUnique");
                 }
@@ -172,28 +205,27 @@ public class PostGrabber extends Thread {
     }
 
     void viewInListView(List<ConstructorPost> listPost) {
-        
+
         final ObservableList<ConstructorPost> observableList = FXCollections.observableArrayList();
-        
+
         observableList.setAll(listPost);
         Platform.runLater(new Runnable() {
 
             @Override
             public void run() {
                 postListView.setItems(observableList);
-                postListView.setCellFactory(new Callback<ListView<ConstructorPost>,ListCell<ConstructorPost>>() {
-             @Override
-             public ListCell<ConstructorPost> call(ListView<ConstructorPost> param) {
-                 return  new ListViewCell();
-             }
-                  
-                    });
-                
+                postListView.setCellFactory(new Callback<ListView<ConstructorPost>, ListCell<ConstructorPost>>() {
+                    @Override
+                    public ListCell<ConstructorPost> call(ListView<ConstructorPost> param) {
+                        return new ListViewCell();
+                    }
+
+                });
+
             }
         });
 
     }
-    
 
     //_______________________  
     ConstructorPost addtoWallsList(GetResponse getwalls) {
@@ -203,10 +235,9 @@ public class PostGrabber extends Thread {
         Integer provId = getwalls.getItems().get(0).getOwnerId();
         Integer postId = getwalls.getItems().get(0).getId();
         Long postdate = getwalls.getItems().get(0).getDate().longValue();
-       
+
 //        Integer postViews = getwalls.getItems().get(0).getViews().getCount();
 //        Integer postLikes = getwalls.getItems().get(0).getLikes().getCount();
-
         String text = getwalls.getItems().get(0).getText();
         Integer count_photo = getwalls.getItems().get(0).getAttachments().size();
         List<String> listPhoto = new ArrayList<String>();
@@ -216,7 +247,7 @@ public class PostGrabber extends Thread {
                     getwalls.getItems().get(0).getAttachments().get(j).getPhoto().getPhoto807());
         }
 
-        return new ConstructorPost(provId, postId, postdate, 1, 1, text, count_photo, listPhoto,false);
+        return new ConstructorPost(provId, postId, postdate, 1, 1, text, count_photo, listPhoto, false);
 
     }
 
@@ -242,7 +273,7 @@ public class PostGrabber extends Thread {
             @Override
             public void run() {
                 postListView.setItems(observableList);
-                
+
             }
         });
 
