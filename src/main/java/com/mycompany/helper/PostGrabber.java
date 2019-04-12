@@ -136,7 +136,7 @@ public class PostGrabber extends Thread {
 
     void addtoListPost(ConstructorPost addtoWallsList) {
 
-     //   System.out.println("addtoWallsList " + addtoWallsList.postId);
+      System.out.println("addtoWallsList " + addtoWallsList.postId +"provider"+addtoWallsList.provId);
 
         if (addtoWallsList != null) {
             Boolean isExist = false;
@@ -145,6 +145,7 @@ public class PostGrabber extends Thread {
                 viewInListView(listPost);
             } else {
                 for (int i = 0; i < listPost.size(); i++) {
+// addtoWallsList 12835provider429277497
                     if (listPost.get(i).postdate.equals(addtoWallsList.postdate)
                             && listPost.get(i).postId.equals(addtoWallsList.postId)
                         //    && listPost.get(i).text.equals(addtoWallsList.text)

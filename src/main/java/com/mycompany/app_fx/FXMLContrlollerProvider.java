@@ -153,8 +153,7 @@ public class FXMLContrlollerProvider implements Initializable {
             new DbHandler().addGroup(result.get());
             
             group =new DbHandler().groupList();
-            checkComboBox.getItems().clear();
-            setComBox(group);
+            setComBox(updObservableList(group));
         }
        
     }
@@ -164,7 +163,7 @@ public class FXMLContrlollerProvider implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         
-        setComBox(group);
+        setComBox(updObservableList(group));
         checkComboBox.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -193,8 +192,7 @@ public class FXMLContrlollerProvider implements Initializable {
         });
 }  
     
-    public void setComBox(final List<GroupsProvider> group){
-    
+    public ObservableList <String> updObservableList(final List<GroupsProvider> group){
         ObservableList <String>value=FXCollections.observableArrayList();
         List <String> groupName=new ArrayList<>();
         
@@ -203,7 +201,12 @@ public class FXMLContrlollerProvider implements Initializable {
         }
         
         value.setAll(groupName);
-
+        return value;
+    }
+    
+    public void setComBox(ObservableList <String>value){
+    
+        checkComboBox.getItems().clear();
         checkComboBox.getItems().addAll(value);
         checkComboBox.getCheckModel().check(0); //default
         checkComboBox.getCheckModel().getCheckedItems().addListener(new ListChangeListener<String>(){
