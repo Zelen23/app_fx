@@ -61,7 +61,13 @@ public class Vk_api {
 
     public GetResponse getwalls(UserActor actor, Integer provider_id,int count,int offset) {
         GetResponse walls = new GetResponse();
+    
         try {
+            try {
+                Thread.sleep(600);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+            }
             TransportClient transportClient = HttpTransportClient.getInstance();
             VkApiClient vk = new VkApiClient(transportClient);
             walls = vk.wall().get(actor)
