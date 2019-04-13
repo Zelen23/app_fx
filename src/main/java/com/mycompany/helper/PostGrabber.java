@@ -8,6 +8,7 @@ package com.mycompany.helper;
 import com.mycompany.app_fx.Cell_listPostController;
 import com.mycompany.app_fx.FXMLController;
 import com.mycompany.app_fx.ListViewCell;
+import com.mycompany.app_fx.PreferencesController;
 import com.mycompany.app_fx.TaskCellFactory;
 import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.objects.base.Geo;
@@ -31,10 +32,13 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author adolf UH6sYetv5n
+ * Прикрутить возможность фильтрации
+ * Прикрутить логи
  */
 public class PostGrabber extends Thread {
 
@@ -54,34 +58,34 @@ public class PostGrabber extends Thread {
     }
     //529989036
     Vk_preferences pref = new Vk_preferences();
-    Integer NumbersOfPosts=new DbHandler().settingsList("NumbersOfPosts",
+    Integer NumbersOfPosts = new DbHandler().settingsList("NumbersOfPosts",
             Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID)));
-    
 
+    org.slf4j.Logger logger = LoggerFactory.getLogger(PostGrabber.class);
+       
     /*цикл в час в этом цикле каждые 10мин перебираю*/
     @Override
     public void run() {
-       
-        while (true) {
+
+       // while (true) {
             try {
                 for (int i = 0; i < providerList.size(); i++) {
 
                     filterDataInPost(vk_api.getwalls(userActor, providerList.get(i), NumbersOfPosts, 0));
+                    sleep(100);
                 }
-                sleep(50000);
+                
 
             } catch (InterruptedException ex) {
                 Logger.getLogger(PostGrabber.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-        }
+      //  }
 
     }
 
     public void filterDataInPost(GetResponse getwalls) {
 
-        //System.out.println(getwalls.getItems().toString());
-        //System.out.println("getwalls.getCount() " + getwalls.getCount());
         //System.out.println("getwalls.getItems().size() " + getwalls.getItems().size());
         ConstructorPost post = null;
         Integer provId = null;
@@ -91,53 +95,54 @@ public class PostGrabber extends Thread {
         Integer postLikes = 0;
         String text = "";
         Integer count_itemsAttach = null;
-       
-
+        //Лист с постами от поставщика
         for (int i = 0; i < getwalls.getItems().size(); i++) {
-            List<WallpostAttachment> attachments = getwalls.getItems().get(i).getAttachments();
-            // если данные удовлетворяют могу добавить в listPost
-            if (getwalls.getItems().get(i).getIsPinned()==null&&attachments != null) {
-                count_itemsAttach = getwalls.getItems().get(i).getAttachments().size();
+
+            WallPostFull itemPost = getwalls.getItems().get(i);
+            List<WallpostAttachment> attachments = itemPost.getAttachments();
+            Integer isPinned = itemPost.getIsPinned();
+        //если данные удовлетворяют могу добавить в listPost
+            if (isPinned == null && attachments != null) {
+                
+                logger.info("1st_step:filterDataInPost " + itemPost.getOwnerId() + "_" + itemPost.getId());
+        //вложения в одном посте            
+                count_itemsAttach = itemPost.getAttachments().size();
                 List<String> listPhoto = new ArrayList<String>();
 
                 for (int j = 0; j < count_itemsAttach; j++) {
-                    Photo isPhoto       = getwalls.getItems().get(i).getAttachments().get(j).getPhoto();
-                    
-                    Views views         = getwalls.getItems().get(i).getViews();
-                    LikesInfo likesInfo = getwalls.getItems().get(i).getLikes();
-                    
-                    
-                    if (isPhoto != null) {
-                        if(views!=null){
-                            postViews=views.getCount();
-                        };
-                        if(likesInfo!=null){
-                            postLikes=likesInfo.getCount();
-                        };
-                        provId   = getwalls.getItems().get(i).getOwnerId();
-                        postId   = getwalls.getItems().get(i).getId();
-                        postdate = getwalls.getItems().get(i).getDate().longValue();
-                        text     = getwalls.getItems().get(i).getText();
-                        
-                        listPhoto.add(
-                                getwalls.getItems().get(i).getAttachments().get(j).getPhoto().getPhoto807());
-                           
-                    }
 
+                    Photo isPhoto = itemPost.getAttachments().get(j).getPhoto();
+                    Views views = itemPost.getViews();
+                    LikesInfo likesInfo = itemPost.getLikes();
+        //если вложение это фотка то забираем этот пост                
+                    if (isPhoto != null) {
+
+                        if (views != null) {
+                            postViews = views.getCount();
+                        };
+                        if (likesInfo != null) {
+                            postLikes = likesInfo.getCount();
+                        };
+                        provId = itemPost.getOwnerId();
+                        postId = itemPost.getId();
+                        postdate = itemPost.getDate().longValue();
+                        text = itemPost.getText();
+
+                        listPhoto.add(gettingPhoto(isPhoto));
+                    }
                 }
-                //проверяю входит ди запись в массив записей 
-                addtoListPost(new ConstructorPost(provId, postId, postdate,postViews, postLikes, text, count_itemsAttach, listPhoto,false));
+        //проверяю входит ди запись в массив записей 
+        //херачит в несколько проходов
+                addtoListPost(new ConstructorPost(provId, postId, postdate, postViews, postLikes, text, count_itemsAttach, listPhoto, false));
 
             }
 
         }
 
     }
-
+    
+    // тут можно проводить фильтрацию
     void addtoListPost(ConstructorPost addtoWallsList) {
-
-     //   System.out.println("addtoWallsList " + addtoWallsList.postId);
-
         if (addtoWallsList != null) {
             Boolean isExist = false;
             if (listPost.isEmpty()) {
@@ -145,105 +150,86 @@ public class PostGrabber extends Thread {
                 viewInListView(listPost);
             } else {
                 for (int i = 0; i < listPost.size(); i++) {
+
                     if (listPost.get(i).postdate.equals(addtoWallsList.postdate)
                             && listPost.get(i).postId.equals(addtoWallsList.postId)
-                        //    && listPost.get(i).text.equals(addtoWallsList.text)
                             && listPost.get(i).provId.equals(addtoWallsList.provId)) {
                         isExist = true;
                     }
 
                 }
                 if (isExist == false) {
+                    System.out.println();
+                    logger.info("3rd step: addtoListPost" + addtoWallsList.provId + "_" + addtoWallsList.postId);
                     listPost.add(addtoWallsList);
                     viewInListView(listPost);
 
-                  
                 } else {
-                    // System.out.println("row " + addtoWallsList.postId + " from " + addtoWallsList.provId + "noUnique");
+                  
                 }
 
             }
-            //   viewInListView(listPost);
-
-            // System.out.println("listPost " + listPost.size());
+         
         }
 
     }
 
     void viewInListView(List<ConstructorPost> listPost) {
-        
+
         final ObservableList<ConstructorPost> observableList = FXCollections.observableArrayList();
-        
+
         observableList.setAll(listPost);
         Platform.runLater(new Runnable() {
 
             @Override
             public void run() {
                 postListView.setItems(observableList);
-                postListView.setCellFactory(new Callback<ListView<ConstructorPost>,ListCell<ConstructorPost>>() {
-             @Override
-             public ListCell<ConstructorPost> call(ListView<ConstructorPost> param) {
-                 return  new ListViewCell();
-             }
-                  
-                    });
-                
+                postListView.setCellFactory(new Callback<ListView<ConstructorPost>, ListCell<ConstructorPost>>() {
+                    @Override
+                    public ListCell<ConstructorPost> call(ListView<ConstructorPost> param) {
+                        return new ListViewCell();
+                    }
+
+                });
+
             }
         });
 
     }
     
+    public String gettingPhoto(Photo photo) {
 
-    //_______________________  
-    ConstructorPost addtoWallsList(GetResponse getwalls) {
-        filterDataInPost(getwalls);
+        String returnPhoto = "";
+        if (photo.getPhoto2560() != null) {
 
-        //тут падаем если нет какого-то поля нужно обходить 
-        Integer provId = getwalls.getItems().get(0).getOwnerId();
-        Integer postId = getwalls.getItems().get(0).getId();
-        Long postdate = getwalls.getItems().get(0).getDate().longValue();
-       
-//        Integer postViews = getwalls.getItems().get(0).getViews().getCount();
-//        Integer postLikes = getwalls.getItems().get(0).getLikes().getCount();
+            returnPhoto = photo.getPhoto2560();
+        } else {
+            if (photo.getPhoto1280() != null) {
 
-        String text = getwalls.getItems().get(0).getText();
-        Integer count_photo = getwalls.getItems().get(0).getAttachments().size();
-        List<String> listPhoto = new ArrayList<String>();
+                returnPhoto = photo.getPhoto1280();
+            } else {
 
-        for (int j = 0; j < count_photo; j++) {
-            listPhoto.add(
-                    getwalls.getItems().get(0).getAttachments().get(j).getPhoto().getPhoto807());
-        }
+                if (photo.getPhoto807() != null) {
 
-        return new ConstructorPost(provId, postId, postdate, 1, 1, text, count_photo, listPhoto,false);
+                    returnPhoto = photo.getPhoto807();
+                } else {
+                    if (photo.getPhoto604() != null) {
 
-    }
+                        returnPhoto = photo.getPhoto604();
+                    } else {
+                        if (photo.getPhoto130() != null) {
 
-    void viewInListView2(List<ConstructorPost> listPost) {
-        List<String> aaa = new ArrayList<String>();
-        for (int i = 0; i < listPost.size(); i++) {
-            aaa.add(listPost.get(i).provId + "   " + listPost.get(i).postdate + "\n"
-                    + listPost.get(i).postId + "   " + listPost.get(i).provId + "\n "
-                    + listPost.get(i).text + " \n "
-                    + listPost.get(i).listPhoto.toString());
+                            returnPhoto = photo.getPhoto130();
+                        }
 
-            /*System.err.println(listPost.get(i).provId + "   " + listPost.get(i).postdate + "\n"
-                    + listPost.get(i).postId + "   " + listPost.get(i).provId + "\n "
-                    + listPost.get(i).text + " \n "
-                    + listPost.get(i).listPhoto.toString());
-             */
-        }
-
-        final ObservableList observableList = FXCollections.observableArrayList();
-        observableList.setAll(aaa);
-        Platform.runLater(new Runnable() {
-
-            @Override
-            public void run() {
-                postListView.setItems(observableList);
-                
+                    }
+                }
             }
-        });
+
+        }
+        logger.info("    2nd step: gettingPhoto" + returnPhoto + " " + photo.getOwnerId() + "_" + photo.getId());
+        return returnPhoto;
 
     }
+
 }

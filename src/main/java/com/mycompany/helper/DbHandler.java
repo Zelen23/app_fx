@@ -5,6 +5,7 @@
  */
 package com.mycompany.helper;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -19,12 +20,10 @@ import java.util.logging.Logger;
 /**
  *
  * @author adolf
- * 
- * всегда передавать vk_user_id
- * insUser сохранять время получения токена и время жизни
- * новая таблица для хранения client_ID
- * переименовать названия таблиц
- * 
+ *
+ * всегда передавать vk_user_id insUser сохранять время получения токена и время
+ * жизни новая таблица для хранения client_ID переименовать названия таблиц
+ *
  */
 public class DbHandler {
 
@@ -34,48 +33,66 @@ public class DbHandler {
 
     public static String url = "jdbc:sqlite:vk_grabBase.db";
 
-    public static String table
-            = "CREATE TABLE [main] (\n"
-            + "  [id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \n"
-            + "  [provider] INTEGER NOT NULL, \n"
+    public static String providers
+            = "CREATE TABLE [providers] (\n"
+            + "  [id] INTEGER, \n"
+            + "  [provider] INTEGER NOT NULL PRIMARY KEY ON CONFLICT REPLACE, \n"
             + "  [name] VARCHAR, \n"
             + "  [flag_post] BOOLEAN NOT NULL ON CONFLICT REPLACE DEFAULT true, \n"
-            + "  [user_id] INTEGER, \n"
+            + "  [user_id] VARCHAR, \n"
             + "  [create_at] DATETIME, \n"
-            + "  [plase] VARCHAR);\n"
-            + "CREATE TABLE [settings]";
-    public static String table2
-            = "CREATE TABLE [settings] (\n"
-            + "  [key1] CHAR, \n"
-            + "  [value1] CHAR, \n"
-            + "  [id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT);";
+            + "  [plase] VARCHAR, \n"
+            + "  [Groups] nvARCHAR);";
 
-    public static String table3
+    public static String groups
+            = "CREATE TABLE [groups] (\n"
+            + "  [id] INTEGER NOT NULL PRIMARY KEY ON CONFLICT IGNORE AUTOINCREMENT, \n"
+            + "  [GroupName] VARCHAR);";
+
+    public static String user
             = "CREATE TABLE [user] (\n"
             + "  [token] CHAR, \n"
             + "  [vk_id] INTEGER NOT NULL, \n"
-            + "  [name] VARCHAR), \n"
-            + "  [create_at] DATETIME, \n"
+            + "  [create_at] TIMESTAMP, \n"
             + "  [id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \n"
             + "  [TimeInterval] INT NOT NULL ON CONFLICT REPLACE DEFAULT 30, \n"
-            + "  [NumbersOfPosts] INT NOT NULL ON CONFLICT REPLACE DEFAULT 10);";
+            + "  [NumbersOfPosts] INT NOT NULL ON CONFLICT REPLACE DEFAULT 10, \n"
+            + "  [name] VARCHAR);;";
 
-    public static String trig
+    public static String gpoup_provider
+            = "CREATE TABLE [gpoup_provider] (\n"
+            + "  [key1] INTEGER CONSTRAINT [group] REFERENCES [providers]([provider]) ON DELETE CASCADE ON UPDATE NO ACTION, \n"
+            + "  [value1] INTEGER CONSTRAINT [groupVal] REFERENCES [Groups]([id]) ON DELETE CASCADE ON UPDATE NO ACTION DEFAULT 99, \n"
+            + "  [id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT);";
+
+    public static String uniquIndex
+            = "CREATE UNIQUE INDEX [group] ON [gpoup_provider] ([key1], [value1]);";
+
+    public static String tr_addProviders
+            = "CREATE TRIGGER [addProviders]\n"
+            + "AFTER INSERT\n"
+            + "ON [providers]\n"
+            + "BEGIN\n"
+            + "insert into gpoup_provider (key1)\n"
+            + "values (new.provider);\n"
+            + "END;";
+    //убрал 
+    public static String tr_chekInput
             = "CREATE TRIGGER [chekInput]\n"
             + "BEFORE INSERT\n"
-            + "ON [settings]\n"
+            + "ON [gpoup_provider]\n"
             + "FOR EACH ROW\n"
             + "WHEN EXISTS (Select * From \n"
-            + "settings where \n"
+            + "gpoup_provider where \n"
             + "key1=new.key1)\n"
             + "BEGIN\n"
-            + "delete from settings\n"
+            + "delete from gpoup_provider\n"
             + "where\n"
             + "new.key1 = key1 \n"
             + "and new.value1<>value1;\n"
             + "END;";
 
-    public static String trig2 = "CREATE TRIGGER [insertVk_id]\n"
+    public static String tr_insertVk_id = "CREATE TRIGGER [insertVk_id]\n"
             + "BEFORE INSERT\n"
             + "ON [user]\n"
             + "FOR EACH ROW\n"
@@ -87,19 +104,37 @@ public class DbHandler {
             + "and new.token<>token;\n"
             + "END;";
 
+    public static String defaultGroupString
+            = "insert into groups \n"
+            + "(id,GroupName)\n"
+            + "values\n"
+            + "(99,'default');";
+
     public static void CreateDB() {
-        try {
+        
+                try {
             conn = DriverManager.getConnection(url);
             statmt = conn.createStatement();
-            statmt.execute(table);
-            statmt.execute(table2);
-            statmt.execute(table3);
-            statmt.execute(trig);
-            statmt.execute(trig2);
+
+            statmt.execute(providers);
+            statmt.execute(groups);
+            statmt.execute(user);
+            statmt.execute(gpoup_provider);
+
+            statmt.execute(tr_addProviders);
+            statmt.execute(tr_insertVk_id);
+
+            statmt.execute(uniquIndex);
+            statmt.execute(defaultGroupString);
+
             System.out.println("Соединения закрыты");
         } catch (SQLException ex) {
             Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        
+        
+
     }
 
     public static Connection DBconnect() {
@@ -120,9 +155,9 @@ public class DbHandler {
         System.out.println("Соединения закрыты");
     }
 
-    public void insertInProvider(Integer provID, Integer user_id,String name) {
+    public void insertInProvider(Integer provID, Integer user_id, String name) {
         try {
-            String inserString = "Insert into main (provider,user_id,name)values (?,?,?)";
+            String inserString = "Insert into providers (provider,user_id,name)values (?,?,?)";
             Connection conn = this.DBconnect();
             PreparedStatement preparedStatement = conn.prepareStatement(inserString);
             preparedStatement.setInt(1, provID);
@@ -136,7 +171,7 @@ public class DbHandler {
     }
 
     public void deleteProvider(Integer provID) {
-        String deleteString = "Delete from  main where provider = ?";
+        String deleteString = "Delete from  providers where provider = ?";
         try {
             Connection conn = this.DBconnect();
             PreparedStatement preparedStatement = conn.prepareStatement(deleteString);
@@ -149,7 +184,7 @@ public class DbHandler {
     }
 
     public void updflag_post(Boolean flag_post, Integer provID) {
-        String deleteString = "Update main set flag_post= ? where provider= ?";
+        String deleteString = "Update providers set flag_post= ? where provider= ?";
         try {
             Connection conn = this.DBconnect();
             PreparedStatement preparedStatement = conn.prepareStatement(deleteString);
@@ -162,9 +197,10 @@ public class DbHandler {
 
     }
 
+    //вывод с учетом груп
     public List<ConstructorProvider> providerDB(Integer user_id) {
         List<ConstructorProvider> prov = new ArrayList<ConstructorProvider>();
-        String selectString = "Select name,provider,flag_post,plase from main where user_id = '" + user_id + "';";
+        String selectString = "Select name,provider,flag_post,plase from providers where user_id = '" + user_id + "';";
 
         try {
 
@@ -247,7 +283,7 @@ public class DbHandler {
         return settings;
     }
 
-    public void insUser(Integer user_id, String token,String name, String time) {
+    public void insUser(Integer user_id, String token, String name, String time) {
         try {
             String inserString = "Insert into user (vk_id,token,name,create_at)values (?,?,?,?)";
             Connection conn = this.DBconnect();
@@ -285,4 +321,184 @@ public class DbHandler {
         return token;
     }
 
+    public List<ConstructorProvider> providerDBX(Integer user_id, String id_group) {
+        List<ConstructorProvider> prov = new ArrayList<ConstructorProvider>();
+        Integer grind = 99;
+        String selectString
+                = " select \n"
+                + "providers.provider,providers.name,providers.user_id,providers.plase,providers.flag_post, \n"
+                + "groups.[GroupName],groups.[id],\n"
+                + "gpoup_provider.[value1]       \n"
+                + "from providers\n"
+                + "inner join gpoup_provider\n"
+                + "on providers.[provider]=gpoup_provider.[key1]\n"
+                + "\n"
+                + "inner join groups\n"
+                + "on groups.[id]=gpoup_provider.[value1]\n"
+                + "where gpoup_provider.[value1] in (" + id_group + ")  \n"
+                + "and providers.[user_id]=" + user_id + " \n"
+                + "group by providers.provider";
+
+        System.err.println("providerDBX " + selectString);
+
+        try {
+
+            Connection conn = this.DBconnect();
+            Statement statement = conn.createStatement();
+            ResultSet resultSet = statement.executeQuery(selectString);
+
+            while (resultSet.next()) {
+                String name = resultSet.getString("name");
+                String plase = resultSet.getString("plase");
+                Integer id = resultSet.getInt("provider");
+                Boolean flag = resultSet.getBoolean("flag_post");
+
+                prov.add(new ConstructorProvider(name, plase, id, flag, "provider"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //System.err.println("providerDBX_resultprov "+prov.get(0).name);
+        return prov;
+    }
+
+    public List<GroupsProvider> groupList() {
+        List<GroupsProvider> group = new ArrayList<GroupsProvider>();
+        String selectString = "Select id,GroupName from groups";
+
+        try {
+
+            Connection conn = this.DBconnect();
+            Statement statement = conn.createStatement();
+            ResultSet resultSet = statement.executeQuery(selectString);
+
+            while (resultSet.next()) {
+                Integer id = resultSet.getInt("id");
+                String GroupName = resultSet.getString("GroupName");
+                group.add(new GroupsProvider(id, GroupName));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return group;
+    }
+
+    // уникальность поддерживается эксепшоном
+    public void addProviderToGroup(Integer Provider_id, Integer id_group) {
+        
+    String insQuerry
+                    = "insert into gpoup_provider \n"
+                    + "(key1,value1)\n"
+                    + "values\n"
+                    + "(?,?)";
+    
+     System.out.println("addProviderToGroup " + insQuerry);
+        try {
+            Connection conn = this.DBconnect();
+            PreparedStatement preparedStatement = conn.prepareStatement(insQuerry);
+            preparedStatement.setInt(1, Provider_id);
+            preparedStatement.setInt(2, id_group);
+            preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+       
+    }
+    
+    public void deleteProviderToGroup(Integer Provider_id){
+        
+        String deleteString = "Delete from gpoup_provider where key1 = ?;";
+        
+        System.err.println("deleteProviderToGroup " + deleteString);
+        
+        try {
+            Connection conn = this.DBconnect();
+            PreparedStatement preparedStatement = conn.prepareStatement(deleteString);
+            preparedStatement.setInt(1, Provider_id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+    
+    public List<String>getGroupProvider(Integer Provider_id ){
+        
+        List<String> groupsList = new ArrayList<String>();
+        String selectString 
+                = "Select gpoup_provider.key1,gpoup_provider.value1,\n" 
+                +"groups.[GroupName]\n" 
+                +"\n" 
+                +"from gpoup_provider\n" 
+                +"inner join groups\n" 
+                +"on \n" 
+                +"gpoup_provider.value1=groups.[id]\n" 
+                +"where key1="+Provider_id+";";
+        
+        System.err.println("getGroupProvider " + selectString);
+
+        try {
+
+            Connection conn = this.DBconnect();
+            Statement statement = conn.createStatement();
+            ResultSet resultSet = statement.executeQuery(selectString);
+
+            while (resultSet.next()) {
+                String groupName = resultSet.getString("GroupName");
+                Integer provider = resultSet.getInt("key1");
+
+                groupsList.add(groupName);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return groupsList;
+    }
+    
+    public void addGroup(String groupName){
+        
+         try {
+            String inserString = "Insert into groups ('GroupName')values (?)";
+            Connection conn = this.DBconnect();
+            PreparedStatement preparedStatement = conn.prepareStatement(inserString);
+            preparedStatement.setString(1, groupName);
+            preparedStatement.executeUpdate();
+
+            System.err.println(inserString);
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    // читать список групп
+    //добавить группу
+    //удалить группу-удалить все связи в settings
+    //добавить группы провайдеру(группы)
+    /*    
+    insert into settings 
+        (key1,value1)
+    values
+        (111,4),
+        (111,3)
+     */
+    //удалить группу у провайдера
+    //вывести список поставшиков по id группы и пользователю
+    /*  select 
+            main.id,main.provider,main.name,main.[user_id],
+            Groups.[GroupName],Groups.[id],
+            settings.[value1]       
+        from main
+        inner join settings
+        on main.[provider]=settings.[key1]
+
+        inner join Groups
+        on Groups.[id]=settings.[value1]
+        where settings.[value1] in (4,2)  
+        -- and main.[user_id]=419021587
+        -- group by main.provider
+     */
 }

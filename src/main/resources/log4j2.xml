@@ -4,11 +4,17 @@
         <Console name="Console" target="SYSTEM_OUT"> 
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"/> 
         </Console> 
+        <File name="MyFile" fileName="logs/app.log">
+            <PatternLayout>
+            <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+            </PatternLayout>
+        </File>
     </Appenders> 
 
 <Loggers> 
         <Root level="info"> 
             <AppenderRef ref="Console"/> 
+            <AppenderRef ref="MyFile"/>
         </Root> 
     </Loggers> 
 </Configuration> 

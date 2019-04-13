@@ -26,8 +26,7 @@ public class Poster extends Thread{
         this.vk_id=vk_id;
     }
     
-    
-    
+
     Helper helper=new Helper();
        
     Vk_api vk_api = new Vk_api();
@@ -36,7 +35,6 @@ public class Poster extends Thread{
         new Vk_preferences().getPref(Vk_preferences.TOKEN));
    
 
-   
     @Override
     public void run() {
         //дата время
@@ -73,7 +71,7 @@ public class Poster extends Thread{
         UserActor userActor = vk_api.getActor(Integer.parseInt(
             new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
             new DbHandler().getToken(vk_id));
-   return userActor;
+    return userActor;
    }
     
     
