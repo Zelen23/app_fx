@@ -36,6 +36,8 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
 /**
@@ -77,16 +79,15 @@ public class Vk_api {
                     .ownerId(provider_id)
                     .execute();
 
-            //  System.out.println(walls.getItems().get(0).getText()+" "
-            //          +walls.getItems().get(0).getAttachments().get(0).getPhoto().getPhoto1280()
-            //  );
         } catch (ApiException ex) {
             java.util.logging.Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-            System.err.println("Token_getwalls_2");
+            final String alertInfo=ex.getMessage();   
+            new Helper().alertInfo(alertInfo);
 
         } catch (ClientException ex) {
             java.util.logging.Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-            System.err.println("ping_getwalls");
+            final String alertInfo=ex.getMessage();   
+            new Helper().alertInfo(alertInfo);
         }
 
         return walls;
@@ -120,60 +121,23 @@ public class Vk_api {
                      Thread.sleep(1500);
                 } catch (ApiException ex) {
                     Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+                    final String alertInfo=ex.getMessage();   
+                    new Helper().alertInfo(alertInfo);
                 } catch (ClientException ex) {
                     Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+                    final String alertInfo=ex.getMessage();   
+                    new Helper().alertInfo(alertInfo);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+                    final String alertInfo=ex.getMessage();   
+                    new Helper().alertInfo(alertInfo);
                 }
                     
             }
         System.err.println(ouList);
         return ouList;
     }
-    
-    public List<String> addPhotoX(UserActor actor,List<String> listPhoto){
-      
-            //получаю лист со ссылками фоток
-            // воозвращаю лист
-            List<String>ouList=new ArrayList<String>();
-            TransportClient transportClient = HttpTransportClient.getInstance();
-            VkApiClient vk = new VkApiClient(transportClient);
-            
-            for (String elt : listPhoto) {
-                try {
-                    
-                    File file=new Helper().saveFile(elt);
-         
-                    PhotoUpload serverResponse = vk.photos()
-                            .getWallUploadServer(actor)
-                            .execute();
-                    WallUploadResponse  uploadResponse = vk.upload()
-                            .photoWall(serverResponse.getUploadUrl(), file)
-                            .execute();  
-                    
-                    List<Photo> photoList = vk.photos()
-                            .saveWallPhoto(actor, uploadResponse.getPhoto())
-                            .server(uploadResponse.getServer())
-                            .hash(uploadResponse.getHash())
-                            .execute();
-                    
-                     Photo photo = photoList.get(0);
-
-                     ouList.add("photo" + photo.getOwnerId() + "_" + photo.getId());
-                     Thread.sleep(1500);
-                } catch (ApiException ex) {
-                    Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (ClientException ex) {
-                    Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                    
-            }
-        System.err.println(ouList);
-        return ouList;
-    }
-    
+     
     public List<UserXtrCounters> getUserInfo(UserActor actor, String vk_id){
          
         List<UserXtrCounters> userinfo=null;
@@ -189,17 +153,22 @@ public class Vk_api {
             
         } catch (ApiException ex) {
             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+             final String alertInfo=ex.getMessage();   
+             new Helper().alertInfo(alertInfo);
         } catch (ClientException ex) {
             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+             final String alertInfo=ex.getMessage();   
+             new Helper().alertInfo(alertInfo);
         }
         
          return userinfo;
     }
+    
     public List<ConstructorProvider> fromUsertoProvider(List<UserXtrCounters> userinfo){
-     List<ConstructorProvider> vk_Providers = new ArrayList<>();
+        List<ConstructorProvider> vk_Providers = new ArrayList<>();
      
-     for(UserXtrCounters elt:userinfo){
-      vk_Providers.add(new ConstructorProvider
+        for(UserXtrCounters elt:userinfo){
+        vk_Providers.add(new ConstructorProvider
         (elt.getFirstName()+" "+elt.getLastName()
                 , "plase"
                 , elt.getId()
@@ -211,27 +180,7 @@ public class Vk_api {
         
     return vk_Providers;
     }
-    
-    public void editPhotoX(UserActor actor,Photo photo){
-        
-        try {
-            TransportClient transportClient = HttpTransportClient.getInstance();
-            VkApiClient vk = new VkApiClient(transportClient);
-            OkResponse pp = vk.photos()
-                    .edit(actor, photo.getId())
-                    .ownerId(actor.getId())
-                    .caption("--")
-                    .execute();
-        } catch (ApiException ex) {
-            Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClientException ex) {
-            Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-        }
-                          
-         
    
-    }
-    
     public void setPost(UserActor actor, String mess,Long pubdate,List<String>attach,Integer owner_id){
         try {
             TransportClient transportClient = HttpTransportClient.getInstance();
@@ -246,8 +195,12 @@ public class Vk_api {
             System.out.println("date_in_setPost "+ pubdate.intValue());
         } catch (ApiException ex) {
             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+            final String alertInfo=ex.getMessage();   
+            new Helper().alertInfo(alertInfo);
         } catch (ClientException ex) {
             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+            final String alertInfo=ex.getMessage();   
+            new Helper().alertInfo(alertInfo);
         }
                     
     }

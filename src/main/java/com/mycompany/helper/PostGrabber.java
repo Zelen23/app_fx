@@ -8,6 +8,7 @@ package com.mycompany.helper;
 import com.mycompany.app_fx.Cell_listPostController;
 import com.mycompany.app_fx.FXMLController;
 import com.mycompany.app_fx.ListViewCell;
+import com.mycompany.app_fx.PreferencesController;
 import com.mycompany.app_fx.TaskCellFactory;
 import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.objects.base.Geo;
@@ -31,10 +32,13 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author adolf UH6sYetv5n
+ * Прикрутить возможность фильтрации
+ * Прикрутить логи
  */
 public class PostGrabber extends Thread {
 
@@ -57,24 +61,26 @@ public class PostGrabber extends Thread {
     Integer NumbersOfPosts = new DbHandler().settingsList("NumbersOfPosts",
             Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID)));
 
-
+    org.slf4j.Logger logger = LoggerFactory.getLogger(PostGrabber.class);
+       
     /*цикл в час в этом цикле каждые 10мин перебираю*/
     @Override
     public void run() {
 
-        while (true) {
+       // while (true) {
             try {
                 for (int i = 0; i < providerList.size(); i++) {
 
                     filterDataInPost(vk_api.getwalls(userActor, providerList.get(i), NumbersOfPosts, 0));
+                    sleep(100);
                 }
-                sleep(50000);
+                
 
             } catch (InterruptedException ex) {
                 Logger.getLogger(PostGrabber.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-        }
+      //  }
 
     }
 
@@ -97,7 +103,8 @@ public class PostGrabber extends Thread {
             Integer isPinned = itemPost.getIsPinned();
         //если данные удовлетворяют могу добавить в listPost
             if (isPinned == null && attachments != null) {
-                System.out.println("1st_step:filterDataInPost " + itemPost.getOwnerId() + "_" + itemPost.getId());
+                
+                logger.info("1st_step:filterDataInPost " + itemPost.getOwnerId() + "_" + itemPost.getId());
         //вложения в одном посте            
                 count_itemsAttach = itemPost.getAttachments().size();
                 List<String> listPhoto = new ArrayList<String>();
@@ -125,6 +132,7 @@ public class PostGrabber extends Thread {
                     }
                 }
         //проверяю входит ди запись в массив записей 
+        //херачит в несколько проходов
                 addtoListPost(new ConstructorPost(provId, postId, postdate, postViews, postLikes, text, count_itemsAttach, listPhoto, false));
 
             }
@@ -151,18 +159,17 @@ public class PostGrabber extends Thread {
 
                 }
                 if (isExist == false) {
-                    System.out.println("3rd step: addtoListPost" + addtoWallsList.provId + "_" + addtoWallsList.postId);
+                    System.out.println();
+                    logger.info("3rd step: addtoListPost" + addtoWallsList.provId + "_" + addtoWallsList.postId);
                     listPost.add(addtoWallsList);
                     viewInListView(listPost);
 
                 } else {
-                    // System.out.println("row " + addtoWallsList.postId + " from " + addtoWallsList.provId + "noUnique");
+                  
                 }
 
             }
-            //   viewInListView(listPost);
-
-            // System.out.println("listPost " + listPost.size());
+         
         }
 
     }
@@ -220,7 +227,7 @@ public class PostGrabber extends Thread {
             }
 
         }
-        System.out.println("    2nd step: gettingPhoto" + returnPhoto + " " + photo.getOwnerId() + "_" + photo.getPostId());
+        logger.info("    2nd step: gettingPhoto" + returnPhoto + " " + photo.getOwnerId() + "_" + photo.getId());
         return returnPhoto;
 
     }

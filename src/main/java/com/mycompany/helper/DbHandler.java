@@ -5,6 +5,7 @@
  */
 package com.mycompany.helper;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -110,7 +111,8 @@ public class DbHandler {
             + "(99,'default');";
 
     public static void CreateDB() {
-        try {
+        
+                try {
             conn = DriverManager.getConnection(url);
             statmt = conn.createStatement();
 
@@ -129,6 +131,10 @@ public class DbHandler {
         } catch (SQLException ex) {
             Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        
+        
+
     }
 
     public static Connection DBconnect() {
