@@ -46,9 +46,11 @@ public class PostGrabber extends Thread {
     ListView postListView = new ListView();
 
     Vk_api vk_api = new Vk_api();
+    /*
     UserActor userActor = vk_api.getActor(Integer.parseInt(
             new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
             new Vk_preferences().getPref(Vk_preferences.TOKEN));
+    */
     List<GetResponse> massiveGetResponses = new ArrayList<GetResponse>();
     public List<ConstructorPost> listPost = new ArrayList<ConstructorPost>();
 
@@ -71,10 +73,10 @@ public class PostGrabber extends Thread {
             try {
                 for (int i = 0; i < providerList.size(); i++) {
 
-                    filterDataInPost(vk_api.getwalls(userActor, providerList.get(i), NumbersOfPosts, 0));
+                   // filterDataInPost(vk_api.getwalls(userActor, providerList.get(i), NumbersOfPosts, 0));
+                    wallItemX(vk_api.getwalls( providerList.get(i), NumbersOfPosts, 0));
                     sleep(100);
                 }
-                
 
             } catch (InterruptedException ex) {
                 Logger.getLogger(PostGrabber.class.getName()).log(Level.SEVERE, null, ex);
@@ -83,10 +85,27 @@ public class PostGrabber extends Thread {
       //  }
 
     }
+    
+    
+    public void wallItem(GetResponse getwalls){
+        for (int i = 0; i < getwalls.getItems().size(); i++) {
 
-    public void filterDataInPost(GetResponse getwalls) {
+            WallPostFull itemPost = getwalls.getItems().get(i);
+            filter(itemPost);
+        }
+    }
+    
+    public void wallItemX(GetResponse getwalls){
+        List<WallPostFull>list = new ArrayList<WallPostFull>();
+        for (int i = 0; i < getwalls.getItems().size(); i++) {
 
-        //System.out.println("getwalls.getItems().size() " + getwalls.getItems().size());
+            list.add(getwalls.getItems().get(i)) ; 
+        }
+        filterX(list);
+    }
+    
+     public void filterX( List<WallPostFull> list){
+    
         ConstructorPost post = null;
         Integer provId = null;
         Integer postId = null;
@@ -95,25 +114,24 @@ public class PostGrabber extends Thread {
         Integer postLikes = 0;
         String text = "";
         Integer count_itemsAttach = null;
-        //Лист с постами от поставщика
-        for (int i = 0; i < getwalls.getItems().size(); i++) {
-
-            WallPostFull itemPost = getwalls.getItems().get(i);
-            List<WallpostAttachment> attachments = itemPost.getAttachments();
-            Integer isPinned = itemPost.getIsPinned();
-        //если данные удовлетворяют могу добавить в listPost
+        
+        for(WallPostFull wallItem:list ){
+                  List<WallpostAttachment> attachments = wallItem.getAttachments();
+        Integer isPinned = wallItem.getIsPinned();
+        
+                //если данные удовлетворяют могу добавить в listPost
             if (isPinned == null && attachments != null) {
                 
-                logger.info("1st_step:filterDataInPost " + itemPost.getOwnerId() + "_" + itemPost.getId());
+                logger.info("1st_step:filterDataInPost " + wallItem.getOwnerId() + "_" + wallItem.getId());
         //вложения в одном посте            
-                count_itemsAttach = itemPost.getAttachments().size();
+                count_itemsAttach = wallItem.getAttachments().size();
                 List<String> listPhoto = new ArrayList<String>();
 
                 for (int j = 0; j < count_itemsAttach; j++) {
 
-                    Photo isPhoto = itemPost.getAttachments().get(j).getPhoto();
-                    Views views = itemPost.getViews();
-                    LikesInfo likesInfo = itemPost.getLikes();
+                    Photo isPhoto = wallItem.getAttachments().get(j).getPhoto();
+                    Views views = wallItem.getViews();
+                    LikesInfo likesInfo = wallItem.getLikes();
         //если вложение это фотка то забираем этот пост                
                     if (isPhoto != null) {
 
@@ -123,10 +141,64 @@ public class PostGrabber extends Thread {
                         if (likesInfo != null) {
                             postLikes = likesInfo.getCount();
                         };
-                        provId = itemPost.getOwnerId();
-                        postId = itemPost.getId();
-                        postdate = itemPost.getDate().longValue();
-                        text = itemPost.getText();
+                        provId = wallItem.getOwnerId();
+                        postId = wallItem.getId();
+                        postdate = wallItem.getDate().longValue();
+                        text = wallItem.getText();
+
+                        listPhoto.add(gettingPhoto(isPhoto));
+                    }
+                }
+        //проверяю входит ди запись в массив записей 
+        //херачит в несколько проходов
+                addtoListPost(new ConstructorPost(provId, postId, postdate, postViews, postLikes, text, count_itemsAttach, listPhoto, false));
+
+            }  
+        }
+    
+
+        
+    }
+    public void filter(WallPostFull wallItem){
+    
+        ConstructorPost post = null;
+        Integer provId = null;
+        Integer postId = null;
+        Long postdate = null;
+        Integer postViews = 0;
+        Integer postLikes = 0;
+        String text = "";
+        Integer count_itemsAttach = null;
+    
+        List<WallpostAttachment> attachments = wallItem.getAttachments();
+        Integer isPinned = wallItem.getIsPinned();
+        
+                //если данные удовлетворяют могу добавить в listPost
+            if (isPinned == null && attachments != null) {
+                
+                logger.info("1st_step:filterDataInPost " + wallItem.getOwnerId() + "_" + wallItem.getId());
+        //вложения в одном посте            
+                count_itemsAttach = wallItem.getAttachments().size();
+                List<String> listPhoto = new ArrayList<String>();
+
+                for (int j = 0; j < count_itemsAttach; j++) {
+
+                    Photo isPhoto = wallItem.getAttachments().get(j).getPhoto();
+                    Views views = wallItem.getViews();
+                    LikesInfo likesInfo = wallItem.getLikes();
+        //если вложение это фотка то забираем этот пост                
+                    if (isPhoto != null) {
+
+                        if (views != null) {
+                            postViews = views.getCount();
+                        };
+                        if (likesInfo != null) {
+                            postLikes = likesInfo.getCount();
+                        };
+                        provId = wallItem.getOwnerId();
+                        postId = wallItem.getId();
+                        postdate = wallItem.getDate().longValue();
+                        text = wallItem.getText();
 
                         listPhoto.add(gettingPhoto(isPhoto));
                     }
@@ -136,11 +208,9 @@ public class PostGrabber extends Thread {
                 addtoListPost(new ConstructorPost(provId, postId, postdate, postViews, postLikes, text, count_itemsAttach, listPhoto, false));
 
             }
-
-        }
-
+        
     }
-    
+
     // тут можно проводить фильтрацию
     void addtoListPost(ConstructorPost addtoWallsList) {
         if (addtoWallsList != null) {
@@ -159,13 +229,13 @@ public class PostGrabber extends Thread {
 
                 }
                 if (isExist == false) {
-                    System.out.println();
+                    
                     logger.info("3rd step: addtoListPost" + addtoWallsList.provId + "_" + addtoWallsList.postId);
                     listPost.add(addtoWallsList);
                     viewInListView(listPost);
 
                 } else {
-                  
+                  System.out.println("no add 3rd step: addtoListPost" + addtoWallsList.provId + "_" + addtoWallsList.postId);
                 }
 
             }

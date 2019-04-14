@@ -7,13 +7,42 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
 <AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="609.0" prefWidth="890.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.app_fx.FXMLController">
     <children>
-        <Button fx:id="bSendPOST" layoutX="771.0" layoutY="514.0" onAction="#handle_Button_SendPOST" prefHeight="32.0" prefWidth="116.0" text="Post To Wall" AnchorPane.bottomAnchor="63.0" AnchorPane.rightAnchor="20.0" />
-        <Button fx:id="bGetPostProviders" layoutX="771.0" layoutY="563.0" onAction="#handle_Button_GetPostProviders" prefHeight="32.0" prefWidth="116.0" text="Get Post" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="20.0" />
+      <TabPane layoutX="1.0" layoutY="31.0" prefHeight="571.0" prefWidth="890.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="7.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="-1.0" AnchorPane.topAnchor="31.0">
+        <tabs>
+          <Tab text="GetPostFromProviders">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="347.0" prefWidth="652.0">
+                     <children>
+                          <Button fx:id="bSendPOST" onAction="#handle_Button_SendPOST" prefHeight="32.0" prefWidth="116.0" text="Post To Wall" AnchorPane.bottomAnchor="63.0" AnchorPane.rightAnchor="20.0" />
+                          <Button fx:id="bGetPostProviders" onAction="#handle_Button_GetPostProviders" prefHeight="32.0" prefWidth="116.0" text="Get Post" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="20.0" />
+                        <ListView fx:id="postListView" layoutX="3.0" layoutY="7.0" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="460.0" prefWidth="694.0" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="165.0" AnchorPane.topAnchor="7.0">
+         
+       </ListView>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="GetPost">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="526.0" prefWidth="890.0">
+                     <children>
+                        <Label layoutX="14.0" layoutY="14.0" text="Link " AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="848.4" AnchorPane.topAnchor="14.0" />
+                        <TextField fx:id="postLink" layoutX="49.0" layoutY="11.0" prefHeight="26.0" prefWidth="602.0" AnchorPane.leftAnchor="49.0" AnchorPane.rightAnchor="239.0" AnchorPane.topAnchor="11.0" />
+                        <ListView fx:id="listLinkPost" layoutY="48.0" prefHeight="459.0" prefWidth="651.0" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="239.0" AnchorPane.topAnchor="48.0" />
+                        <Button fx:id="bSendPostFromLink" layoutX="691.0" layoutY="460.0" mnemonicParsing="false" onAction="#handle_SendPostFromLink" prefHeight="32.0" prefWidth="178.0" text="Button" AnchorPane.bottomAnchor="19.19999999999999" AnchorPane.rightAnchor="20.99999999999997" />
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
       
       
       <MenuBar fx:id="menuBar" layoutY="1.0" prefHeight="26.0" prefWidth="861.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-0.6000000000000227" AnchorPane.topAnchor="1.0">
@@ -38,14 +67,11 @@
           </Menu>
         </menus>
       </MenuBar>
-      <ListView fx:id="postListView" layoutX="14.0" layoutY="76.0" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="522.0" prefWidth="691.0" AnchorPane.bottomAnchor="11.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="185.0" AnchorPane.topAnchor="76.0">
-         
-       </ListView>
-      <DatePicker fx:id="datePick" editable="false" layoutX="690.0" layoutY="38.0" prefHeight="26.0" prefWidth="160.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="38.0" />
-      <TextField fx:id="eH" layoutX="611.0" layoutY="38.0" prefHeight="26.0" prefWidth="44.0" text="08" AnchorPane.rightAnchor="243.0" AnchorPane.topAnchor="38.0" />
-      <TextField fx:id="eM" layoutX="661.0" layoutY="38.0" prefHeight="26.0" prefWidth="44.0" text="00" AnchorPane.rightAnchor="188.0" AnchorPane.topAnchor="38.0" />
+      <DatePicker fx:id="datePick" editable="false" layoutX="708.0" layoutY="38.0" prefHeight="26.0" prefWidth="160.0" AnchorPane.rightAnchor="22.0" AnchorPane.topAnchor="38.0" />
+      <TextField fx:id="eH" layoutX="601.0" layoutY="38.0" prefHeight="26.0" prefWidth="44.0" text="08" AnchorPane.rightAnchor="245.0" AnchorPane.topAnchor="38.0" />
+      <TextField fx:id="eM" layoutX="656.0" layoutY="38.0" prefHeight="26.0" prefWidth="44.0" text="00" AnchorPane.rightAnchor="190.0" AnchorPane.topAnchor="38.0" />
       <Label layoutX="651.0" layoutY="42.0" prefHeight="18.0" prefWidth="9.0" text=":" AnchorPane.rightAnchor="228.0" AnchorPane.topAnchor="42.0" />
-      <Label layoutX="425.0" layoutY="42.0" text="TimeInterval: " />
-      <TextField fx:id="eTimeInterval" layoutX="509.0" layoutY="38.0" prefHeight="26.0" prefWidth="70.0" />
+      <Label layoutX="423.0" layoutY="42.0" text="TimeInterval: " AnchorPane.rightAnchor="386.2" AnchorPane.topAnchor="42.0" />
+      <TextField fx:id="eTimeInterval" layoutX="507.0" layoutY="38.0" prefHeight="26.0" prefWidth="70.0" AnchorPane.rightAnchor="312.6" AnchorPane.topAnchor="38.0" />
     </children>
 </AnchorPane>
