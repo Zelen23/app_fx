@@ -9,6 +9,7 @@ import com.vk.api.sdk.client.actors.UserActor;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.collections4.list.AbstractLinkedList;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -28,20 +29,21 @@ public class Poster extends Thread{
     
 
     Helper helper=new Helper();
-       
+    Vk_api vk_api = new Vk_api();
+    /*   
     Vk_api vk_api = new Vk_api();
     UserActor userActor = vk_api.getActor(Integer.parseInt(
         new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
         new Vk_preferences().getPref(Vk_preferences.TOKEN));
-   
+    */
+     org.slf4j.Logger logger = LoggerFactory.getLogger(Poster.class);
 
     @Override
     public void run() {
         //дата время
         //интервал
         //цикл в коллиество строк на отправку
-    System.out.println("Poster_RUN_actorID "+ userActor.getId());
-    
+ 
     Integer TimeInterval=new DbHandler().settingsList("TimeInterval", vk_id);
     int i=1;  
     
@@ -49,13 +51,12 @@ public class Poster extends Thread{
         i=i+TimeInterval;
        // Long time= helper.timeadd(helper.unixTime(), i);
         Long time= helper.timeadd(times, i);
-      
+        logger.info("Send post to my wall from: "+elt.provId+"_"+elt.postId);
         new Vk_api().setPost(
-                userActor,
                 elt.text,
                 time,
-                new Vk_api().addPhoto(userActor, elt.listPhoto, elt.text),
-                userActor.getId()
+                vk_api.addPhoto(elt.listPhoto, elt.text),
+                vk_api.getActor().getId()
                 //в метод передаю массив ссылок на фотку 
         );
               
@@ -66,13 +67,7 @@ public class Poster extends Thread{
 //To change body of generated methods, choose Tools | Templates.
     }
     
-      public UserActor Actor(){
-      Vk_api vk_api = new Vk_api();
-        UserActor userActor = vk_api.getActor(Integer.parseInt(
-            new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
-            new DbHandler().getToken(vk_id));
-    return userActor;
-   }
+
     
     
     
