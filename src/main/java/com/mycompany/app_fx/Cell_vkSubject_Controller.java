@@ -27,6 +27,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.web.WebEngine;
 import javafx.stage.Stage;
 import org.controlsfx.control.CheckComboBox;
@@ -69,6 +70,7 @@ public class Cell_vkSubject_Controller {
             loader.setController(this);
 
             loader.load();
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -80,13 +82,18 @@ public class Cell_vkSubject_Controller {
 
     void setInfo(final ConstructorProvider item) {
         provName.setText(item.name);
+        provID.setText(String.valueOf(item.id));
         //provPlase.setText(item.plase);
         if (item.type.equals("user_vk")) {
             provGroups.setVisible(false);
+            provID.setText(item.plase);
+            
+            
+            
         }
         setComBox(item.id);
 
-        provID.setText(String.valueOf(item.id));
+        
         flag_prov.setSelected(item.flag);
         flag_prov.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
@@ -98,6 +105,7 @@ public class Cell_vkSubject_Controller {
                 //- так же дополнить эксепшен выводом сообщенния об отстутствии токена
                 switch (item.type) {
                     case "user_vk":
+                        
                         if (newValue) {
 
                             new Vk_preferences().putPref(
@@ -114,6 +122,7 @@ public class Cell_vkSubject_Controller {
                         break;
 
                     case "provider":
+                        
                         new DbHandler().updflag_post(newValue, item.id);
                         break;
 

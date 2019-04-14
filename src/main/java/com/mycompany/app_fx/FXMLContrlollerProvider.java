@@ -38,6 +38,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -117,12 +118,13 @@ public class FXMLContrlollerProvider implements Initializable {
     }
     public List<ConstructorProvider> us_Info(String parseID ){
     Vk_api vk_api=new Vk_api();
+    /*
         UserActor userActor = vk_api.getActor(Integer.parseInt(
             new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
             new Vk_preferences().getPref(Vk_preferences.TOKEN));
-        
+    */   
         List<ConstructorProvider> userInfo=vk_api.fromUsertoProvider(
-                   vk_api.getUserInfo(userActor, parseID));
+                   vk_api.getUserInfo(parseID));
            
        
     return userInfo;
@@ -190,6 +192,7 @@ public class FXMLContrlollerProvider implements Initializable {
                 return new ListProvCell();
             }
         });
+        
 }  
     
     public ObservableList <String> updObservableList(final List<GroupsProvider> group){

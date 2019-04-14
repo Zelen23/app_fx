@@ -29,17 +29,17 @@ public class PostLinkGetter extends Thread {
        
         
     }
-
+ /*
     Vk_api vk_api = new Vk_api();
     UserActor userActor = vk_api.getActor(Integer.parseInt(
             new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
             new Vk_preferences().getPref(Vk_preferences.TOKEN));
-
+*/
     @Override
     public void run() {
 
         List<WallPostFull> wallItem = new ArrayList<WallPostFull>();
-        wallItem = new Vk_api().getwallbyId(userActor, postList);
+        wallItem = new Vk_api().getwallbyId( postList);
         new PostGrabber(null, postListView).filterX(wallItem);
 
     }

@@ -43,6 +43,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Pair;
+import org.slf4j.LoggerFactory;
 
 
 /*! вывод в лог в файл
@@ -79,6 +80,7 @@ public class FXMLController implements Initializable {
     Vk_preferences pref = new Vk_preferences();
     PostGrabber postGrabber;
     PostLinkGetter postLinkGetter;
+    org.slf4j.Logger logger = LoggerFactory.getLogger(FXMLController.class);
 
     //====================================FILE=====================================   
     @FXML
@@ -208,7 +210,8 @@ public class FXMLController implements Initializable {
         }
         Poster poster = new Poster(list, getDateTimeinEdit(), vk_id);
         poster.start();
-        System.err.println("handle_Button_SendPOST " + vk_id);
+        logger.info("handle_Button_SendPOST to walls " + vk_id);
+        
 
     }
 
@@ -232,7 +235,7 @@ public class FXMLController implements Initializable {
         postGrabber = new PostGrabber(providerList, postListView);
         postGrabber.start();
 
-        System.err.println("handle_Button_GetPostProviders " + providerList);
+        logger.info("handle_Button_GetPostProviders " + providerList);
 
     }
 
@@ -264,7 +267,7 @@ public class FXMLController implements Initializable {
         }
         Poster poster = new Poster(list, getDateTimeinEdit(), vk_id);
         poster.start();
-        System.err.println(" handle_SendPostFromLink " + vk_id);
+        logger.info("handle_SendPostFromLink " + vk_id);
 
     }
 

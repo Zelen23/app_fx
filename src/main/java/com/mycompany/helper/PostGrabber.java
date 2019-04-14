@@ -46,9 +46,11 @@ public class PostGrabber extends Thread {
     ListView postListView = new ListView();
 
     Vk_api vk_api = new Vk_api();
+    /*
     UserActor userActor = vk_api.getActor(Integer.parseInt(
             new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
             new Vk_preferences().getPref(Vk_preferences.TOKEN));
+    */
     List<GetResponse> massiveGetResponses = new ArrayList<GetResponse>();
     public List<ConstructorPost> listPost = new ArrayList<ConstructorPost>();
 
@@ -72,7 +74,7 @@ public class PostGrabber extends Thread {
                 for (int i = 0; i < providerList.size(); i++) {
 
                    // filterDataInPost(vk_api.getwalls(userActor, providerList.get(i), NumbersOfPosts, 0));
-                    wallItemX(vk_api.getwalls(userActor, providerList.get(i), NumbersOfPosts, 0));
+                    wallItemX(vk_api.getwalls( providerList.get(i), NumbersOfPosts, 0));
                     sleep(100);
                 }
 
