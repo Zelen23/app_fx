@@ -21,6 +21,7 @@ import com.vk.api.sdk.objects.photos.Photo;
 import com.vk.api.sdk.objects.photos.PhotoUpload;
 import com.vk.api.sdk.objects.photos.responses.WallUploadResponse;
 import com.vk.api.sdk.objects.users.UserXtrCounters;
+import com.vk.api.sdk.objects.wall.WallPostFull;
 import com.vk.api.sdk.objects.wall.responses.GetResponse;
 import com.vk.api.sdk.queries.users.UserField;
 import com.vk.api.sdk.queries.users.UsersGetFollowersQueryWithFields;
@@ -54,16 +55,16 @@ public class Vk_api {
     String urlWall = "https://oauth.vk.com/authorize?client_id=" + pref.getPref(CLIENT_ID)
             + "&display=page&redirect_uri=https://oauth.vk.com/blank.html"
             + "&scope=wall&response_type=token&v=5.52";
-    
+
     public UserActor getActor(Integer user_id, String token) {
         UserActor actor = new UserActor(user_id, token);
 
         return actor;
     }
 
-    public GetResponse getwalls(UserActor actor, Integer provider_id,int count,int offset) {
+    public GetResponse getwalls(UserActor actor, Integer provider_id, int count, int offset) {
         GetResponse walls = new GetResponse();
-    
+
         try {
             try {
                 Thread.sleep(600);
@@ -81,107 +82,125 @@ public class Vk_api {
 
         } catch (ApiException ex) {
             java.util.logging.Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-            final String alertInfo=ex.getMessage();   
+            final String alertInfo = ex.getMessage();
             new Helper().alertInfo(alertInfo);
 
         } catch (ClientException ex) {
             java.util.logging.Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-            final String alertInfo=ex.getMessage();   
+            final String alertInfo = ex.getMessage();
             new Helper().alertInfo(alertInfo);
         }
 
         return walls;
     }
-   
-    public List<String> addPhoto(UserActor actor,List<String> listPhoto,String caption ){
-      
-            //получаю лист со ссылками фоток
-            // воозвращаю лист
-            List<String>ouList=new ArrayList<String>();
+
+    public List < WallPostFull>  getwallbyId(UserActor actor,  List<String> posts) {
+      List < WallPostFull> walls = new ArrayList<WallPostFull> ();
+        try {
+
             TransportClient transportClient = HttpTransportClient.getInstance();
             VkApiClient vk = new VkApiClient(transportClient);
-            
-            for (String elt : listPhoto) {
-                try {
+            walls =  vk.wall()
+                    .getById(actor, posts)
+                    .execute();
                     
-                    File file=new Helper().saveFile(elt);
-         
-                    PhotoUpload serverResponse = vk.photos().getWallUploadServer(actor).execute();
-                    WallUploadResponse  uploadResponse = vk.upload().photoWall(serverResponse.getUploadUrl(), file).execute();  
-                    
-                    List<Photo> photoList = vk.photos().saveWallPhoto(actor, uploadResponse.getPhoto())
-                            .caption(caption)
-                            .server(uploadResponse.getServer())
-                            .hash(uploadResponse.getHash())
-                            .execute();
-                    
-                     Photo photo = photoList.get(0);
+   
 
-                     ouList.add("photo" + photo.getOwnerId() + "_" + photo.getId());
-                     Thread.sleep(1500);
-                } catch (ApiException ex) {
-                    Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-                    final String alertInfo=ex.getMessage();   
-                    new Helper().alertInfo(alertInfo);
-                } catch (ClientException ex) {
-                    Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-                    final String alertInfo=ex.getMessage();   
-                    new Helper().alertInfo(alertInfo);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-                    final String alertInfo=ex.getMessage();   
-                    new Helper().alertInfo(alertInfo);
-                }
-                    
+        } catch (ApiException ex) {
+            Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClientException ex) {
+            Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return walls;
+    }
+
+    public List<String> addPhoto(UserActor actor, List<String> listPhoto, String caption) {
+
+        //получаю лист со ссылками фоток
+        // воозвращаю лист
+        List<String> ouList = new ArrayList<String>();
+        TransportClient transportClient = HttpTransportClient.getInstance();
+        VkApiClient vk = new VkApiClient(transportClient);
+
+        for (String elt : listPhoto) {
+            try {
+
+                File file = new Helper().saveFile(elt);
+
+                PhotoUpload serverResponse = vk.photos().getWallUploadServer(actor).execute();
+                WallUploadResponse uploadResponse = vk.upload().photoWall(serverResponse.getUploadUrl(), file).execute();
+
+                List<Photo> photoList = vk.photos().saveWallPhoto(actor, uploadResponse.getPhoto())
+                        .caption(caption)
+                        .server(uploadResponse.getServer())
+                        .hash(uploadResponse.getHash())
+                        .execute();
+
+                Photo photo = photoList.get(0);
+
+                ouList.add("photo" + photo.getOwnerId() + "_" + photo.getId());
+                Thread.sleep(1500);
+            } catch (ApiException ex) {
+                Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+                final String alertInfo = ex.getMessage();
+                new Helper().alertInfo(alertInfo);
+            } catch (ClientException ex) {
+                Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+                final String alertInfo = ex.getMessage();
+                new Helper().alertInfo(alertInfo);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+                final String alertInfo = ex.getMessage();
+                new Helper().alertInfo(alertInfo);
             }
+
+        }
         System.err.println(ouList);
         return ouList;
     }
-     
-    public List<UserXtrCounters> getUserInfo(UserActor actor, String vk_id){
-         
-        List<UserXtrCounters> userinfo=null;
+
+    public List<UserXtrCounters> getUserInfo(UserActor actor, String vk_id) {
+
+        List<UserXtrCounters> userinfo = null;
         try {
             TransportClient transportClient = HttpTransportClient.getInstance();
             VkApiClient vk = new VkApiClient(transportClient);
-                userinfo = vk.users().get(actor)
+            userinfo = vk.users().get(actor)
                     .userIds(vk_id)
-                    .fields( UserField.ABOUT)
+                    .fields(UserField.ABOUT)
                     .execute();
-             
-           
-            
+
         } catch (ApiException ex) {
             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-             final String alertInfo=ex.getMessage();   
-             new Helper().alertInfo(alertInfo);
+            final String alertInfo = ex.getMessage();
+            new Helper().alertInfo(alertInfo);
         } catch (ClientException ex) {
             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-             final String alertInfo=ex.getMessage();   
-             new Helper().alertInfo(alertInfo);
+            final String alertInfo = ex.getMessage();
+            new Helper().alertInfo(alertInfo);
         }
-        
-         return userinfo;
+
+        return userinfo;
     }
-    
-    public List<ConstructorProvider> fromUsertoProvider(List<UserXtrCounters> userinfo){
+
+    public List<ConstructorProvider> fromUsertoProvider(List<UserXtrCounters> userinfo) {
         List<ConstructorProvider> vk_Providers = new ArrayList<>();
-     
-        for(UserXtrCounters elt:userinfo){
-        vk_Providers.add(new ConstructorProvider
-        (elt.getFirstName()+" "+elt.getLastName()
-                , "plase"
-                , elt.getId()
-                , Boolean.FALSE
-                , "provider"));
-        System.err.println(elt.getId());
-        System.err.println(elt.getFirstName()+" "+elt.getLastName());
-     }
-        
-    return vk_Providers;
+
+        for (UserXtrCounters elt : userinfo) {
+            vk_Providers.add(new ConstructorProvider(elt.getFirstName() + " " + elt.getLastName(),
+                     "plase",
+                     elt.getId(),
+                     Boolean.FALSE,
+                     "provider"));
+            System.err.println(elt.getId());
+            System.err.println(elt.getFirstName() + " " + elt.getLastName());
+        }
+
+        return vk_Providers;
     }
-   
-    public void setPost(UserActor actor, String mess,Long pubdate,List<String>attach,Integer owner_id){
+
+    public void setPost(UserActor actor, String mess, Long pubdate, List<String> attach, Integer owner_id) {
         try {
             TransportClient transportClient = HttpTransportClient.getInstance();
             VkApiClient vk = new VkApiClient(transportClient);
@@ -191,23 +210,20 @@ public class Vk_api {
                     .message(mess)
                     .attachments(attach)
                     .execute();
-            
-            System.out.println("date_in_setPost "+ pubdate.intValue());
+
+            System.out.println("date_in_setPost " + pubdate.intValue());
         } catch (ApiException ex) {
             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-            final String alertInfo=ex.getMessage();   
+            final String alertInfo = ex.getMessage();
             new Helper().alertInfo(alertInfo);
         } catch (ClientException ex) {
             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-            final String alertInfo=ex.getMessage();   
+            final String alertInfo = ex.getMessage();
             new Helper().alertInfo(alertInfo);
         }
-                    
+
     }
-    
- 
-    
-    
+
     //__________________________________
     public void getuser(UserActor actor) {
 

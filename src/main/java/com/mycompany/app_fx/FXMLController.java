@@ -5,8 +5,11 @@ import com.mycompany.helper.ConstructorProvider;
 import com.mycompany.helper.DbHandler;
 import com.mycompany.helper.Helper;
 import com.mycompany.helper.PostGrabber;
+import com.mycompany.helper.PostLinkGetter;
 import com.mycompany.helper.Poster;
+import com.mycompany.helper.Vk_api;
 import com.mycompany.helper.Vk_preferences;
+import com.vk.api.sdk.client.actors.UserActor;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -54,18 +57,15 @@ import javafx.util.Pair;
  */
 public class FXMLController implements Initializable {
 
-    
     @FXML
     private MenuBar menuBar;
     @FXML
     private Menu menuFile;
-    
-   
+
     @FXML
     private ListView postListView;
     @FXML
     private Label label;
-  
 
     @FXML
     private TextField eH;
@@ -74,13 +74,14 @@ public class FXMLController implements Initializable {
     @FXML
     private TextField eTimeInterval;
     @FXML
-            
+
     DatePicker datePick;
     Vk_preferences pref = new Vk_preferences();
     PostGrabber postGrabber;
-    
- //====================================FILE=====================================   
-     @FXML
+    PostLinkGetter postLinkGetter;
+
+    //====================================FILE=====================================   
+    @FXML
     private MenuItem m_file_Users;
     @FXML
     private MenuItem m_file_Auth;
@@ -88,7 +89,7 @@ public class FXMLController implements Initializable {
     private MenuItem m_file_ApiKey;
     @FXML
     private MenuItem m_file_Providers;
-    
+
     @FXML
     private void handle_file_Users(ActionEvent event) {
         try {
@@ -104,6 +105,7 @@ public class FXMLController implements Initializable {
         }
 
     }
+
     @FXML
     private void handle_file_Authorization(ActionEvent event) {
         // если в настройках есть УЗ и в реестре храним user_id то открыть
@@ -136,6 +138,7 @@ public class FXMLController implements Initializable {
         }
 
     }
+
     @FXML
     private void handle_file_ApiKey(ActionEvent event) {
 
@@ -151,6 +154,7 @@ public class FXMLController implements Initializable {
             Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
     @FXML
     private void handle_file_Providers(ActionEvent event) {
 
@@ -184,23 +188,22 @@ public class FXMLController implements Initializable {
         }
     }
 
-    
 //====================================BUTTON====================================
     @FXML
     private Button bSendPOST;
     @FXML
     private Button bGetPostProviders;
-    
+
     @FXML
     private void handle_Button_SendPOST(ActionEvent event) {
 
-        List<ConstructorPost> list = new ArrayList<ConstructorPost>(); 
+        List<ConstructorPost> list = new ArrayList<ConstructorPost>();
         int vk_id = Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
-        
+
         for (ConstructorPost elt : postGrabber.listPost) {
             if (elt.flag) {
                 list.add(elt);
-               
+
             }
         }
         Poster poster = new Poster(list, getDateTimeinEdit(), vk_id);
@@ -208,17 +211,18 @@ public class FXMLController implements Initializable {
         System.err.println("handle_Button_SendPOST " + vk_id);
 
     }
+
     @FXML
     private void handle_Button_GetPostProviders(ActionEvent event) {
-       
+
         int vk_id = Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
-        
-        String groups= pref.getPref(Vk_preferences.GROUPS_PROVIDER);
-        List<ConstructorProvider> listProvDBX = new DbHandler().providerDBX(vk_id,groups );
-        
-      //  List<ConstructorProvider> listProvDB = new DbHandler().providerDB(vk_id);
+
+        String groups = pref.getPref(Vk_preferences.GROUPS_PROVIDER);
+        List<ConstructorProvider> listProvDBX = new DbHandler().providerDBX(vk_id, groups);
+
+        //  List<ConstructorProvider> listProvDB = new DbHandler().providerDB(vk_id);
         List<Integer> providerList = new ArrayList<>();
-        
+
         for (ConstructorProvider elt : listProvDBX) {
             if (elt.flag) {
                 providerList.add(elt.id);
@@ -229,9 +233,60 @@ public class FXMLController implements Initializable {
         postGrabber.start();
 
         System.err.println("handle_Button_GetPostProviders " + providerList);
- 
+
     }
-    
+
+//==================================2nd-tab=====================================
+    @FXML
+    private Button bSendPostFromLink;
+
+    @FXML
+    private ListView listLinkPost;
+
+    @FXML
+    private TextField postLink;
+
+    List<String> massPost = new ArrayList<>();
+
+    @FXML
+    private void handle_SendPostFromLink(ActionEvent event) {
+
+        ObservableList<ConstructorPost> observableList = listLinkPost.getItems();
+
+        List<ConstructorPost> list = new ArrayList<ConstructorPost>();
+        int vk_id = Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
+
+        for (ConstructorPost elt : observableList) {
+            if (elt.flag) {
+                list.add(elt);
+
+            }
+        }
+        Poster poster = new Poster(list, getDateTimeinEdit(), vk_id);
+        poster.start();
+        System.err.println(" handle_SendPostFromLink " + vk_id);
+
+    }
+
+    public void secondTab() {
+        postLink.textProperty().addListener(new ChangeListener<String>() {
+
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                String parsePostItem = new Helper().wall(newValue);
+                if (parsePostItem != null) {
+                    massPost.add(parsePostItem);
+
+                    postLinkGetter = new PostLinkGetter(massPost, listLinkPost);
+                    postLinkGetter.start();
+                    postLink.clear();
+                }
+
+            }
+
+        });
+
+    }
 
 //=====================================View=====================================    
     @Override
@@ -246,10 +301,10 @@ public class FXMLController implements Initializable {
         // если файл создан то не пытаться создавать
         new DbHandler().CreateDB();
         //при запуске группы по умолчанию
-        pref.putPref(Vk_preferences.GROUPS_PROVIDER,"99");
-       
+        pref.putPref(Vk_preferences.GROUPS_PROVIDER, "99");
+        secondTab();
+
     }
-    
 
     public void setDateTime() {
 
@@ -262,7 +317,6 @@ public class FXMLController implements Initializable {
         eH.setText(hours);
         eM.setText(min);
 
-       
         final int vk_id = Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
         final DbHandler db = new DbHandler();
         eTimeInterval.setText("" + db.settingsList("TimeInterval", vk_id));
@@ -290,5 +344,4 @@ public class FXMLController implements Initializable {
         postListView.setItems(observableList);
     }
 
-   
 }

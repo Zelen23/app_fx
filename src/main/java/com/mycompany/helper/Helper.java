@@ -21,6 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ListView;
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -137,5 +138,31 @@ public class Helper {
         });
 
     }
+    
+    public String wall(String postLink){
+     //https://vk.com/g.fagradyan?w=wall288914612_12495
+     String[] wallStrings = null;
+    if(postLink.startsWith("https://vk.com/")& postLink.contains("wall")){
+            
+            postLink=postLink.replace("https://vk.com/", "");
+            wallStrings=postLink.split("wall");
+            
+            for(String elt: wallStrings){
+           //  System.err.println(elt);        
+            }
+           return  wallStrings[wallStrings.length-1];  
+        }else{
+            System.err.println("noPostLink ");
+            return  null;
+        }
+ 
+    
+    }
+
+    public String wall(String string, ListView listLinkPost) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    
 
 }
