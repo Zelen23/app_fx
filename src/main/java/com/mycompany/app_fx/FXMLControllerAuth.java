@@ -85,7 +85,7 @@ public class FXMLControllerAuth implements Initializable {
                     
                     String time = helper.parseUrl(newValue).get(1);
                     // записали в базу токен и Ид пользователя
-                    Vk_api vk_api=new Vk_api();
+                    Vk_api vk_api=new Vk_api(null);
                     /*
                     
                     UserActor userActor = vk_api.getActor(Integer.parseInt(
@@ -94,6 +94,7 @@ public class FXMLControllerAuth implements Initializable {
                     */
                     List<ConstructorProvider> userInfo=vk_api.fromUsertoProvider(
                         vk_api.getUserInfo(user_id));
+                    
                     new DbHandler().insUser(
                             Integer.valueOf(user_id),
                             token,

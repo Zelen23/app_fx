@@ -6,7 +6,7 @@
         </Console> 
         <File name="MyFile" fileName="logs/app.log">
             <PatternLayout>
-            <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+            <Pattern>%d %p %c{1.} [%t] %L - %m%n</Pattern>
             </PatternLayout>
         </File>
     </Appenders> 

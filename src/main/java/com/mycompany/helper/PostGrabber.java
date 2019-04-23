@@ -9,6 +9,7 @@ import com.mycompany.app_fx.Cell_listPostController;
 import com.mycompany.app_fx.FXMLController;
 import com.mycompany.app_fx.ListViewCell;
 import com.mycompany.app_fx.PreferencesController;
+
 import com.mycompany.app_fx.TaskCellFactory;
 import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.objects.base.Geo;
@@ -28,24 +29,41 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressBar;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.slf4j.LoggerFactory;
+
 
 /**
  *
  * @author adolf UH6sYetv5n
  * Прикрутить возможность фильтрации
  * Прикрутить логи
+ * 
+ * 3rd step: addtoListPostnull_null
+2019-04-23 23:12:51 INFO  PostGrabber:131 - 1st_step:filterDataInPost 288914612_12679
+2019-04-23 23:12:51 INFO  PostGrabber:308 -     2nd step: gettingPhotohttps://sun1-28.userapi.com/c849328/v849328373/17b992/lq3gY-tYwG8.jpg 288914612_456276193
+Exception in thread "Thread-5" java.lang.NullPointerException
+* 
+* Exception in thread "Thread-5" java.lang.NullPointerException
+	at com.mycompany.helper.PostGrabber.addtoListPost(PostGrabber.java:230)
+	at com.mycompany.helper.PostGrabber.filterX(PostGrabber.java:160)
+	at com.mycompany.helper.PostGrabber.wallItemX(PostGrabber.java:108)
+	at com.mycompany.helper.PostGrabber.run(PostGrabber.java:80)
+апр 23, 2019 11:15:24 PM javafx.fxml.FXMLLoader$ValueElement processValue
  */
 public class PostGrabber extends Thread {
 
     private List<Integer> providerList = new ArrayList<Integer>();
     ListView postListView = new ListView();
+    Label l_status =new Label();
+    ProgressBar progressBar=new ProgressBar(providerList.size());
 
-    Vk_api vk_api = new Vk_api();
+    Vk_api vk_api = new Vk_api(l_status);
     /*
     UserActor userActor = vk_api.getActor(Integer.parseInt(
             new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
@@ -54,9 +72,11 @@ public class PostGrabber extends Thread {
     List<GetResponse> massiveGetResponses = new ArrayList<GetResponse>();
     public List<ConstructorPost> listPost = new ArrayList<ConstructorPost>();
 
-    public PostGrabber(List<Integer> providerList, ListView postListView) {
+    public PostGrabber(List<Integer> providerList, ListView postListView, Label l_status,ProgressBar progressBar) {
         this.providerList = providerList;
         this.postListView = postListView;
+        this.l_status     = l_status;
+        this.progressBar  = progressBar;
     }
     //529989036
     Vk_preferences pref = new Vk_preferences();
@@ -72,10 +92,12 @@ public class PostGrabber extends Thread {
        // while (true) {
             try {
                 for (int i = 0; i < providerList.size(); i++) {
-
+                   new FXMLController(). setMess("get Post "+providerList.get(i),l_status);
                    // filterDataInPost(vk_api.getwalls(userActor, providerList.get(i), NumbersOfPosts, 0));
                     wallItemX(vk_api.getwalls( providerList.get(i), NumbersOfPosts, 0));
+                    progessT(i);
                     sleep(100);
+         
                 }
 
             } catch (InterruptedException ex) {
@@ -118,6 +140,8 @@ public class PostGrabber extends Thread {
         for(WallPostFull wallItem:list ){
                   List<WallpostAttachment> attachments = wallItem.getAttachments();
         Integer isPinned = wallItem.getIsPinned();
+        
+        
         
                 //если данные удовлетворяют могу добавить в listPost
             if (isPinned == null && attachments != null) {
@@ -267,6 +291,8 @@ public class PostGrabber extends Thread {
 
     }
     
+   
+    
     public String gettingPhoto(Photo photo) {
 
         String returnPhoto = "";
@@ -300,6 +326,27 @@ public class PostGrabber extends Thread {
         logger.info("    2nd step: gettingPhoto" + returnPhoto + " " + photo.getOwnerId() + "_" + photo.getId());
         return returnPhoto;
 
+    }
+    
+    public void progessT(final Integer i){
+    
+         Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                
+        Psb progress=new Psb(i,providerList.size());
+       progressBar.progressProperty().bind(progress.progressProperty());
+       Thread th = new Thread(progress);
+        th.setDaemon(true);
+        th.start();
+            }
+        });
+    
+    
+      
+     
+    
     }
 
 }

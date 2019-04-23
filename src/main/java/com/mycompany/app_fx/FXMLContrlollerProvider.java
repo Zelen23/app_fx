@@ -117,7 +117,7 @@ public class FXMLContrlollerProvider implements Initializable {
  
     }
     public List<ConstructorProvider> us_Info(String parseID ){
-    Vk_api vk_api=new Vk_api();
+    Vk_api vk_api=new Vk_api(null);
     /*
         UserActor userActor = vk_api.getActor(Integer.parseInt(
             new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
