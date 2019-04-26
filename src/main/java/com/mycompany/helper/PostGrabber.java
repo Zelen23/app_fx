@@ -226,9 +226,11 @@ public class PostGrabber extends Thread {
 
                         listPhoto.add(gettingPhoto(isPhoto));
                     }
+                    
                 }
         //проверяю входит ди запись в массив записей 
         //херачит в несколько проходов
+       
                 addtoListPost(new ConstructorPost(provId, postId, postdate, postViews, postLikes, text, count_itemsAttach, listPhoto, false));
 
             }
