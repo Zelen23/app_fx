@@ -10,6 +10,7 @@ import com.vk.api.sdk.client.actors.UserActor;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import org.apache.commons.collections4.list.AbstractLinkedList;
 import org.slf4j.LoggerFactory;
 
@@ -23,12 +24,14 @@ public class Poster extends Thread{
     Long times;
     int vk_id;
     Label l_status =new Label();
+    ProgressBar progresBar=new ProgressBar(listPost.size());
 
-    public Poster(List<ConstructorPost> listPost,Long times, int vk_id, Label l_status) {
+    public Poster(List<ConstructorPost> listPost,Long times, int vk_id, Label l_status,ProgressBar progresBar) {
         this.listPost = listPost;
         this.times=times;
         this.vk_id=vk_id;
         this.l_status=l_status;
+        this.progresBar=progresBar;
     }
     
 
@@ -53,7 +56,7 @@ public class Poster extends Thread{
     
     for(ConstructorPost elt:listPost){    
         i=i+TimeInterval;
-         new FXMLController(). setMess("set Post "+elt.provId+" "+elt.postId,l_status);
+        
        // Long time= helper.timeadd(helper.unixTime(), i);
         Long time= helper.timeadd(times, i);
         logger.info("Send post to my wall from: "+elt.provId+"_"+elt.postId);

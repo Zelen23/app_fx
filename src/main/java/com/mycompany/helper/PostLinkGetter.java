@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressBar;
 
 /**
  *
@@ -23,12 +24,14 @@ public class PostLinkGetter extends Thread {
     ListView postListView;
     List<String> postList = new ArrayList<String>();
     Label l_status =new Label();
+    ProgressBar progresBar=new ProgressBar(postList.size());
    
 
-    public PostLinkGetter( List<String> postList, ListView postListView,Label l_status) {
+    public PostLinkGetter( List<String> postList, ListView postListView,Label l_status,ProgressBar progresBar) {
         this.postList = postList;
         this.postListView = postListView;
         this.l_status =l_status;
+        this.progresBar=progresBar;
        
         
     }
@@ -43,7 +46,11 @@ public class PostLinkGetter extends Thread {
 
         List<WallPostFull> wallItem = new ArrayList<WallPostFull>();
         wallItem = new Vk_api(l_status).getwallbyId( postList);
-        new PostGrabber(null, postListView,l_status,null).filterX(wallItem);
+        
+        PostGrabber postGrab=new PostGrabber(null, postListView,l_status,progresBar);
+        postGrab.filterX(wallItem);
+        postGrab.progessStatus(1,"PostLinkGetter");
+        
 
     }
 

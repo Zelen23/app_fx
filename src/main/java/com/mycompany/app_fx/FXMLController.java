@@ -218,7 +218,7 @@ public class FXMLController implements Initializable {
 
             }
         }
-        Poster poster = new Poster(list, getDateTimeinEdit(), vk_id,l_status);
+        Poster poster = new Poster(list, getDateTimeinEdit(), vk_id,l_status,progressBar);
         poster.start();
         logger.info("handle_Button_SendPOST to walls " + vk_id);
         
@@ -274,7 +274,7 @@ public class FXMLController implements Initializable {
 
             }
         }
-        Poster poster = new Poster(list, getDateTimeinEdit(), vk_id,l_status);
+        Poster poster = new Poster(list, getDateTimeinEdit(), vk_id,l_status,progressBar);
         poster.start();
         logger.info("handle_SendPostFromLink " + vk_id);
 
@@ -289,7 +289,7 @@ public class FXMLController implements Initializable {
                 if (parsePostItem != null) {
                     massPost.add(parsePostItem);
 
-                    postLinkGetter = new PostLinkGetter(massPost, listLinkPost,l_status);
+                    postLinkGetter = new PostLinkGetter(massPost, listLinkPost,l_status,progressBar);
                     postLinkGetter.start();
                     postLink.clear();
                 }
@@ -356,19 +356,5 @@ public class FXMLController implements Initializable {
         postListView.setItems(observableList);
     }
     
-    
-    public void  setMess(final String mess, final Label label ){
-    
-            Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-              label.setText(mess);
-            }
-
-        });
-  
-    }
-    
-
 }
 
