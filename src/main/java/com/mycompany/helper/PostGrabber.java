@@ -21,6 +21,7 @@ import com.vk.api.sdk.objects.wall.Views;
 import com.vk.api.sdk.objects.wall.WallPost;
 import com.vk.api.sdk.objects.wall.WallPostFull;
 import com.vk.api.sdk.objects.wall.WallpostAttachment;
+import com.vk.api.sdk.objects.wall.WallpostAttachmentType;
 import com.vk.api.sdk.objects.wall.responses.GetResponse;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +60,9 @@ public class PostGrabber extends Thread {
 
     private List<Integer> providerList = new ArrayList<Integer>();
     ListView postListView = new ListView();
+
    
+
 
     Vk_api vk_api = new Vk_api();
     /*
@@ -70,10 +73,12 @@ public class PostGrabber extends Thread {
     List<GetResponse> massiveGetResponses = new ArrayList<GetResponse>();
     public List<ConstructorPost> listPost = new ArrayList<ConstructorPost>();
 
+
     public PostGrabber(List<Integer> providerList, ListView postListView) {
         this.providerList = providerList;
         this.postListView = postListView;
       
+
     }
     //529989036
     Vk_preferences pref = new Vk_preferences();
@@ -89,6 +94,7 @@ public class PostGrabber extends Thread {
         // while (true) {
         try {
             for (int i = 0; i < providerList.size(); i++) {
+
                 //new FXMLController().setMess("get Post " + providerList.get(i), l_status);
                 // filterDataInPost(vk_api.getwalls(userActor, providerList.get(i), NumbersOfPosts, 0));
                 GetResponse getwalls = vk_api.getwalls(providerList.get(i), NumbersOfPosts, 0);
@@ -97,6 +103,7 @@ public class PostGrabber extends Thread {
                // progessStatus(i,""+providerList.get(i));
                 
                 sleep(100);
+
             }
 
         } catch (InterruptedException ex) {
@@ -146,13 +153,22 @@ public class PostGrabber extends Thread {
                 count_itemsAttach = wallItem.getAttachments().size();
                 List<String> listPhoto = new ArrayList<String>();
 
+                // посчитал все вложения в одном посте
                 for (int j = 0; j < count_itemsAttach; j++) {
 
+                    WallpostAttachmentType attachmentType = 
+                            wallItem.getAttachments().get(j).getType();
+                    
+                    if(attachmentType==WallpostAttachmentType.PHOTO){
+                        
+                    }
                     Photo isPhoto = wallItem.getAttachments().get(j).getPhoto();
                     Views views = wallItem.getViews();
                     LikesInfo likesInfo = wallItem.getLikes();
                     //если вложение это фотка то забираем этот пост                
-                    if (isPhoto != null) {
+
+                    if (isPhoto != null ) {
+
 
                         if (views != null) {
                             postViews = views.getCount();
@@ -170,7 +186,12 @@ public class PostGrabber extends Thread {
                 }
                 //проверяю входит ди запись в массив записей 
                 //херачит в несколько проходов
-                addtoListPost(new ConstructorPost(provId, postId, postdate, postViews, postLikes, text, count_itemsAttach, listPhoto, false));
+
+                if(listPhoto.size()>0){
+                     addtoListPost(new ConstructorPost(provId, postId, postdate, postViews, postLikes, text, count_itemsAttach, listPhoto, false));
+                }
+               
+
 
             }
         }
@@ -225,9 +246,11 @@ public class PostGrabber extends Thread {
             }
             //проверяю входит ди запись в массив записей 
             //херачит в несколько проходов
+
             addtoListPost(new ConstructorPost(provId, postId, postdate, postViews, postLikes, text, count_itemsAttach, listPhoto, false));
 
         }
+
 
     }
 
@@ -323,5 +346,6 @@ public class PostGrabber extends Thread {
     }
 
    
+
 
 }
