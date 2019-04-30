@@ -45,11 +45,11 @@ public class PostLinkGetter extends Thread {
     public void run() {
 
         List<WallPostFull> wallItem = new ArrayList<WallPostFull>();
-        wallItem = new Vk_api(l_status).getwallbyId( postList);
+        wallItem = new Vk_api().getwallbyId( postList);
         
-        PostGrabber postGrab=new PostGrabber(null, postListView,l_status,progresBar);
+        PostGrabber postGrab=new PostGrabber(null, postListView);
         postGrab.filterX(wallItem);
-        postGrab.progessStatus(1,"PostLinkGetter");
+       // postGrab.progessStatus(1,"PostLinkGetter");
         
 
     }

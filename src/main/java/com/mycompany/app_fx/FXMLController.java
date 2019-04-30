@@ -218,7 +218,7 @@ public class FXMLController implements Initializable {
 
             }
         }
-        Poster poster = new Poster(list, getDateTimeinEdit(), vk_id,l_status,progressBar);
+        Poster poster = new Poster(list, getDateTimeinEdit(), vk_id);
         poster.start();
         logger.info("handle_Button_SendPOST to walls " + vk_id);
         
@@ -235,14 +235,20 @@ public class FXMLController implements Initializable {
 
         //  List<ConstructorProvider> listProvDB = new DbHandler().providerDB(vk_id);
         List<Integer> providerList = new ArrayList<>();
-
+        
+        int i=1; int sss=15;
         for (ConstructorProvider elt : listProvDBX) {
+            
             if (elt.flag) {
                 providerList.add(elt.id);
+                progessStatus(i,listProvDBX.size(),"ddddd "+i);
+                
+                i++; 
             }
+           
         }
 
-        postGrabber = new PostGrabber(providerList, postListView,l_status,progressBar);
+        postGrabber = new PostGrabber(providerList, postListView);
         postGrabber.start();
 
         logger.info("handle_Button_GetPostProviders " + providerList);
@@ -274,7 +280,7 @@ public class FXMLController implements Initializable {
 
             }
         }
-        Poster poster = new Poster(list, getDateTimeinEdit(), vk_id,l_status,progressBar);
+        Poster poster = new Poster(list, getDateTimeinEdit(), vk_id);
         poster.start();
         logger.info("handle_SendPostFromLink " + vk_id);
 
@@ -354,6 +360,29 @@ public class FXMLController implements Initializable {
         ObservableList observableList = FXCollections.observableArrayList();
         observableList.setAll(aaa);
         postListView.setItems(observableList);
+    }
+    
+    public void progessStatus(final Integer i,final Integer size,final String statusMess) {
+
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+
+                try {
+                    Thread.sleep(100);
+                    Psb progress = new Psb(i, size);
+                    progressBar.progressProperty().bind(progress.progressProperty());
+                    l_status.setText(statusMess);
+                    Thread th = new Thread(progress);
+                    th.setDaemon(true);
+                    th.start();
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+
     }
     
 }

@@ -23,20 +23,18 @@ public class Poster extends Thread{
     List<ConstructorPost> listPost;
     Long times;
     int vk_id;
-    Label l_status =new Label();
-    ProgressBar progresBar=new ProgressBar(listPost.size());
+   
 
-    public Poster(List<ConstructorPost> listPost,Long times, int vk_id, Label l_status,ProgressBar progresBar) {
+    public Poster(List<ConstructorPost> listPost,Long times, int vk_id) {
         this.listPost = listPost;
         this.times=times;
         this.vk_id=vk_id;
-        this.l_status=l_status;
-        this.progresBar=progresBar;
+       
     }
     
 
     Helper helper=new Helper();
-    Vk_api vk_api = new Vk_api(l_status);
+    Vk_api vk_api = new Vk_api();
     /*   
     Vk_api vk_api = new Vk_api();
     UserActor userActor = vk_api.getActor(Integer.parseInt(
@@ -56,18 +54,19 @@ public class Poster extends Thread{
     
     for(ConstructorPost elt:listPost){    
         i=i+TimeInterval;
+       
         
        // Long time= helper.timeadd(helper.unixTime(), i);
         Long time= helper.timeadd(times, i);
         logger.info("Send post to my wall from: "+elt.provId+"_"+elt.postId);
-        new Vk_api(l_status).setPost(
+        new Vk_api().setPost(
                 elt.text,
                 time,
                 vk_api.addPhoto(elt.listPhoto, elt.text),
                 vk_api.getActor().getId()
                 //в метод передаю массив ссылок на фотку 
         );
-              
+          
     }
      
     

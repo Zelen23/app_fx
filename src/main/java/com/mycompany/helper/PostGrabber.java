@@ -59,10 +59,9 @@ public class PostGrabber extends Thread {
 
     private List<Integer> providerList = new ArrayList<Integer>();
     ListView postListView = new ListView();
-    Label l_status = new Label();
-    ProgressBar progressBar = new ProgressBar(providerList.size());
+   
 
-    Vk_api vk_api = new Vk_api(l_status);
+    Vk_api vk_api = new Vk_api();
     /*
     UserActor userActor = vk_api.getActor(Integer.parseInt(
             new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
@@ -71,11 +70,10 @@ public class PostGrabber extends Thread {
     List<GetResponse> massiveGetResponses = new ArrayList<GetResponse>();
     public List<ConstructorPost> listPost = new ArrayList<ConstructorPost>();
 
-    public PostGrabber(List<Integer> providerList, ListView postListView, Label l_status, ProgressBar progressBar) {
+    public PostGrabber(List<Integer> providerList, ListView postListView) {
         this.providerList = providerList;
         this.postListView = postListView;
-        this.l_status = l_status;
-        this.progressBar = progressBar;
+      
     }
     //529989036
     Vk_preferences pref = new Vk_preferences();
@@ -96,7 +94,7 @@ public class PostGrabber extends Thread {
                 GetResponse getwalls = vk_api.getwalls(providerList.get(i), NumbersOfPosts, 0);
                 wallItemX(getwalls);
                 // чекаю провайдеров
-                progessStatus(i,""+providerList.get(i));
+               // progessStatus(i,""+providerList.get(i));
                 
                 sleep(100);
             }
@@ -324,22 +322,6 @@ public class PostGrabber extends Thread {
 
     }
 
-    public void progessStatus(final Integer i,final String statusMess) {
-
-        Platform.runLater(new Runnable() {
-
-            @Override
-            public void run() {
-
-                Psb progress = new Psb(i, providerList.size());
-                progressBar.progressProperty().bind(progress.progressProperty());
-                l_status.setText(statusMess);
-                Thread th = new Thread(progress);
-                th.setDaemon(true);
-                th.start();
-            }
-        });
-
-    }
+   
 
 }

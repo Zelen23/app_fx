@@ -64,12 +64,7 @@ public class Vk_api {
 
     org.slf4j.Logger logger = LoggerFactory.getLogger(Vk_api.class);
     
-    Label l_status=new Label();
-
-    public Vk_api(Label l_status) {
-        this.l_status = l_status;
-    }
-    
+ 
 
     
     public UserActor getActor() {
