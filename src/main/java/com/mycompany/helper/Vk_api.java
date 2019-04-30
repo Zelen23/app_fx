@@ -5,6 +5,7 @@
  */
 package com.mycompany.helper;
 
+import com.mycompany.app_fx.FXMLController;
 import static com.mycompany.helper.Vk_preferences.CLIENT_ID;
 import com.vk.api.sdk.actions.Photos;
 import com.vk.api.sdk.actions.Upload;
@@ -39,12 +40,16 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author adolf
+ * 
+ *мапить коды ошибок на мессаджи через swith
+ * 
  */
 public class Vk_api {
 
@@ -58,6 +63,13 @@ public class Vk_api {
             + "&scope=wall&response_type=token&v=5.52";
 
     org.slf4j.Logger logger = LoggerFactory.getLogger(Vk_api.class);
+    
+    Label l_status=new Label();
+
+    public Vk_api(Label l_status) {
+        this.l_status = l_status;
+    }
+    
 
     
     public UserActor getActor() {
@@ -89,15 +101,19 @@ public class Vk_api {
 
         } catch (ApiException ex) {
             java.util.logging.Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-            final String alertInfo = ex.getMessage();
+            
+            final String alertInfo = ex.getMessage()+"\nprov: "+provider_id;
+            
             new Helper().alertInfo(alertInfo);
+        
 
         } catch (ClientException ex) {
             java.util.logging.Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+            
             final String alertInfo = ex.getMessage();
             new Helper().alertInfo(alertInfo);
         }
-
+       
         return walls;
     }
 
