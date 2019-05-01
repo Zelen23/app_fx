@@ -20,38 +20,26 @@ import javafx.scene.control.ProgressBar;
  */
 public class PostLinkGetter extends Thread {
 
-   
     ListView postListView;
     List<String> postList = new ArrayList<String>();
-    Label l_status =new Label();
-    ProgressBar progresBar=new ProgressBar(postList.size());
-   
+    ProgressBar progressBar = new ProgressBar();
+    Label status = new Label();
 
-    public PostLinkGetter( List<String> postList, ListView postListView,Label l_status,ProgressBar progresBar) {
+    public PostLinkGetter(List<String> postList, ListView postListView, ProgressBar progressBar, Label status) {
         this.postList = postList;
         this.postListView = postListView;
-        this.l_status =l_status;
-        this.progresBar=progresBar;
-       
-        
+        this.progressBar = progressBar;
+        this.status = status;
     }
- /*
-    Vk_api vk_api = new Vk_api();
-    UserActor userActor = vk_api.getActor(Integer.parseInt(
-            new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
-            new Vk_preferences().getPref(Vk_preferences.TOKEN));
-*/
+
     @Override
     public void run() {
 
         List<WallPostFull> wallItem = new ArrayList<WallPostFull>();
-        wallItem = new Vk_api().getwallbyId( postList);
-        
-        PostGrabber postGrab=new PostGrabber(null, postListView);
-        postGrab.filterX(wallItem);
-       // postGrab.progessStatus(1,"PostLinkGetter");
-        
+        wallItem = new Vk_api().getwallbyId(postList);
 
+        PostGrabber postGrab = new PostGrabber(null, postListView, null, null);
+        postGrab.filterX(wallItem);
     }
 
 }

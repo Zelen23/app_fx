@@ -23,6 +23,8 @@ import com.vk.api.sdk.objects.wall.WallPostFull;
 import com.vk.api.sdk.objects.wall.WallpostAttachment;
 import com.vk.api.sdk.objects.wall.WallpostAttachmentType;
 import com.vk.api.sdk.objects.wall.responses.GetResponse;
+import java.io.IOException;
+import static java.lang.Thread.sleep;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -30,6 +32,8 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -60,24 +64,18 @@ public class PostGrabber extends Thread {
 
     private List<Integer> providerList = new ArrayList<Integer>();
     ListView postListView = new ListView();
-
-   
-
+    ProgressBar progressBar = new ProgressBar();
+    Label status = new Label();
 
     Vk_api vk_api = new Vk_api();
-    /*
-    UserActor userActor = vk_api.getActor(Integer.parseInt(
-            new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
-            new Vk_preferences().getPref(Vk_preferences.TOKEN));
-     */
     List<GetResponse> massiveGetResponses = new ArrayList<GetResponse>();
     public List<ConstructorPost> listPost = new ArrayList<ConstructorPost>();
 
-
-    public PostGrabber(List<Integer> providerList, ListView postListView) {
+    public PostGrabber(List<Integer> providerList, ListView postListView, ProgressBar progressBar, Label status) {
         this.providerList = providerList;
         this.postListView = postListView;
-      
+        this.progressBar = progressBar;
+        this.status = status;
 
     }
     //529989036
@@ -92,25 +90,22 @@ public class PostGrabber extends Thread {
     public void run() {
 
         // while (true) {
-        try {
-            for (int i = 0; i < providerList.size(); i++) {
+        Task task = new Task() {
+            @Override
+            protected Object call() throws Exception {
+                for (int i = 0; i < providerList.size(); i++) {
+                    GetResponse getwalls = vk_api.getwalls(providerList.get(i), NumbersOfPosts, 0);
+                    wallItemX(getwalls);
 
-                //new FXMLController().setMess("get Post " + providerList.get(i), l_status);
-                // filterDataInPost(vk_api.getwalls(userActor, providerList.get(i), NumbersOfPosts, 0));
-                GetResponse getwalls = vk_api.getwalls(providerList.get(i), NumbersOfPosts, 0);
-                wallItemX(getwalls);
-                // чекаю провайдеров
-               // progessStatus(i,""+providerList.get(i));
-                
-                sleep(100);
+                    sleep(100);
+                    updateProgress(i + 1, providerList.size());
+                    updateMessage(providerList.get(i).toString());
+                }
 
+                return null;
             }
-
-        } catch (InterruptedException ex) {
-            Logger.getLogger(PostGrabber.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        //  }
+        };
+        progessStatus(task);
     }
 
     public void wallItem(GetResponse getwalls) {
@@ -156,19 +151,18 @@ public class PostGrabber extends Thread {
                 // посчитал все вложения в одном посте
                 for (int j = 0; j < count_itemsAttach; j++) {
 
-                    WallpostAttachmentType attachmentType = 
-                            wallItem.getAttachments().get(j).getType();
-                    
-                    if(attachmentType==WallpostAttachmentType.PHOTO){
-                        
+                    WallpostAttachmentType attachmentType
+                            = wallItem.getAttachments().get(j).getType();
+
+                    if (attachmentType == WallpostAttachmentType.PHOTO) {
+
                     }
                     Photo isPhoto = wallItem.getAttachments().get(j).getPhoto();
                     Views views = wallItem.getViews();
                     LikesInfo likesInfo = wallItem.getLikes();
                     //если вложение это фотка то забираем этот пост                
 
-                    if (isPhoto != null ) {
-
+                    if (isPhoto != null) {
 
                         if (views != null) {
                             postViews = views.getCount();
@@ -187,11 +181,9 @@ public class PostGrabber extends Thread {
                 //проверяю входит ди запись в массив записей 
                 //херачит в несколько проходов
 
-                if(listPhoto.size()>0){
-                     addtoListPost(new ConstructorPost(provId, postId, postdate, postViews, postLikes, text, count_itemsAttach, listPhoto, false));
+                if (listPhoto.size() > 0) {
+                    addtoListPost(new ConstructorPost(provId, postId, postdate, postViews, postLikes, text, count_itemsAttach, listPhoto, false));
                 }
-               
-
 
             }
         }
@@ -211,7 +203,6 @@ public class PostGrabber extends Thread {
 
         List<WallpostAttachment> attachments = wallItem.getAttachments();
         Integer isPinned = wallItem.getIsPinned();
-
 
         //если данные удовлетворяют могу добавить в listPost
         if (isPinned == null && attachments != null) {
@@ -250,7 +241,6 @@ public class PostGrabber extends Thread {
             addtoListPost(new ConstructorPost(provId, postId, postdate, postViews, postLikes, text, count_itemsAttach, listPhoto, false));
 
         }
-
 
     }
 
@@ -345,7 +335,19 @@ public class PostGrabber extends Thread {
 
     }
 
-   
+    public void progessStatus(final Task task) {
 
+        Platform.runLater(new Runnable() {
+
+            @Override
+            public void run() {
+                progressBar.progressProperty().bind(task.progressProperty());
+                status.textProperty().bind(task.messageProperty());
+                new Thread(task).start();
+
+            }
+        });
+
+    }
 
 }
