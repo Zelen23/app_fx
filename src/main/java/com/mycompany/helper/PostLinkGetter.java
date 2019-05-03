@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressBar;
 
 /**
  *
@@ -19,32 +20,26 @@ import javafx.scene.control.ListView;
  */
 public class PostLinkGetter extends Thread {
 
-   
     ListView postListView;
     List<String> postList = new ArrayList<String>();
-    Label l_status =new Label();
-   
+    ProgressBar progressBar = new ProgressBar();
+    Label status = new Label();
 
-    public PostLinkGetter( List<String> postList, ListView postListView,Label l_status) {
+    public PostLinkGetter(List<String> postList, ListView postListView, ProgressBar progressBar, Label status) {
         this.postList = postList;
         this.postListView = postListView;
-        this.l_status =l_status;
-       
-        
+        this.progressBar = progressBar;
+        this.status = status;
     }
- /*
-    Vk_api vk_api = new Vk_api();
-    UserActor userActor = vk_api.getActor(Integer.parseInt(
-            new Vk_preferences().getPref(Vk_preferences.VK_USER_ID)),
-            new Vk_preferences().getPref(Vk_preferences.TOKEN));
-*/
+
     @Override
     public void run() {
 
         List<WallPostFull> wallItem = new ArrayList<WallPostFull>();
-        wallItem = new Vk_api(l_status).getwallbyId( postList);
-        new PostGrabber(null, postListView,l_status,null).filterX(wallItem);
+        wallItem = new Vk_api().getwallbyId(postList);
 
+        PostGrabber postGrab = new PostGrabber(null, postListView, null, null);
+        postGrab.filterX(wallItem);
     }
 
 }

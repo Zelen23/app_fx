@@ -47,9 +47,9 @@ import org.slf4j.LoggerFactory;
 /**
  *
  * @author adolf
- * 
- *мапить коды ошибок на мессаджи через swith
- * 
+ *
+ * мапить коды ошибок на мессаджи через swith
+ *
  */
 public class Vk_api {
 
@@ -63,25 +63,17 @@ public class Vk_api {
             + "&scope=wall&response_type=token&v=5.52";
 
     org.slf4j.Logger logger = LoggerFactory.getLogger(Vk_api.class);
-    
-    Label l_status=new Label();
 
-    public Vk_api(Label l_status) {
-        this.l_status = l_status;
-    }
-    
-
-    
     public UserActor getActor() {
-        
-        UserActor actor = new UserActor( 
+
+        UserActor actor = new UserActor(
                 Integer.parseInt(pref.getPref(Vk_preferences.VK_USER_ID)),
                 pref.getPref(Vk_preferences.TOKEN));
 
         return actor;
     }
 
-    public GetResponse getwalls( Integer provider_id, int count, int offset) {
+    public GetResponse getwalls(Integer provider_id, int count, int offset) {
         GetResponse walls = new GetResponse();
 
         try {
@@ -92,7 +84,7 @@ public class Vk_api {
             }
             TransportClient transportClient = HttpTransportClient.getInstance();
             VkApiClient vk = new VkApiClient(transportClient);
-            walls = vk.wall().get( getActor())
+            walls = vk.wall().get(getActor())
                     .count(count)
                     .offset(offset)
                     .filter(WallGetFilter.OWNER)
@@ -101,33 +93,30 @@ public class Vk_api {
 
         } catch (ApiException ex) {
             java.util.logging.Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-            
-            final String alertInfo = ex.getMessage()+"\nprov: "+provider_id;
-            
+
+            final String alertInfo = ex.getMessage() + "\nprov: " + provider_id;
+
             new Helper().alertInfo(alertInfo);
-        
 
         } catch (ClientException ex) {
             java.util.logging.Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-            
+
             final String alertInfo = ex.getMessage();
             new Helper().alertInfo(alertInfo);
         }
-       
+
         return walls;
     }
 
-    public List < WallPostFull>  getwallbyId(  List<String> posts) {
-      List < WallPostFull> walls = new ArrayList<WallPostFull> ();
+    public List< WallPostFull> getwallbyId(List<String> posts) {
+        List< WallPostFull> walls = new ArrayList<WallPostFull>();
         try {
 
             TransportClient transportClient = HttpTransportClient.getInstance();
             VkApiClient vk = new VkApiClient(transportClient);
-            walls =  vk.wall()
-                    .getById( getActor(), posts)
+            walls = vk.wall()
+                    .getById(getActor(), posts)
                     .execute();
-                    
-   
 
         } catch (ApiException ex) {
             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
@@ -138,11 +127,11 @@ public class Vk_api {
             final String alertInfo = ex.getMessage();
             new Helper().alertInfo(alertInfo);
         }
-        
+
         return walls;
     }
 
-    public List<String> addPhoto( List<String> listPhoto, String caption) {
+    public List<String> addPhoto(List<String> listPhoto, String caption) {
 
         //получаю лист со ссылками фоток
         // воозвращаю лист
@@ -155,10 +144,10 @@ public class Vk_api {
 
                 File file = new Helper().saveFile(elt);
 
-                PhotoUpload serverResponse = vk.photos().getWallUploadServer( getActor()).execute();
+                PhotoUpload serverResponse = vk.photos().getWallUploadServer(getActor()).execute();
                 WallUploadResponse uploadResponse = vk.upload().photoWall(serverResponse.getUploadUrl(), file).execute();
 
-                List<Photo> photoList = vk.photos().saveWallPhoto( getActor(), uploadResponse.getPhoto())
+                List<Photo> photoList = vk.photos().saveWallPhoto(getActor(), uploadResponse.getPhoto())
                         .caption(caption)
                         .server(uploadResponse.getServer())
                         .hash(uploadResponse.getHash())
@@ -183,17 +172,17 @@ public class Vk_api {
             }
 
         }
-        logger.info("Succefull upload photo "+ouList);
+        logger.info("Succefull upload photo " + ouList);
         return ouList;
     }
 
-    public List<UserXtrCounters> getUserInfo( String vk_id) {
+    public List<UserXtrCounters> getUserInfo(String vk_id) {
 
         List<UserXtrCounters> userinfo = null;
         try {
             TransportClient transportClient = HttpTransportClient.getInstance();
             VkApiClient vk = new VkApiClient(transportClient);
-            userinfo = vk.users().get( getActor())
+            userinfo = vk.users().get(getActor())
                     .userIds(vk_id)
                     .fields(UserField.ABOUT)
                     .execute();
@@ -216,22 +205,22 @@ public class Vk_api {
 
         for (UserXtrCounters elt : userinfo) {
             vk_Providers.add(new ConstructorProvider(elt.getFirstName() + " " + elt.getLastName(),
-                     "plase",
-                     elt.getId(),
-                     Boolean.FALSE,
-                     "provider"));
-   //         System.err.println(elt.getId());
-   //        System.err.println(elt.getFirstName() + " " + elt.getLastName());
+                    "plase",
+                    elt.getId(),
+                    Boolean.FALSE,
+                    "provider"));
+            //         System.err.println(elt.getId());
+            //        System.err.println(elt.getFirstName() + " " + elt.getLastName());
         }
 
         return vk_Providers;
     }
 
-    public void setPost( String mess, Long pubdate, List<String> attach, Integer owner_id) {
+    public void setPost(String mess, Long pubdate, List<String> attach, Integer owner_id) {
         try {
             TransportClient transportClient = HttpTransportClient.getInstance();
             VkApiClient vk = new VkApiClient(transportClient);
-            vk.wall().post( getActor())
+            vk.wall().post(getActor())
                     .ownerId(owner_id)
                     .publishDate(pubdate.intValue())
                     .message(mess)
