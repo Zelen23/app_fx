@@ -23,7 +23,7 @@
                      <children>
                           <Button fx:id="bSendPOST" onAction="#handle_Button_SendPOST" prefHeight="32.0" prefWidth="116.0" text="Post To Wall" AnchorPane.bottomAnchor="63.0" AnchorPane.rightAnchor="20.0" />
                           <Button fx:id="bGetPostProviders" onAction="#handle_Button_GetPostProviders" prefHeight="32.0" prefWidth="116.0" text="Get Post" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="20.0" />
-                        <ListView fx:id="postListView" layoutX="3.0" layoutY="7.0" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="460.0" prefWidth="694.0" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="165.0" AnchorPane.topAnchor="7.0">
+                        <ListView fx:id="postListView" editable="true" layoutX="3.0" layoutY="7.0" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="460.0" prefWidth="694.0" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="165.0" AnchorPane.topAnchor="7.0">
          
        </ListView>
                      </children>
