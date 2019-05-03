@@ -7,7 +7,6 @@ import com.mycompany.helper.Helper;
 import com.mycompany.helper.PostGrabber;
 import com.mycompany.helper.PostLinkGetter;
 import com.mycompany.helper.Poster;
-import com.mycompany.helper.Psb;
 import com.mycompany.helper.Vk_api;
 import com.mycompany.helper.Vk_preferences;
 import com.vk.api.sdk.client.actors.UserActor;
@@ -72,8 +71,6 @@ public class FXMLController implements Initializable {
     private ListView postListView;
     @FXML
     private Label label;
-    @FXML
-    private Label l_status;
 
     @FXML
     private TextField eH;
@@ -81,12 +78,15 @@ public class FXMLController implements Initializable {
     private TextField eM;
     @FXML
     private TextField eTimeInterval;
-    
+
     @FXML
     DatePicker datePick;
+
     @FXML
-    ProgressBar progressBar;
-  
+    ProgressBar progressBar = new ProgressBar(0);
+    @FXML
+    private Label l_status;
+
     Vk_preferences pref = new Vk_preferences();
     PostGrabber postGrabber;
     PostLinkGetter postLinkGetter;
@@ -218,10 +218,9 @@ public class FXMLController implements Initializable {
 
             }
         }
-        Poster poster = new Poster(list, getDateTimeinEdit(), vk_id,l_status);
+        Poster poster = new Poster(list, getDateTimeinEdit(), vk_id, progressBar, l_status);
         poster.start();
         logger.info("handle_Button_SendPOST to walls " + vk_id);
-        
 
     }
 
@@ -232,19 +231,16 @@ public class FXMLController implements Initializable {
 
         String groups = pref.getPref(Vk_preferences.GROUPS_PROVIDER);
         List<ConstructorProvider> listProvDBX = new DbHandler().providerDBX(vk_id, groups);
-
-        //  List<ConstructorProvider> listProvDB = new DbHandler().providerDB(vk_id);
         List<Integer> providerList = new ArrayList<>();
 
         for (ConstructorProvider elt : listProvDBX) {
+
             if (elt.flag) {
                 providerList.add(elt.id);
             }
         }
-
-        postGrabber = new PostGrabber(providerList, postListView,l_status,progressBar);
+        postGrabber = new PostGrabber(providerList, postListView, progressBar, l_status);
         postGrabber.start();
-
         logger.info("handle_Button_GetPostProviders " + providerList);
     }
 
@@ -271,10 +267,9 @@ public class FXMLController implements Initializable {
         for (ConstructorPost elt : observableList) {
             if (elt.flag) {
                 list.add(elt);
-
             }
         }
-        Poster poster = new Poster(list, getDateTimeinEdit(), vk_id,l_status);
+        Poster poster = new Poster(list, getDateTimeinEdit(), vk_id, progressBar, l_status);
         poster.start();
         logger.info("handle_SendPostFromLink " + vk_id);
 
@@ -289,7 +284,7 @@ public class FXMLController implements Initializable {
                 if (parsePostItem != null) {
                     massPost.add(parsePostItem);
 
-                    postLinkGetter = new PostLinkGetter(massPost, listLinkPost,l_status);
+                    postLinkGetter = new PostLinkGetter(massPost, listLinkPost, progressBar, l_status);
                     postLinkGetter.start();
                     postLink.clear();
                 }
@@ -355,20 +350,5 @@ public class FXMLController implements Initializable {
         observableList.setAll(aaa);
         postListView.setItems(observableList);
     }
-    
-    
-    public void  setMess(final String mess, final Label label ){
-    
-            Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-              label.setText(mess);
-            }
-
-        });
-  
-    }
-    
 
 }
-
