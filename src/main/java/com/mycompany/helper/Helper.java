@@ -21,6 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import org.apache.commons.io.FileUtils;
 
@@ -138,6 +139,8 @@ public class Helper {
         });
 
     }
+    
+    
     
     public String wall(String postLink){
      //https://vk.com/g.fagradyan?w=wall288914612_12495

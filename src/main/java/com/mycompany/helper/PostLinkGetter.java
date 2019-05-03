@@ -10,6 +10,7 @@ import com.vk.api.sdk.objects.wall.WallPostFull;
 import com.vk.api.sdk.objects.wall.responses.GetResponse;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 
 /**
@@ -21,11 +22,13 @@ public class PostLinkGetter extends Thread {
    
     ListView postListView;
     List<String> postList = new ArrayList<String>();
+    Label l_status =new Label();
    
 
-    public PostLinkGetter( List<String> postList, ListView postListView) {
+    public PostLinkGetter( List<String> postList, ListView postListView,Label l_status) {
         this.postList = postList;
         this.postListView = postListView;
+        this.l_status =l_status;
        
         
     }
@@ -39,8 +42,8 @@ public class PostLinkGetter extends Thread {
     public void run() {
 
         List<WallPostFull> wallItem = new ArrayList<WallPostFull>();
-        wallItem = new Vk_api().getwallbyId( postList);
-        new PostGrabber(null, postListView).filterX(wallItem);
+        wallItem = new Vk_api(l_status).getwallbyId( postList);
+        new PostGrabber(null, postListView,l_status,null).filterX(wallItem);
 
     }
 

@@ -7,6 +7,7 @@ import com.mycompany.helper.Helper;
 import com.mycompany.helper.PostGrabber;
 import com.mycompany.helper.PostLinkGetter;
 import com.mycompany.helper.Poster;
+import com.mycompany.helper.Psb;
 import com.mycompany.helper.Vk_api;
 import com.mycompany.helper.Vk_preferences;
 import com.vk.api.sdk.client.actors.UserActor;
@@ -20,17 +21,20 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -39,6 +43,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -67,6 +72,8 @@ public class FXMLController implements Initializable {
     private ListView postListView;
     @FXML
     private Label label;
+    @FXML
+    private Label l_status;
 
     @FXML
     private TextField eH;
@@ -74,9 +81,12 @@ public class FXMLController implements Initializable {
     private TextField eM;
     @FXML
     private TextField eTimeInterval;
+    
     @FXML
-
     DatePicker datePick;
+    @FXML
+    ProgressBar progressBar;
+  
     Vk_preferences pref = new Vk_preferences();
     PostGrabber postGrabber;
     PostLinkGetter postLinkGetter;
@@ -208,7 +218,7 @@ public class FXMLController implements Initializable {
 
             }
         }
-        Poster poster = new Poster(list, getDateTimeinEdit(), vk_id);
+        Poster poster = new Poster(list, getDateTimeinEdit(), vk_id,l_status);
         poster.start();
         logger.info("handle_Button_SendPOST to walls " + vk_id);
         
@@ -232,11 +242,10 @@ public class FXMLController implements Initializable {
             }
         }
 
-        postGrabber = new PostGrabber(providerList, postListView);
+        postGrabber = new PostGrabber(providerList, postListView,l_status,progressBar);
         postGrabber.start();
 
         logger.info("handle_Button_GetPostProviders " + providerList);
-
     }
 
 //==================================2nd-tab=====================================
@@ -265,7 +274,7 @@ public class FXMLController implements Initializable {
 
             }
         }
-        Poster poster = new Poster(list, getDateTimeinEdit(), vk_id);
+        Poster poster = new Poster(list, getDateTimeinEdit(), vk_id,l_status);
         poster.start();
         logger.info("handle_SendPostFromLink " + vk_id);
 
@@ -280,7 +289,7 @@ public class FXMLController implements Initializable {
                 if (parsePostItem != null) {
                     massPost.add(parsePostItem);
 
-                    postLinkGetter = new PostLinkGetter(massPost, listLinkPost);
+                    postLinkGetter = new PostLinkGetter(massPost, listLinkPost,l_status);
                     postLinkGetter.start();
                     postLink.clear();
                 }
@@ -346,5 +355,20 @@ public class FXMLController implements Initializable {
         observableList.setAll(aaa);
         postListView.setItems(observableList);
     }
+    
+    
+    public void  setMess(final String mess, final Label label ){
+    
+            Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+              label.setText(mess);
+            }
+
+        });
+  
+    }
+    
 
 }
+
