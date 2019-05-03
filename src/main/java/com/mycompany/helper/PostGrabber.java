@@ -108,14 +108,6 @@ public class PostGrabber extends Thread {
         progessStatus(task);
     }
 
-    public void wallItem(GetResponse getwalls) {
-        for (int i = 0; i < getwalls.getItems().size(); i++) {
-
-            WallPostFull itemPost = getwalls.getItems().get(i);
-            filter(itemPost);
-        }
-    }
-
     public void wallItemX(GetResponse getwalls) {
         List<WallPostFull> list = new ArrayList<WallPostFull>();
         for (int i = 0; i < getwalls.getItems().size(); i++) {
@@ -186,60 +178,6 @@ public class PostGrabber extends Thread {
                 }
 
             }
-        }
-
-    }
-
-    public void filter(WallPostFull wallItem) {
-
-        ConstructorPost post = null;
-        Integer provId = null;
-        Integer postId = null;
-        Long postdate = null;
-        Integer postViews = 0;
-        Integer postLikes = 0;
-        String text = "";
-        Integer count_itemsAttach = null;
-
-        List<WallpostAttachment> attachments = wallItem.getAttachments();
-        Integer isPinned = wallItem.getIsPinned();
-
-        //если данные удовлетворяют могу добавить в listPost
-        if (isPinned == null && attachments != null) {
-
-            logger.info("1st_step:filterDataInPost " + wallItem.getOwnerId() + "_" + wallItem.getId());
-            //вложения в одном посте            
-            count_itemsAttach = wallItem.getAttachments().size();
-            List<String> listPhoto = new ArrayList<String>();
-
-            for (int j = 0; j < count_itemsAttach; j++) {
-
-                Photo isPhoto = wallItem.getAttachments().get(j).getPhoto();
-                Views views = wallItem.getViews();
-                LikesInfo likesInfo = wallItem.getLikes();
-                //если вложение это фотка то забираем этот пост                
-                if (isPhoto != null) {
-
-                    if (views != null) {
-                        postViews = views.getCount();
-                    };
-                    if (likesInfo != null) {
-                        postLikes = likesInfo.getCount();
-                    };
-                    provId = wallItem.getOwnerId();
-                    postId = wallItem.getId();
-                    postdate = wallItem.getDate().longValue();
-                    text = wallItem.getText();
-
-                    listPhoto.add(gettingPhoto(isPhoto));
-                }
-
-            }
-            //проверяю входит ди запись в массив записей 
-            //херачит в несколько проходов
-
-            addtoListPost(new ConstructorPost(provId, postId, postdate, postViews, postLikes, text, count_itemsAttach, listPhoto, false));
-
         }
 
     }
