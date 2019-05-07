@@ -5,7 +5,6 @@
  */
 package com.mycompany.helper;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -23,6 +22,8 @@ import java.util.logging.Logger;
  *
  * всегда передавать vk_user_id insUser сохранять время получения токена и время
  * жизни новая таблица для хранения client_ID переименовать названия таблиц
+ *
+ * добавить таблицу с данными и временем произведенного поста
  *
  */
 public class DbHandler {
@@ -65,6 +66,15 @@ public class DbHandler {
             + "  [value1] INTEGER CONSTRAINT [groupVal] REFERENCES [Groups]([id]) ON DELETE CASCADE ON UPDATE NO ACTION DEFAULT 99, \n"
             + "  [id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT);";
 
+    public static String postInfo
+            = "CREATE TABLE [postInfo] (\n"
+            + "  [id] INTEGER NOT NULL ON CONFLICT REPLACE PRIMARY KEY AUTOINCREMENT, \n"
+            + "  [provider_id] INT, \n"
+            + "  [post_id] INT, \n"
+            + "  [postMyWallId] INT, \n"
+            + "  [user_id] INT, \n"
+            + "  [created_at] INT);\n";
+
     public static String uniquIndex
             = "CREATE UNIQUE INDEX [group] ON [gpoup_provider] ([key1], [value1]);";
 
@@ -104,6 +114,20 @@ public class DbHandler {
             + "and new.token<>token;\n"
             + "END;";
 
+    public static String tr_limit100 = "CREATE TRIGGER [limit]\n"
+            + "AFTER INSERT\n"
+            + "ON [postInfo]\n"
+            + "FOR EACH ROW\n"
+            + "WHEN exists (select * from  postInfo where  \n"
+            + "(select count(*) from postInfo where user_id=new.user_id)>=5)\n"
+            + "BEGIN\n"
+            + "\n"
+            + "delete from postInfo\n"
+            + "where user_id=new.user_id\n"
+            + "and id=(select min(id) from postInfo where user_id=new.user_id);\n"
+            + "\n"
+            + "END;";
+
     public static String defaultGroupString
             = "insert into groups \n"
             + "(id,GroupName)\n"
@@ -111,8 +135,8 @@ public class DbHandler {
             + "(99,'default');";
 
     public static void CreateDB() {
-        
-                try {
+
+        try {
             conn = DriverManager.getConnection(url);
             statmt = conn.createStatement();
 
@@ -120,9 +144,12 @@ public class DbHandler {
             statmt.execute(groups);
             statmt.execute(user);
             statmt.execute(gpoup_provider);
+            statmt.execute(postInfo);
 
             statmt.execute(tr_addProviders);
             statmt.execute(tr_insertVk_id);
+            statmt.execute(tr_limit100);
+            
 
             statmt.execute(uniquIndex);
             statmt.execute(defaultGroupString);
@@ -131,9 +158,6 @@ public class DbHandler {
         } catch (SQLException ex) {
             Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
-        
 
     }
 
@@ -386,14 +410,14 @@ public class DbHandler {
 
     // уникальность поддерживается эксепшоном
     public void addProviderToGroup(Integer Provider_id, Integer id_group) {
-        
-    String insQuerry
-                    = "insert into gpoup_provider \n"
-                    + "(key1,value1)\n"
-                    + "values\n"
-                    + "(?,?)";
-    
-     System.out.println("addProviderToGroup " + insQuerry);
+
+        String insQuerry
+                = "insert into gpoup_provider \n"
+                + "(key1,value1)\n"
+                + "values\n"
+                + "(?,?)";
+
+        System.out.println("addProviderToGroup " + insQuerry);
         try {
             Connection conn = this.DBconnect();
             PreparedStatement preparedStatement = conn.prepareStatement(insQuerry);
@@ -404,15 +428,14 @@ public class DbHandler {
             Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-       
     }
-    
-    public void deleteProviderToGroup(Integer Provider_id){
-        
+
+    public void deleteProviderToGroup(Integer Provider_id) {
+
         String deleteString = "Delete from gpoup_provider where key1 = ?;";
-        
+
         System.err.println("deleteProviderToGroup " + deleteString);
-        
+
         try {
             Connection conn = this.DBconnect();
             PreparedStatement preparedStatement = conn.prepareStatement(deleteString);
@@ -423,20 +446,20 @@ public class DbHandler {
         }
 
     }
-    
-    public List<String>getGroupProvider(Integer Provider_id ){
-        
+
+    public List<String> getGroupProvider(Integer Provider_id) {
+
         List<String> groupsList = new ArrayList<String>();
-        String selectString 
-                = "Select gpoup_provider.key1,gpoup_provider.value1,\n" 
-                +"groups.[GroupName]\n" 
-                +"\n" 
-                +"from gpoup_provider\n" 
-                +"inner join groups\n" 
-                +"on \n" 
-                +"gpoup_provider.value1=groups.[id]\n" 
-                +"where key1="+Provider_id+";";
-        
+        String selectString
+                = "Select gpoup_provider.key1,gpoup_provider.value1,\n"
+                + "groups.[GroupName]\n"
+                + "\n"
+                + "from gpoup_provider\n"
+                + "inner join groups\n"
+                + "on \n"
+                + "gpoup_provider.value1=groups.[id]\n"
+                + "where key1=" + Provider_id + ";";
+
         System.err.println("getGroupProvider " + selectString);
 
         try {
@@ -456,10 +479,10 @@ public class DbHandler {
         }
         return groupsList;
     }
-    
-    public void addGroup(String groupName){
-        
-         try {
+
+    public void addGroup(String groupName) {
+
+        try {
             String inserString = "Insert into groups ('GroupName')values (?)";
             Connection conn = this.DBconnect();
             PreparedStatement preparedStatement = conn.prepareStatement(inserString);
@@ -474,31 +497,53 @@ public class DbHandler {
 
     }
 
-    // читать список групп
-    //добавить группу
-    //удалить группу-удалить все связи в settings
-    //добавить группы провайдеру(группы)
-    /*    
-    insert into settings 
-        (key1,value1)
-    values
-        (111,4),
-        (111,3)
-     */
-    //удалить группу у провайдера
-    //вывести список поставшиков по id группы и пользователю
-    /*  select 
-            main.id,main.provider,main.name,main.[user_id],
-            Groups.[GroupName],Groups.[id],
-            settings.[value1]       
-        from main
-        inner join settings
-        on main.[provider]=settings.[key1]
+    public void postingInfo(Integer provider_id, Integer post_id,Integer postMyWallId, Integer user_id) {
 
-        inner join Groups
-        on Groups.[id]=settings.[value1]
-        where settings.[value1] in (4,2)  
-        -- and main.[user_id]=419021587
-        -- group by main.provider
-     */
+        try {
+            String inserString = "Insert into postInfo (provider_id,post_id,user_id,postMyWallId,created_at)values (?,?,?,?,?)";
+
+            Connection conn = this.DBconnect();
+            PreparedStatement preparedStatement = conn.prepareStatement(inserString);
+            preparedStatement.setInt(1, provider_id);
+            preparedStatement.setInt(2, post_id);
+            preparedStatement.setInt(3, user_id);
+            preparedStatement.setInt(4, postMyWallId);
+            preparedStatement.setLong(5, new Helper().unixTime());
+            preparedStatement.executeUpdate();
+
+            System.err.println(inserString);
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+    
+    public List<Integer> postedList(Integer provider_id,Integer user_id){
+    
+     List<Integer> posted = new ArrayList<Integer>();
+        String selectString = "Select post_id from postInfo where"
+                + " provider_id= "+provider_id
+                + " and user_id= "+user_id;
+        
+    //    System.err.println(selectString);
+
+        try {
+
+            Connection conn = this.DBconnect();
+            Statement statement = conn.createStatement();
+            ResultSet resultSet = statement.executeQuery(selectString);
+
+            while (resultSet.next()) {
+                Integer id = resultSet.getInt("post_id");
+               
+                posted.add(id );
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return posted;
+    }
+
 }
