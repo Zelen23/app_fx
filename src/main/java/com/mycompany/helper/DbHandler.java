@@ -58,7 +58,7 @@ public class DbHandler {
             + "  [id] INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \n"
             + "  [TimeInterval] INT NOT NULL ON CONFLICT REPLACE DEFAULT 30, \n"
             + "  [NumbersOfPosts] INT NOT NULL ON CONFLICT REPLACE DEFAULT 10, \n"
-            + "  [name] VARCHAR);;";
+            + "  [name] VARCHAR);";
 
     public static String gpoup_provider
             = "CREATE TABLE [gpoup_provider] (\n"
@@ -119,7 +119,7 @@ public class DbHandler {
             + "ON [postInfo]\n"
             + "FOR EACH ROW\n"
             + "WHEN exists (select * from  postInfo where  \n"
-            + "(select count(*) from postInfo where user_id=new.user_id)>=5)\n"
+            + "(select count(*) from postInfo where user_id=new.user_id)>=30)\n"
             + "BEGIN\n"
             + "\n"
             + "delete from postInfo\n"
@@ -135,14 +135,16 @@ public class DbHandler {
             + "(99,'default');";
 
     public static void CreateDB() {
+       
 
         try {
             conn = DriverManager.getConnection(url);
             statmt = conn.createStatement();
-
+       
+            statmt.execute(user);
             statmt.execute(providers);
             statmt.execute(groups);
-            statmt.execute(user);
+         
             statmt.execute(gpoup_provider);
             statmt.execute(postInfo);
 
@@ -153,7 +155,8 @@ public class DbHandler {
 
             statmt.execute(uniquIndex);
             statmt.execute(defaultGroupString);
-
+        
+            
             System.out.println("Соединения закрыты");
         } catch (SQLException ex) {
             Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -294,13 +297,16 @@ public class DbHandler {
             Connection conn = this.DBconnect();
             Statement statement = conn.createStatement();
             ResultSet resultSet = statement.executeQuery(selectString);
-
-            while (resultSet.next()) {
+            if(resultSet!=null){
+                  while (resultSet.next()) {
                 int value = resultSet.getInt(key);
 
                 settings = value;
 
             }
+            }
+
+      
         } catch (SQLException ex) {
             Logger.getLogger(DbHandler.class.getName()).log(Level.SEVERE, null, ex);
         }

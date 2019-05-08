@@ -10,6 +10,7 @@ import com.mycompany.helper.Poster;
 import com.mycompany.helper.Vk_api;
 import com.mycompany.helper.Vk_preferences;
 import com.vk.api.sdk.client.actors.UserActor;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -304,11 +305,23 @@ public class FXMLController implements Initializable {
         если есть то  в prividerList и auth-выставляем данные по пользователю из параметров
         все запросы к vkApi делать через выбраного пользоватея
          */
-        setDateTime();
+      
         // если файл создан то не пытаться создавать
-        new DbHandler().CreateDB();
+        
+       
+       File file=new File("vk_grabBase.db");
+       if(file.exists()){
+            new DbHandler().DBconnect();
+            System.err.println("exist");
+              setDateTime();
+       }else{  
+            new DbHandler().CreateDB();
+            System.err.println("No_exist");
+       }
+        
         //при запуске группы по умолчанию
         pref.putPref(Vk_preferences.GROUPS_PROVIDER, "99");
+
         secondTab();
 
     }

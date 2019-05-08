@@ -171,58 +171,9 @@ public class PostGrabber extends Thread {
 
     }
 
-    // тут можно проводить фильтрацию
-    void addtoListPost(ConstructorPost addtoWallsList) {
-        
-        List<Integer> postIdList= 
-                new DbHandler().postedList(addtoWallsList.provId,user_id );
-        
-        if (addtoWallsList != null) {
-            Boolean isExist = false;
-            if (listPost.isEmpty()) {
-                listPost.add(addtoWallsList);
-                viewInListView(listPost);
-            } else {
-//прохожу по всему листу и сравниваю каждую новую запись с тем что есть в  ListPost
-// по=этому выходит много прогонов
-                for (int i = 0; i < listPost.size(); i++) {
-
-                    if (listPost.get(i).postdate.equals(addtoWallsList.postdate)
-                            && listPost.get(i).postId.equals(addtoWallsList.postId)
-                            && listPost.get(i).provId.equals(addtoWallsList.provId)) {
-                        isExist = true;
-                    }
-                    if(postIdList.contains(listPost.get(i).postId)) {
-                        //listPost.get(i).text="ПОСТИЛ \n"+listPost.get(i).text;
-                        System.out.println("----" +  addtoWallsList.provId + "_" + addtoWallsList.postId);
-                        //isExist = true;
-                    
-                    };
-                    
- 
-                }
-                
-                
-                
-                if (isExist == false) {
-
-                    logger.info("3rd step: addtoListPost" + addtoWallsList.provId + "_" + addtoWallsList.postId);
-                    listPost.add(addtoWallsList);
-                    viewInListView(listPost);
-
-                } else {
-                    System.out.println("no add 3rd step: addtoListPost" + addtoWallsList.provId + "_" + addtoWallsList.postId);
-                }
-
-            }
-
-        }
-
-    }
-    
     void fromFilterToListView(ConstructorPost addtoWallsList){
         // не показывать размещенные
-        Boolean flagLogs=true;
+        Boolean flagLogs=  pref.getBooleanPref(Vk_preferences.SHOW_POSTED);
         
         // не показывать старше чем ...
         
@@ -316,5 +267,59 @@ public class PostGrabber extends Thread {
         });
 
     }
+    
 
+
+
+//-----
+
+    // тут можно проводить фильтрацию
+    void addtoListPost(ConstructorPost addtoWallsList) {
+        
+        List<Integer> postIdList= 
+                new DbHandler().postedList(addtoWallsList.provId,user_id );
+        
+        if (addtoWallsList != null) {
+            Boolean isExist = false;
+            if (listPost.isEmpty()) {
+                listPost.add(addtoWallsList);
+                viewInListView(listPost);
+            } else {
+//прохожу по всему листу и сравниваю каждую новую запись с тем что есть в  ListPost
+// по=этому выходит много прогонов
+                for (int i = 0; i < listPost.size(); i++) {
+
+                    if (listPost.get(i).postdate.equals(addtoWallsList.postdate)
+                            && listPost.get(i).postId.equals(addtoWallsList.postId)
+                            && listPost.get(i).provId.equals(addtoWallsList.provId)) {
+                        isExist = true;
+                    }
+                    if(postIdList.contains(listPost.get(i).postId)) {
+                        //listPost.get(i).text="ПОСТИЛ \n"+listPost.get(i).text;
+                        System.out.println("----" +  addtoWallsList.provId + "_" + addtoWallsList.postId);
+                        //isExist = true;
+                    
+                    };
+                    
+ 
+                }
+                
+                
+                
+                if (isExist == false) {
+
+                    logger.info("3rd step: addtoListPost" + addtoWallsList.provId + "_" + addtoWallsList.postId);
+                    listPost.add(addtoWallsList);
+                    viewInListView(listPost);
+
+                } else {
+                    System.out.println("no add 3rd step: addtoListPost" + addtoWallsList.provId + "_" + addtoWallsList.postId);
+                }
+
+            }
+
+        }
+
+    }
+    
 }
