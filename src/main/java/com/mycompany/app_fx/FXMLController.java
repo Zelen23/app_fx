@@ -32,6 +32,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -45,6 +46,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Pair;
@@ -111,6 +113,8 @@ public class FXMLController implements Initializable {
             scene.getStylesheets().add("/styles/Styles.css");
             Stage stage = new Stage();
             stage.setTitle("AddUser");
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner((Stage) progressBar.getScene().getWindow());
             stage.setScene(scene);
             stage.show();
         } catch (IOException ex) {
@@ -124,6 +128,8 @@ public class FXMLController implements Initializable {
         // если в настройках есть УЗ и в реестре храним user_id то открыть
         // если нет- окно добавления пользователя
         Boolean flag = true;
+        
+        
         if (!flag) {
             try {
                 Parent root = FXMLLoader.load(getClass().getResource("/fxml/AddUser_id.fxml"));
@@ -143,6 +149,10 @@ public class FXMLController implements Initializable {
                 scene.getStylesheets().add("/styles/Styles.css");
                 Stage stage = new Stage();
                 stage.setTitle("Get_token");
+                
+                stage.initModality(Modality.WINDOW_MODAL);
+                stage.initOwner((Stage) progressBar.getScene().getWindow());
+                
                 stage.setScene(scene);
                 stage.show();
             } catch (IOException ex) {
@@ -177,6 +187,8 @@ public class FXMLController implements Initializable {
             scene.getStylesheets().add("/styles/Styles.css");
             Stage stage = new Stage();
             stage.setTitle("AddProviders");
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner((Stage) progressBar.getScene().getWindow());
             stage.setScene(scene);
             stage.show();
         } catch (IOException ex) {
