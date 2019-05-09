@@ -5,40 +5,25 @@
  */
 package com.mycompany.helper;
 
-import com.mycompany.app_fx.Cell_listPostController;
-import com.mycompany.app_fx.FXMLController;
 import com.mycompany.app_fx.ListViewCell;
-import com.mycompany.app_fx.PreferencesController;
-
-import com.mycompany.app_fx.TaskCellFactory;
-import com.vk.api.sdk.client.actors.UserActor;
-import com.vk.api.sdk.objects.base.Geo;
 import com.vk.api.sdk.objects.base.LikesInfo;
 import com.vk.api.sdk.objects.photos.Photo;
-import com.vk.api.sdk.objects.wall.PostSource;
-import com.vk.api.sdk.objects.wall.PostType;
 import com.vk.api.sdk.objects.wall.Views;
-import com.vk.api.sdk.objects.wall.WallPost;
 import com.vk.api.sdk.objects.wall.WallPostFull;
 import com.vk.api.sdk.objects.wall.WallpostAttachment;
 import com.vk.api.sdk.objects.wall.WallpostAttachmentType;
 import com.vk.api.sdk.objects.wall.responses.GetResponse;
-import java.io.IOException;
 import static java.lang.Thread.sleep;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
-import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.slf4j.LoggerFactory;
 
@@ -80,8 +65,11 @@ public class PostGrabber extends Thread {
     }
     //529989036
     Vk_preferences pref = new Vk_preferences();
+    Integer user_id=Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
     Integer NumbersOfPosts = new DbHandler().settingsList("NumbersOfPosts",
-            Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID)));
+            user_id);
+    
+ 
 
     org.slf4j.Logger logger = LoggerFactory.getLogger(PostGrabber.class);
 
@@ -174,7 +162,8 @@ public class PostGrabber extends Thread {
                 //херачит в несколько проходов
 
                 if (listPhoto.size() > 0) {
-                    addtoListPost(new ConstructorPost(provId, postId, postdate, postViews, postLikes, text, count_itemsAttach, listPhoto, false));
+                   // addtoListPost(new ConstructorPost(provId, postId, postdate, postViews, postLikes, text, count_itemsAttach, listPhoto, false));
+                   fromFilterToListView(new ConstructorPost(provId, postId, postdate, postViews, postLikes, text, count_itemsAttach, listPhoto, false));
                 }
 
             }
@@ -182,39 +171,30 @@ public class PostGrabber extends Thread {
 
     }
 
-    // тут можно проводить фильтрацию
-    void addtoListPost(ConstructorPost addtoWallsList) {
-        if (addtoWallsList != null) {
-            Boolean isExist = false;
-            if (listPost.isEmpty()) {
-                listPost.add(addtoWallsList);
-                viewInListView(listPost);
-            } else {
-                for (int i = 0; i < listPost.size(); i++) {
+    void fromFilterToListView(ConstructorPost addtoWallsList){
+        // не показывать размещенные
+        Boolean flagLogs=  pref.getBooleanPref(Vk_preferences.SHOW_POSTED);
+        
+        // не показывать старше чем ...
+        
+        
+        // не показывать если лайков меньше
+        
+        List<Integer> postIdList= 
+                new DbHandler().postedList(addtoWallsList.provId,user_id );
+        
+       if(flagLogs&&postIdList.contains(addtoWallsList.postId)){
+      logger.info("this post is myWall: " + addtoWallsList.provId + "_" + addtoWallsList.postId);
+       }else{
+       listPost.add(addtoWallsList);
+       viewInListView(listPost);
+       logger.info("3rd step: addtoListPost" + addtoWallsList.provId + "_" + addtoWallsList.postId);
+       }
 
-                    if (listPost.get(i).postdate.equals(addtoWallsList.postdate)
-                            && listPost.get(i).postId.equals(addtoWallsList.postId)
-                            && listPost.get(i).provId.equals(addtoWallsList.provId)) {
-                        isExist = true;
-                    }
-
-                }
-                if (isExist == false) {
-
-                    logger.info("3rd step: addtoListPost" + addtoWallsList.provId + "_" + addtoWallsList.postId);
-                    listPost.add(addtoWallsList);
-                    viewInListView(listPost);
-
-                } else {
-                    System.out.println("no add 3rd step: addtoListPost" + addtoWallsList.provId + "_" + addtoWallsList.postId);
-                }
-
-            }
-
-        }
-
+       
+    
     }
-
+    
     void viewInListView(List<ConstructorPost> listPost) {
 
         final ObservableList<ConstructorPost> observableList = FXCollections.observableArrayList();
@@ -287,5 +267,59 @@ public class PostGrabber extends Thread {
         });
 
     }
+    
 
+
+
+//-----
+
+    // тут можно проводить фильтрацию
+    void addtoListPost(ConstructorPost addtoWallsList) {
+        
+        List<Integer> postIdList= 
+                new DbHandler().postedList(addtoWallsList.provId,user_id );
+        
+        if (addtoWallsList != null) {
+            Boolean isExist = false;
+            if (listPost.isEmpty()) {
+                listPost.add(addtoWallsList);
+                viewInListView(listPost);
+            } else {
+//прохожу по всему листу и сравниваю каждую новую запись с тем что есть в  ListPost
+// по=этому выходит много прогонов
+                for (int i = 0; i < listPost.size(); i++) {
+
+                    if (listPost.get(i).postdate.equals(addtoWallsList.postdate)
+                            && listPost.get(i).postId.equals(addtoWallsList.postId)
+                            && listPost.get(i).provId.equals(addtoWallsList.provId)) {
+                        isExist = true;
+                    }
+                    if(postIdList.contains(listPost.get(i).postId)) {
+                        //listPost.get(i).text="ПОСТИЛ \n"+listPost.get(i).text;
+                        System.out.println("----" +  addtoWallsList.provId + "_" + addtoWallsList.postId);
+                        //isExist = true;
+                    
+                    };
+                    
+ 
+                }
+                
+                
+                
+                if (isExist == false) {
+
+                    logger.info("3rd step: addtoListPost" + addtoWallsList.provId + "_" + addtoWallsList.postId);
+                    listPost.add(addtoWallsList);
+                    viewInListView(listPost);
+
+                } else {
+                    System.out.println("no add 3rd step: addtoListPost" + addtoWallsList.provId + "_" + addtoWallsList.postId);
+                }
+
+            }
+
+        }
+
+    }
+    
 }

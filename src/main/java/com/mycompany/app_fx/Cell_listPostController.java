@@ -87,7 +87,7 @@ public class Cell_listPostController {
 
     public void setInfo(final ConstructorPost string) {
         text.setText(string.text);
-        provideText.setText(string.provId.toString());
+        provideText.setText(string.provId+"_"+string.postId);
         l_likes.setText("likes: " + string.postLikes);
         l_viewers.setText("views: : " + string.postViews);
         l_date.setText(help.convertTime(string.postdate));
