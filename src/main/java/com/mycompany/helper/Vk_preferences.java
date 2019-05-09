@@ -22,6 +22,9 @@ public static final String TOKEN="token";
 public static final String VK_USER_ID="vk_user_id";
 public static final String GROUPS_PROVIDER="groups_provider";
 
+public static final String SHOW_POSTED="false";
+
+
 void pref(){
     Preferences preferences=Preferences.userNodeForPackage(Vk_preferences.class);
     
@@ -39,4 +42,17 @@ public String getPref(String key){
   
     
 }
+
+public void putBooleanPref(String key, Boolean value) {
+        Preferences preferences=Preferences.userNodeForPackage(Vk_preferences.class);
+        preferences.putBoolean(key, value);
+    }
+
+
+
+public Boolean getBooleanPref(String key){
+    Preferences preferences=Preferences.userNodeForPackage(Vk_preferences.class);
+    return preferences.getBoolean(key, false);
+}
+
 }

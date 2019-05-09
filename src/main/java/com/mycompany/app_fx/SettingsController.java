@@ -9,10 +9,13 @@ import com.mycompany.helper.DbHandler;
 import com.mycompany.helper.Vk_preferences;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -30,6 +33,8 @@ public class SettingsController implements Initializable {
     TextField editUser_id;
     @FXML
     Button b_saveSettings;
+    @FXML
+    CheckBox chboxShowPosted;
     
     DbHandler db=new DbHandler();
    
@@ -56,8 +61,25 @@ public class SettingsController implements Initializable {
         editTimeInterval.setText(""+db.settingsList("TimeInterval",vk_id));
         editNumOfPosts.setText(""+db.settingsList("NumbersOfPosts",vk_id));
         editUser_id.setText(""+vk_id);
+        
+        chboxShowPosted.setSelected(pref.getBooleanPref(Vk_preferences.SHOW_POSTED));
+        chboxShowPosted.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+
+               if(newValue!=oldValue){
+                pref.putBooleanPref(Vk_preferences.SHOW_POSTED, newValue);
+               }
+
+            }
+        });
+        
        
-       
-    }    
     
+       
+       
+    }
+
+
+
 }

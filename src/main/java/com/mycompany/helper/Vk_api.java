@@ -24,6 +24,7 @@ import com.vk.api.sdk.objects.photos.responses.WallUploadResponse;
 import com.vk.api.sdk.objects.users.UserXtrCounters;
 import com.vk.api.sdk.objects.wall.WallPostFull;
 import com.vk.api.sdk.objects.wall.responses.GetResponse;
+import com.vk.api.sdk.objects.wall.responses.PostResponse;
 import com.vk.api.sdk.queries.users.UserField;
 import com.vk.api.sdk.queries.users.UsersGetFollowersQueryWithFields;
 import com.vk.api.sdk.queries.wall.WallGetFilter;
@@ -216,18 +217,20 @@ public class Vk_api {
         return vk_Providers;
     }
 
-    public void setPost(String mess, Long pubdate, List<String> attach, Integer owner_id) {
+    public Integer setPost(String mess, Long pubdate, List<String> attach, Integer owner_id) {
         try {
             TransportClient transportClient = HttpTransportClient.getInstance();
             VkApiClient vk = new VkApiClient(transportClient);
-            vk.wall().post(getActor())
+            PostResponse postId = vk.wall().post(getActor())
                     .ownerId(owner_id)
                     .publishDate(pubdate.intValue())
                     .message(mess)
                     .attachments(attach)
                     .execute();
 
-            logger.info("Send post to my wall: OK");
+            logger.info("Send post to my wall: OK "+postId.getPostId());
+          
+            return postId.getPostId();
         } catch (ApiException ex) {
             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
             final String alertInfo = ex.getMessage();
@@ -237,7 +240,7 @@ public class Vk_api {
             final String alertInfo = ex.getMessage();
             new Helper().alertInfo(alertInfo);
         }
-
+    return null;
     }
 
     //__________________________________

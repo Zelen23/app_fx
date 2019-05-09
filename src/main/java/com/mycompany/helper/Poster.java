@@ -60,14 +60,16 @@ public class Poster extends Thread {
                     // Long time= helper.timeadd(helper.unixTime(), i);
                     Long time = helper.timeadd(times, i);
                     logger.info("Send post to my wall from: " + elt.provId + "_" + elt.postId);
-                    new Vk_api().setPost(
+                   int postMyWallid= new Vk_api().setPost(
                             elt.text,
                             time,
                             vk_api.addPhoto(elt.listPhoto, elt.text),
                             vk_api.getActor().getId()
                     //в метод передаю массив ссылок на фотку 
                     );
-
+                    
+                    new DbHandler().postingInfo(elt.provId, elt.postId,postMyWallid,vk_id);
+                    
                     updateProgress(listPost.indexOf(elt) + 1, listPost.size());
                     updateMessage(elt.provId + "_" + elt.postId);
                 }

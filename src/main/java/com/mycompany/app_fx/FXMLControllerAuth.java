@@ -42,20 +42,11 @@ public class FXMLControllerAuth implements Initializable {
     Vk_preferences pref = new Vk_preferences();
     Helper helper = new Helper();
 
-    @FXML
-    private Button close;
 
     @FXML
     private WebView webView;
 
-    @FXML
-    private void handleCloseButton(ActionEvent event) {
-        // get a handle to the stage
-        Stage stage = (Stage) close.getScene().getWindow();
-        // do what you have to do
-        stage.close();
-    }
-
+    
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -103,7 +94,7 @@ public class FXMLControllerAuth implements Initializable {
                     
                    
 
-                    Stage stage = (Stage) close.getScene().getWindow();
+                    Stage stage = (Stage) webView.getScene().getWindow();
                     stage.close();
 
                 }
