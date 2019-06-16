@@ -59,6 +59,7 @@
           <Menu mnemonicParsing="false" text="Edit">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#handle_edit_Settings" text="Settings" />
+                  <MenuItem mnemonicParsing="false" onAction="#handle_edit_WallCleaning" text="WallCleaning" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
