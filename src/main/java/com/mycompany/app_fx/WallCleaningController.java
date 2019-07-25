@@ -11,7 +11,6 @@ import com.mycompany.helper.Vk_preferences;
 import com.vk.api.sdk.objects.wall.WallPostFull;
 import com.vk.api.sdk.objects.wall.responses.GetResponse;
 import java.net.URL;
-import java.security.cert.PKIXRevocationChecker.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -66,42 +65,50 @@ public class WallCleaningController implements Initializable {
 
         final int inc = 100;
         e_post.setText("" + inc);
-        
+
         resp = api.getwalls(
-                            Integer.parseInt(pref.getPref(pref.VK_USER_ID)),
-                            // офсетом двигать
-                            // 419021587,
-                            10,
-                            1);
+                Integer.parseInt(pref.getPref(pref.VK_USER_ID)),
+                // офсетом двигать
+                // 419021587,
+                10,
+                1);
+// id предпоследней записи
         l_count.setText("Count: " + resp.getItems().get(0).getId());
-        
+// сдвинули оффсет- пересчитали ресонс        
         e_post.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if (oldValue != newValue && newValue.length()>0) {
-
+                if (oldValue != newValue && newValue.length() > 0) {
+// респонс с 100 постов
                     resp = api.getwalls(
                             Integer.parseInt(pref.getPref(pref.VK_USER_ID)),
                             // офсетом двигать
                             // 419021587,
-                            10000,
+                            100,
                             Integer.parseInt(e_post.getText()));
-                    
+
                     l_info.setText(
                             new Helper().convertTime(
-                                    resp.getItems().get(0).getDate().longValue())+"\r\n"+
-                                    resp.getItems().get(0).getText()
-                             );
+                                    resp.getItems().get(0).getDate().longValue()) + "\r\n"
+                            + resp.getItems().get(0).getText()
+                    );
                 }
-               
+
             }
         });
 
     }
 
+    /*по нажатию на clean нужно собрать массив со всеми id  для удаления
+    убедиться что последний пост- последий
+    ебнуть в 10е циклов
+    найти самый старый pоst_id 
+    пост до которого нужно добоаться 4585
+    
+     */
     @FXML
     private void handler_CleanWall(ActionEvent event) {
-
+// вывел id 100 постов
         List<Integer> postList = new ArrayList();
         for (WallPostFull elt : resp.getItems()) {
             postList.add(elt.getId());
@@ -129,14 +136,41 @@ public class WallCleaningController implements Initializable {
         switch (option.get().getText()) {
             case "delete":
                 System.out.println(
-                        "delete from "+new Helper().convertTime(resp.getItems().get(0).getDate().longValue())+
-                        "\n to^ "+new Helper().convertTime(resp.getItems().get(postList.size()-1).getDate().longValue())    
+                        "delete from " + new Helper().convertTime(resp.getItems().get(0).getDate().longValue())
+                        + "\n to^ " + new Helper().convertTime(resp.getItems().get(postList.size() - 1).getDate().longValue())
                 );
                 break;
             case "back":
-                System.out.println("BBBBBBBBBB");
+          searchMinPostID(postList);
                 break;
         }
+
+    }
+
+    public void searchMinPostID( List<Integer>  postList) {
+        
+        int before=postList.get(postList.size()-1);
+        int ink=before;
+        int iter=0;
+        
+       do {
+           ink=before/2;
+           resp = api.getwalls(
+                Integer.parseInt(pref.getPref(pref.VK_USER_ID)),
+                   100,
+                   ink);
+           iter++;
+           System.out.print("count iteration "+iter);
+       }
+       while(resp.getItems().size()==100);
+       
+       System.out.print("size older postList "+resp.getItems().size());
+        for (WallPostFull elt : resp.getItems()) {
+            postList.add(elt.getId());
+            System.out.println(elt.getId());
+        }
+       
+       
 
     }
 
