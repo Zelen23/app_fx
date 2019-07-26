@@ -59,6 +59,7 @@ public class WallCleaningController implements Initializable {
     Vk_preferences pref = new Vk_preferences();
 
     GetResponse resp;
+    Integer count;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -73,7 +74,9 @@ public class WallCleaningController implements Initializable {
                 10,
                 1);
 // id предпоследней записи
-        l_count.setText("Count: " + resp.getItems().get(0).getId());
+
+        count = resp.getCount();
+        l_count.setText("Count: " + count);
 // сдвинули оффсет- пересчитали ресонс        
         e_post.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -141,36 +144,64 @@ public class WallCleaningController implements Initializable {
                 );
                 break;
             case "back":
-          searchMinPostID(postList);
+                deletePost(postList, 200);
                 break;
         }
 
     }
 
-    public void searchMinPostID( List<Integer>  postList) {
-        
-        int before=postList.get(postList.size()-1);
-        int ink=before;
-        int iter=0;
-        
-       do {
-           ink=before/2;
-           resp = api.getwalls(
-                Integer.parseInt(pref.getPref(pref.VK_USER_ID)),
-                   100,
-                   ink);
-           iter++;
-           System.out.print("count iteration "+iter);
-       }
-       while(resp.getItems().size()==100);
-       
-       System.out.print("size older postList "+resp.getItems().size());
+    public void searchMinPostID(List<Integer> postList) {
+
+        int before = postList.get(postList.size() - 1);
+        int ink = before;
+        int iter = 0;
+
+        do {
+            ink = before / 2;
+            resp = api.getwalls(
+                    Integer.parseInt(pref.getPref(pref.VK_USER_ID)),
+                    100,
+                    ink);
+            iter++;
+            System.out.println("count iteration " + iter);
+        } while (resp.getItems().size() == 100);
+
+        System.out.println("size older postList " + resp.getItems().size());
         for (WallPostFull elt : resp.getItems()) {
             postList.add(elt.getId());
             System.out.println(elt.getId());
         }
-       
-       
+
+    }
+
+    public void deletePost(final List<Integer> postList, final Integer offset) {
+
+        /*count 2900
+         ofset 100*/
+        System.out.println("count: " + count
+                + "init offset " + offset
+                + "minPost " + postList.get(postList.size() - 1));
+        Thread myThready = new Thread(new Runnable() {
+            public void run() //Этот метод будет выполняться в побочном потоке
+            {
+                while (count > offset) {
+
+                    count = count - 100;
+
+                    resp = api.getwalls(
+                            Integer.parseInt(pref.getPref(pref.VK_USER_ID)),
+                            100,
+                            count);
+
+                    for (WallPostFull elt : resp.getItems()) {
+                        postList.add(elt.getId());
+                        System.out.println("for delete" + elt.getId());
+                    }
+
+                }
+            }
+        });
+        myThready.start();
 
     }
 
