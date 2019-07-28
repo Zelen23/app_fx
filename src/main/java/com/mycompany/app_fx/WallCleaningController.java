@@ -144,7 +144,7 @@ public class WallCleaningController implements Initializable {
                 );
                 break;
             case "back":
-                deletePost(postList, 200);
+                deletePost(postList.get(postList.size() - 1), 200);
                 break;
         }
 
@@ -174,32 +174,51 @@ public class WallCleaningController implements Initializable {
 
     }
 
-    public void deletePost(final List<Integer> postList, final Integer offset) {
+    public void deletePost(final Integer post, final Integer offset) {
 
         /*count 2900
          ofset 100*/
         System.out.println("count: " + count
                 + "init offset " + offset
-                + "minPost " + postList.get(postList.size() - 1));
-        Thread myThready = new Thread(new Runnable() {
+                + "minPost " + post);
+        Thread myThready;
+        myThready = new Thread(new Runnable() {
             public void run() //Этот метод будет выполняться в побочном потоке
             {
-                while (count > offset) {
-
+                while (count > 0) {
+                    List<Integer> postList = new ArrayList<>();
                     count = count - 100;
 
                     resp = api.getwalls(
                             Integer.parseInt(pref.getPref(pref.VK_USER_ID)),
                             100,
-                            count);
-
+                            count > 0 ? count : 0);
                     for (WallPostFull elt : resp.getItems()) {
                         postList.add(elt.getId());
-                        System.out.println("for delete" + elt.getId());
+
+                    }
+
+                    /*удалять есе подряд если нашли индекс то до него*/
+                    int index;
+                    index = postList.indexOf(post);
+                    /*удалять по 100 если Index-1 если */
+
+                    for (int i = 0; i < postList.size(); i++) {
+                        if (index != -1) {
+                            System.out.println("bye bye" );
+                            
+                            break;
+                        }
+
+                        System.out.println("count" + count + " index " + index);
+                        System.out.println("for delete " + postList.get(i));
+
                     }
 
                 }
+
             }
+
         });
         myThready.start();
 
