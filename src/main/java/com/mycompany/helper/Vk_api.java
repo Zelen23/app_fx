@@ -235,12 +235,17 @@ public class Vk_api {
         VkApiClient vk = new VkApiClient(transportClient);
             
         try {
+            Thread.sleep(100);
             OkResponse deleteWpos = vk.wall().delete(getActor())
                     .ownerId(ownId)
                     .postId(postId)
                     .execute();
-            
+        System.out.println( "wallDelete"+deleteWpos.getValue());
+         
         return deleteWpos.getValue();
+           
+        
+        
             
         } catch (ApiException ex) {
             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
@@ -254,6 +259,9 @@ public class Vk_api {
             final String alertInfo = ex.getMessage();
             new Helper().alertInfo(alertInfo);
             
+            return null;
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
         

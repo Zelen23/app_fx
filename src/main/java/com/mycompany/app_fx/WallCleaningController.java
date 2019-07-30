@@ -80,13 +80,14 @@ public class WallCleaningController implements Initializable {
 
 //slider    
         sliderClean.setMax(count);
-        sliderClean.setMin(200);
+        sliderClean.setMin(1);
         sliderClean.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 
                 // респонс с 100 постов
-                resp = api.getwalls(
+                if(newValue.intValue()<count){
+                      resp = api.getwalls(
                         Integer.parseInt(pref.getPref(pref.VK_USER_ID)),
                         // офсетом двигать
                         // 419021587,
@@ -100,6 +101,8 @@ public class WallCleaningController implements Initializable {
                                 resp.getItems().get(0).getDate().longValue()) + "\r\n"
                         + resp.getItems().get(0).getText()
                 );
+                }
+              
 
             }
         });
@@ -118,7 +121,8 @@ public class WallCleaningController implements Initializable {
 
         //postID
         //Count
-        String post_id = pref.getPref(pref.VK_USER_ID) + "_" + postID;
+        if(postID!=null){
+                    String post_id = pref.getPref(pref.VK_USER_ID) + "_" + postID;
 
         List l_post = new ArrayList<String>();
         l_post.add(post_id);
@@ -151,6 +155,8 @@ public class WallCleaningController implements Initializable {
 
                 break;
         }
+        }
+
 
     }
 
@@ -204,7 +210,11 @@ public class WallCleaningController implements Initializable {
                         for (int i = postList.size()-1; i > index; i--) {
                             count = resp.getCount();
                             System.out.println("delete last " + postList.get(i));
-
+                          /*
+                            api.wallDelete(Integer.parseInt(
+                                            pref.getPref(pref.VK_USER_ID)),
+                                            postList.get(i));
+                            */
                         }
                         break;
                     }
