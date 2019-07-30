@@ -76,7 +76,7 @@ public class WallCleaningController implements Initializable {
 // id предпоследней записи
 
         count = resp.getCount();
-        l_count.setText("Count: " + count);
+        l_count.setText("Count: " + count+ "max_id"+resp.getItems().get(2).getId());
 // сдвинули оффсет- пересчитали ресонс        
         e_post.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -144,7 +144,7 @@ public class WallCleaningController implements Initializable {
                 );
                 break;
             case "back":
-                deletePost(postList.get(postList.size() - 1), 200);
+                deletePost(postList.get(postList.size() - 1), Integer.parseInt(e_post.getText()));
                 break;
         }
 
@@ -178,13 +178,21 @@ public class WallCleaningController implements Initializable {
 
         /*count 2900
          ofset 100*/
-        System.out.println("count: " + count
+        System.out.println(
+                "count: " + count
                 + "init offset " + offset
                 + "minPost " + post);
         Thread myThready;
         myThready = new Thread(new Runnable() {
             public void run() //Этот метод будет выполняться в побочном потоке
             {
+
+                /* пройдусь по всем постамм пачками по 100,
+                когда дойду до последнего и отниму 100(взможно будет отрицательное)
+                верну эту сотку назад и не пойду на следущий цикл
+                
+                удаляю пачки  пока не найду пачку где есть искомый пост
+                 */
                 while (count > 0) {
                     List<Integer> postList = new ArrayList<>();
                     count = count - 100;
@@ -192,7 +200,7 @@ public class WallCleaningController implements Initializable {
                     resp = api.getwalls(
                             Integer.parseInt(pref.getPref(pref.VK_USER_ID)),
                             100,
-                            count > 0 ? count : 0);
+                            count > 0 ? count : count + 100);
                     for (WallPostFull elt : resp.getItems()) {
                         postList.add(elt.getId());
 
@@ -201,19 +209,24 @@ public class WallCleaningController implements Initializable {
                     /*удалять есе подряд если нашли индекс то до него*/
                     int index;
                     index = postList.indexOf(post);
-                    /*удалять по 100 если Index-1 если */
+                    if (index == -1) {
 
-                    for (int i = 0; i < postList.size(); i++) {
-                        if (index != -1) {
-                            System.out.println("bye bye" );
-                            
-                            break;
+                        for (Integer obj : postList) {
+                            System.out.println("delete " + obj);
                         }
 
-                        System.out.println("count" + count + " index " + index);
-                        System.out.println("for delete " + postList.get(i));
+                    } else {
 
+                        //удаляем до 14 и выскаиваем
+                        System.out.println("fucken " + index);
+
+                        for (int i = 0; i <= index; i++) {
+                            System.out.println("delete last " + postList.get(i));
+                             
+                        }
+                        break;
                     }
+                   
 
                 }
 
