@@ -25,6 +25,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 
 /**
@@ -46,56 +47,59 @@ public class WallCleaningController implements Initializable {
      */
     @FXML
     Button b_CleanWall;
-    @FXML
-    TextField e_post;
+
     @FXML
     Label l_count;
-    @FXML
-    Label l_before;
+ 
     @FXML
     Label l_info;
+    @FXML
+    Slider sliderClean;
 
     Vk_api api = new Vk_api();
     Vk_preferences pref = new Vk_preferences();
 
     GetResponse resp;
     Integer count;
+    Integer postID;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
-        final int inc = 100;
-        e_post.setText("" + inc);
-
+// id предпоследней записи       
         resp = api.getwalls(
                 Integer.parseInt(pref.getPref(pref.VK_USER_ID)),
                 // офсетом двигать
                 // 419021587,
                 10,
                 1);
-// id предпоследней записи
 
         count = resp.getCount();
-        l_count.setText("Count: " + count+ "max_id"+resp.getItems().get(2).getId());
-// сдвинули оффсет- пересчитали ресонс        
-        e_post.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if (oldValue != newValue && newValue.length() > 0) {
-// респонс с 100 постов
-                    resp = api.getwalls(
-                            Integer.parseInt(pref.getPref(pref.VK_USER_ID)),
-                            // офсетом двигать
-                            // 419021587,
-                            100,
-                            Integer.parseInt(e_post.getText()));
 
-                    l_info.setText(
-                            new Helper().convertTime(
-                                    resp.getItems().get(0).getDate().longValue()) + "\r\n"
-                            + resp.getItems().get(0).getText()
-                    );
-                }
+        l_count.setText("Count: " + count + "max_id" + resp.getItems().get(2).getId());
+
+//slider    
+        sliderClean.setMax(count);
+        sliderClean.setMin(200);
+        sliderClean.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+
+                // респонс с 100 постов
+                resp = api.getwalls(
+                        Integer.parseInt(pref.getPref(pref.VK_USER_ID)),
+                        // офсетом двигать
+                        // 419021587,
+                        2,
+                        newValue.intValue());
+                postID = resp.getItems().get(0).getId();
+
+                l_info.setText(
+                        "post_id" + postID+ "\r\n"
+                        + new Helper().convertTime(
+                                resp.getItems().get(0).getDate().longValue()) + "\r\n"
+                        + resp.getItems().get(0).getText()
+                );
 
             }
         });
@@ -111,19 +115,16 @@ public class WallCleaningController implements Initializable {
      */
     @FXML
     private void handler_CleanWall(ActionEvent event) {
-// вывел id 100 постов
-        List<Integer> postList = new ArrayList();
-        for (WallPostFull elt : resp.getItems()) {
-            postList.add(elt.getId());
-            System.out.println(elt.getId());
-        }
 
-        String post_id = pref.getPref(pref.VK_USER_ID) + "_" + postList.get(0);
+        //postID
+        //Count
+        String post_id = pref.getPref(pref.VK_USER_ID) + "_" + postID;
 
         List l_post = new ArrayList<String>();
         l_post.add(post_id);
         List< WallPostFull> postDetails = api.getwallbyId(l_post);
 
+//alert
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("Date Post: " + new Helper().convertTime(postDetails.get(0).getDate().longValue()));
         alert.setHeaderText("text" + postDetails.get(0).getText());
@@ -138,49 +139,27 @@ public class WallCleaningController implements Initializable {
 
         switch (option.get().getText()) {
             case "delete":
-                System.out.println(
+                deletePost(postID);
+
+                break;
+            case "back":
+               /* System.out.println(
                         "delete from " + new Helper().convertTime(resp.getItems().get(0).getDate().longValue())
                         + "\n to^ " + new Helper().convertTime(resp.getItems().get(postList.size() - 1).getDate().longValue())
                 );
-                break;
-            case "back":
-                deletePost(postList.get(postList.size() - 1), Integer.parseInt(e_post.getText()));
+                */
+
                 break;
         }
 
     }
 
-    public void searchMinPostID(List<Integer> postList) {
-
-        int before = postList.get(postList.size() - 1);
-        int ink = before;
-        int iter = 0;
-
-        do {
-            ink = before / 2;
-            resp = api.getwalls(
-                    Integer.parseInt(pref.getPref(pref.VK_USER_ID)),
-                    100,
-                    ink);
-            iter++;
-            System.out.println("count iteration " + iter);
-        } while (resp.getItems().size() == 100);
-
-        System.out.println("size older postList " + resp.getItems().size());
-        for (WallPostFull elt : resp.getItems()) {
-            postList.add(elt.getId());
-            System.out.println(elt.getId());
-        }
-
-    }
-
-    public void deletePost(final Integer post, final Integer offset) {
+    public void deletePost(final Integer post) {
 
         /*count 2900
          ofset 100*/
         System.out.println(
                 "count: " + count
-                + "init offset " + offset
                 + "minPost " + post);
         Thread myThready;
         myThready = new Thread(new Runnable() {
@@ -203,7 +182,7 @@ public class WallCleaningController implements Initializable {
                             count > 0 ? count : count + 100);
                     for (WallPostFull elt : resp.getItems()) {
                         postList.add(elt.getId());
-
+                         
                     }
 
                     /*удалять есе подряд если нашли индекс то до него*/
@@ -220,13 +199,15 @@ public class WallCleaningController implements Initializable {
                         //удаляем до 14 и выскаиваем
                         System.out.println("fucken " + index);
 
-                        for (int i = 0; i <= index; i++) {
+                        //вывел 100ку 150 был 3 по счету- удалил 1-2-3
+                        /*общее кол-во*/
+                        for (int i = postList.size()-1; i > index; i--) {
+                            count = resp.getCount();
                             System.out.println("delete last " + postList.get(i));
-                             
+
                         }
                         break;
                     }
-                   
 
                 }
 
