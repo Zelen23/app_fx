@@ -39,6 +39,10 @@ import javafx.scene.control.TextField;
   По нажатию на кнопу удалить-алерт, который покажет последний пост
   и его дату и сообщение "Уверены что хотите почистить стену до поста <пост>
   размещенного <дата>"
+
+ каждая итерация удаления создает альбом arch_timestamp
+ и в него ложет фотки удвленный постов
+поле окончания чистки постов- удалем фльбом
  */
 public class WallCleaningController implements Initializable {
 
@@ -167,6 +171,10 @@ public class WallCleaningController implements Initializable {
         System.out.println(
                 "count: " + count
                 + "minPost " + post);
+        
+        Integer idAlb=api.crtAlbum( 
+                Integer.parseInt(pref.getPref(pref.VK_USER_ID)), 
+                "arch"+new Helper().unixTime()).getOwnerId();
         Thread myThready;
         myThready = new Thread(new Runnable() {
             public void run() //Этот метод будет выполняться в побочном потоке
@@ -188,6 +196,7 @@ public class WallCleaningController implements Initializable {
                             count > 0 ? count : count + 100);
                     for (WallPostFull elt : resp.getItems()) {
                         postList.add(elt.getId());
+                        
                          
                     }
 
@@ -198,6 +207,11 @@ public class WallCleaningController implements Initializable {
 
                         for (Integer obj : postList) {
                             System.out.println("delete " + obj);
+                            /*
+                            api.wallDelete(Integer.parseInt(
+                                            pref.getPref(pref.VK_USER_ID)),
+                                            obj);
+                            */
                         }
 
                     } else {
@@ -210,11 +224,11 @@ public class WallCleaningController implements Initializable {
                         for (int i = postList.size()-1; i > index; i--) {
                             count = resp.getCount();
                             System.out.println("delete last " + postList.get(i));
-                          /*
+                         /*
                             api.wallDelete(Integer.parseInt(
                                             pref.getPref(pref.VK_USER_ID)),
                                             postList.get(i));
-                            */
+                        */
                         }
                         break;
                     }

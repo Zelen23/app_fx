@@ -15,6 +15,7 @@ import com.vk.api.sdk.httpclient.HttpTransportClient;
 import com.vk.api.sdk.objects.UserAuthResponse;
 import com.vk.api.sdk.objects.base.responses.OkResponse;
 import com.vk.api.sdk.objects.photos.Photo;
+import com.vk.api.sdk.objects.photos.PhotoAlbumFull;
 import com.vk.api.sdk.objects.photos.PhotoUpload;
 import com.vk.api.sdk.objects.photos.responses.WallUploadResponse;
 import com.vk.api.sdk.objects.users.UserXtrCounters;
@@ -269,6 +270,51 @@ public class Vk_api {
    
     }
 
+    public PhotoAlbumFull crtAlbum(Integer group_id,String title){
+        
+        PhotoAlbumFull alb=new PhotoAlbumFull();
+        try {
+            TransportClient transportClient = HttpTransportClient.getInstance();
+            VkApiClient vk = new VkApiClient(transportClient);
+             alb=vk.photos()
+                    .createAlbum( getActor(),title)
+                    .groupId(group_id)
+                    .description(title)
+                    .execute();
+        } catch (ApiException ex) {
+            Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+              final String alertInfo = ex.getMessage();
+            new Helper().alertInfo(alertInfo);
+        } catch (ClientException ex) {
+            Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+              final String alertInfo = ex.getMessage();
+            new Helper().alertInfo(alertInfo);
+        }
+  
+    return alb;
+    }
+    
+    public Integer movePhoto(Integer owner_id,Integer target_album_id,Integer photo_id){
+        OkResponse movePh = null;
+        try {
+            TransportClient transportClient = HttpTransportClient.getInstance();
+            VkApiClient vk = new VkApiClient(transportClient);
+             movePh = vk.photos()
+                    .move(getActor(),target_album_id , photo_id)
+                    .ownerId(owner_id)
+                    .execute();
+        } catch (ApiException ex) {
+            Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+              final String alertInfo = ex.getMessage();
+            new Helper().alertInfo(alertInfo);
+        } catch (ClientException ex) {
+            Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+              final String alertInfo = ex.getMessage();
+            new Helper().alertInfo(alertInfo);
+        }
+    
+    return movePh.getValue();
+    }
     //__________________________________
     public void getuser(UserActor actor) {
 
