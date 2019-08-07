@@ -236,7 +236,7 @@ public class Vk_api {
         VkApiClient vk = new VkApiClient(transportClient);
             
         try {
-            Thread.sleep(100);
+            Thread.sleep(300);
             OkResponse deleteWpos = vk.wall().delete(getActor())
                     .ownerId(ownId)
                     .postId(postId)
@@ -278,8 +278,8 @@ public class Vk_api {
             VkApiClient vk = new VkApiClient(transportClient);
              alb=vk.photos()
                     .createAlbum( getActor(),title)
-                    .groupId(group_id)
                     .description(title)
+                    .privacyView("nobody")
                     .execute();
         } catch (ApiException ex) {
             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
@@ -297,6 +297,7 @@ public class Vk_api {
     public Integer movePhoto(Integer owner_id,Integer target_album_id,Integer photo_id){
         OkResponse movePh = null;
         try {
+             Thread.sleep(300);
             TransportClient transportClient = HttpTransportClient.getInstance();
             VkApiClient vk = new VkApiClient(transportClient);
              movePh = vk.photos()
@@ -311,6 +312,8 @@ public class Vk_api {
             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
               final String alertInfo = ex.getMessage();
             new Helper().alertInfo(alertInfo);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
         }
     
     return movePh.getValue();

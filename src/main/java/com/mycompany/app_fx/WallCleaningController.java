@@ -9,6 +9,7 @@ import com.mycompany.helper.Helper;
 import com.mycompany.helper.Vk_api;
 import com.mycompany.helper.Vk_preferences;
 import com.vk.api.sdk.objects.wall.WallPostFull;
+import com.vk.api.sdk.objects.wall.WallpostAttachment;
 import com.vk.api.sdk.objects.wall.responses.GetResponse;
 import java.net.URL;
 import java.util.ArrayList;
@@ -172,9 +173,12 @@ public class WallCleaningController implements Initializable {
                 "count: " + count
                 + "minPost " + post);
         
-        Integer idAlb=api.crtAlbum( 
+        final Integer idAlb=api.crtAlbum( 
                 Integer.parseInt(pref.getPref(pref.VK_USER_ID)), 
-                "arch"+new Helper().unixTime()).getOwnerId();
+                "arch"+new Helper().unixTime())
+                .getId();
+        System.out.println("arch album ID" + idAlb);
+        
         Thread myThready;
         myThready = new Thread(new Runnable() {
             public void run() //Этот метод будет выполняться в побочном потоке
@@ -196,6 +200,9 @@ public class WallCleaningController implements Initializable {
                             count > 0 ? count : count + 100);
                     for (WallPostFull elt : resp.getItems()) {
                         postList.add(elt.getId());
+                        movePhotoFromPost(elt,idAlb);
+                 
+                        
                         
                          
                     }
@@ -207,11 +214,11 @@ public class WallCleaningController implements Initializable {
 
                         for (Integer obj : postList) {
                             System.out.println("delete " + obj);
-                            /*
+                           
                             api.wallDelete(Integer.parseInt(
                                             pref.getPref(pref.VK_USER_ID)),
                                             obj);
-                            */
+                            
                         }
 
                     } else {
@@ -224,11 +231,11 @@ public class WallCleaningController implements Initializable {
                         for (int i = postList.size()-1; i > index; i--) {
                             count = resp.getCount();
                             System.out.println("delete last " + postList.get(i));
-                         /*
+                        
                             api.wallDelete(Integer.parseInt(
                                             pref.getPref(pref.VK_USER_ID)),
                                             postList.get(i));
-                        */
+                        
                         }
                         break;
                     }
@@ -240,6 +247,22 @@ public class WallCleaningController implements Initializable {
         });
         myThready.start();
 
+    }
+    
+    void movePhotoFromPost(WallPostFull elt,Integer idAlb){
+        
+        ArrayList<Integer> list=new ArrayList<>();
+       
+        for( WallpostAttachment obj:elt.getAttachments()){
+          
+             System.out.println("movePhotoFromPost " +  obj.getPhoto().getId()); 
+               api.movePhoto( 
+                          Integer.parseInt(pref.getPref(pref.VK_USER_ID)),
+                           idAlb,
+                            obj.getPhoto().getId());
+        
+        }
+        
     }
 
 }
