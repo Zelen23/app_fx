@@ -5,6 +5,7 @@
  */
 package com.mycompany.app_fx;
 
+import com.mycompany.helper.ConstructorPhotoPost;
 import com.mycompany.helper.Helper;
 import com.mycompany.helper.Vk_api;
 import com.mycompany.helper.Vk_preferences;
@@ -55,7 +56,7 @@ public class WallCleaningController implements Initializable {
 
     @FXML
     Label l_count;
- 
+
     @FXML
     Label l_info;
     @FXML
@@ -67,6 +68,7 @@ public class WallCleaningController implements Initializable {
     GetResponse resp;
     Integer count;
     Integer postID;
+    ArrayList<Integer> photoList;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -91,23 +93,23 @@ public class WallCleaningController implements Initializable {
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 
                 // респонс с 100 постов
-                if(newValue.intValue()<count){
-                      resp = api.getwalls(
-                        Integer.parseInt(pref.getPref(pref.VK_USER_ID)),
-                        // офсетом двигать
-                        // 419021587,
-                        2,
-                        newValue.intValue());
-                postID = resp.getItems().get(0).getId();
+                if (newValue.intValue() < count) {
+                    resp = api.getwalls(
+                            Integer.parseInt(pref.getPref(pref.VK_USER_ID)),
+                            // офсетом двигать
+                            // 419021587,
+                            2,
+                            newValue.intValue());
+                    postID = resp.getItems().get(0).getId();
+                    photoList = photoFromPost(resp.getItems().get(0));
 
-                l_info.setText(
-                        "post_id" + postID+ "\r\n"
-                        + new Helper().convertTime(
-                                resp.getItems().get(0).getDate().longValue()) + "\r\n"
-                        + resp.getItems().get(0).getText()
-                );
+                    l_info.setText(
+                            "post_id" + postID + "\r\n"
+                            + new Helper().convertTime(
+                                    resp.getItems().get(0).getDate().longValue()) + "\r\n"
+                            + resp.getItems().get(0).getText()
+                    );
                 }
-              
 
             }
         });
@@ -126,59 +128,58 @@ public class WallCleaningController implements Initializable {
 
         //postID
         //Count
-        if(postID!=null){
-                    String post_id = pref.getPref(pref.VK_USER_ID) + "_" + postID;
+        if (postID != null) {
+            String post_id = pref.getPref(pref.VK_USER_ID) + "_" + postID;
 
-        List l_post = new ArrayList<String>();
-        l_post.add(post_id);
-        List< WallPostFull> postDetails = api.getwallbyId(l_post);
+            List l_post = new ArrayList<String>();
+            l_post.add(post_id);
+            List< WallPostFull> postDetails = api.getwallbyId(l_post);
 
 //alert
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Date Post: " + new Helper().convertTime(postDetails.get(0).getDate().longValue()));
-        alert.setHeaderText("text" + postDetails.get(0).getText());
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Date Post: " + new Helper().convertTime(postDetails.get(0).getDate().longValue()));
+            alert.setHeaderText("text" + postDetails.get(0).getText());
 
-        ButtonType delete = new ButtonType("delete");
-        ButtonType no = new ButtonType("back");
+            ButtonType delete = new ButtonType("delete");
+            ButtonType no = new ButtonType("back");
 
-        alert.getButtonTypes().clear();
-        alert.getButtonTypes().addAll(no, delete);
+            alert.getButtonTypes().clear();
+            alert.getButtonTypes().addAll(no, delete);
 
-        Optional<ButtonType> option = alert.showAndWait();
+            Optional<ButtonType> option = alert.showAndWait();
 
-        switch (option.get().getText()) {
-            case "delete":
-                deletePost(postID);
+            switch (option.get().getText()) {
+                case "delete":
+                    deletePost(new ConstructorPhotoPost(postID, photoList));
 
-                break;
-            case "back":
-               /* System.out.println(
+                    break;
+                case "back":
+                    /* System.out.println(
                         "delete from " + new Helper().convertTime(resp.getItems().get(0).getDate().longValue())
                         + "\n to^ " + new Helper().convertTime(resp.getItems().get(postList.size() - 1).getDate().longValue())
                 );
-                */
+                     */
 
-                break;
+                    break;
+            }
         }
-        }
-
 
     }
 
-    public void deletePost(final Integer post) {
+    public void deletePost(final ConstructorPhotoPost post) {
 
         /*count 2900
          ofset 100*/
         System.out.println(
                 "count: " + count
                 + "minPost " + post);
-        
-        final Integer idAlb=api.crtAlbum( 
-                Integer.parseInt(pref.getPref(pref.VK_USER_ID)), 
-                "arch"+new Helper().unixTime())
+
+        final Integer idAlb = api.crtAlbum(
+                Integer.parseInt(pref.getPref(pref.VK_USER_ID)),
+                "arch" + new Helper().unixTime())
                 .getId();
         System.out.println("arch album ID" + idAlb);
-        
+
         Thread myThready;
         myThready = new Thread(new Runnable() {
             public void run() //Этот метод будет выполняться в побочном потоке
@@ -191,40 +192,47 @@ public class WallCleaningController implements Initializable {
                 удаляю пачки  пока не найду пачку где есть искомый пост
                  */
                 while (count > 0) {
-                    List<Integer> postList = new ArrayList<>();
+                    //                List<Integer> postList = new ArrayList<>();
+                    ArrayList<ConstructorPhotoPost> photoPostList = new ArrayList<ConstructorPhotoPost>();
                     count = count - 100;
-                    ArrayList<Integer> photoID = new ArrayList<Integer>();
+                   // ArrayList<Integer> photoID = new ArrayList<Integer>();
 
                     resp = api.getwalls(
                             Integer.parseInt(pref.getPref(pref.VK_USER_ID)),
                             100,
                             count > 0 ? count : count + 100);
-                    
+
                     for (WallPostFull elt : resp.getItems()) {
-                        postList.add(elt.getId());
-                        
-                        photoID=photoFromPost(elt);
-                        
+
+                        //postList.add(elt.getId());
+                        //photoID=photoFromPost(elt);
+                        //топик постов в которых к каждому посту привязана стопка фоток
+                        photoPostList.add(new ConstructorPhotoPost(
+                                elt.getId(),
+                                photoFromPost(elt))
+                        );
                     }
 
                     /*удалять есе подряд если нашли индекс то до него*/
                     int index;
-                    index = postList.indexOf(post);
+                    index = photoPostList.indexOf(post);
+
                     if (index == -1) {
 
-                        for (Integer obj : postList) {
-                            System.out.println("delete " + obj);
-                           
+                        for (ConstructorPhotoPost obj : photoPostList) {
+
+                            System.out.println("delete " + obj.post_ID);
+
                             // перемещать в временный альбом фотку потом удалять
-                            
-                            api.wallDelete(Integer.parseInt(
-                                            pref.getPref(pref.VK_USER_ID)),
-                                            obj);
-                            
-                            mvPH(idAlb,photoID);
-                            
-                            
-                            
+                            if (api.wallDelete(Integer.parseInt(
+                                    pref.getPref(pref.VK_USER_ID)),
+                                    obj.post_ID).intValue() == 1) {
+                                mvPH(idAlb, obj.photoID_inPost);
+
+                            } else {
+                                break;
+                            }
+
                         }
 
                     } else {
@@ -234,14 +242,18 @@ public class WallCleaningController implements Initializable {
 
                         //вывел 100ку 150 был 3 по счету- удалил 1-2-3
                         /*общее кол-во*/
-                        for (int i = postList.size()-1; i > index; i--) {
+                        for (int i = photoPostList.size() - 1; i > index; i--) {
                             count = resp.getCount();
-                            System.out.println("delete last " + postList.get(i));
-                        
-                            api.wallDelete(Integer.parseInt(
-                                            pref.getPref(pref.VK_USER_ID)),
-                                            postList.get(i));
-                        
+                            System.out.println("delete last " + photoPostList.get(i).post_ID);
+
+                            if (api.wallDelete(Integer.parseInt(
+                                    pref.getPref(pref.VK_USER_ID)),
+                                    photoPostList.get(i).post_ID) == 1) {
+                                mvPH(idAlb, photoPostList.get(i).photoID_inPost);
+
+                            } else {
+                                break;
+                            }
                         }
                         break;
                     }
@@ -254,33 +266,31 @@ public class WallCleaningController implements Initializable {
         myThready.start();
 
     }
-// из топика постов вытащил картинки   
-    ArrayList<Integer>  photoFromPost(WallPostFull elt){
-        
-        ArrayList<Integer> list=new ArrayList<>();
-       
-        for( WallpostAttachment obj:elt.getAttachments()){
-            
-            if(obj.getPhoto().getId()!=null){
+    // из топика постов вытащил картинки   
+
+    ArrayList<Integer> photoFromPost(WallPostFull elt) {
+
+        ArrayList<Integer> list = new ArrayList<>();
+
+        for (WallpostAttachment obj : elt.getAttachments()) {
+
+            if (obj.getPhoto().getId() != null) {
                 list.add(obj.getPhoto().getId());
-            System.out.println("movePhotoFromPost " +  obj.getPhoto().getId());
+                System.out.println("movePhotoFromPost " + obj.getPhoto().getId());
             }
-             
+
         }
-       return  list;
+        return list;
     }
-    
-    
-    void mvPH(Integer alb,ArrayList<Integer> phID){
-        
-        for(Integer elt:phID){
+
+    void mvPH(Integer alb, ArrayList<Integer> phID) {
+
+        for (Integer elt : phID) {
             api.movePhoto(Integer.parseInt(pref.getPref(pref.VK_USER_ID)),
-                           alb,
-                           elt);
+                    alb,
+                    elt);
         }
-    
-     
-        
+
     }
 
 }
