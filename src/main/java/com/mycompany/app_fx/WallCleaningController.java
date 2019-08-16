@@ -193,18 +193,18 @@ public class WallCleaningController implements Initializable {
                 while (count > 0) {
                     List<Integer> postList = new ArrayList<>();
                     count = count - 100;
+                    ArrayList<Integer> photoID = new ArrayList<Integer>();
 
                     resp = api.getwalls(
                             Integer.parseInt(pref.getPref(pref.VK_USER_ID)),
                             100,
                             count > 0 ? count : count + 100);
+                    
                     for (WallPostFull elt : resp.getItems()) {
                         postList.add(elt.getId());
-                        movePhotoFromPost(elt,idAlb);
-                 
                         
+                        photoID=photoFromPost(elt);
                         
-                         
                     }
 
                     /*удалять есе подряд если нашли индекс то до него*/
@@ -215,9 +215,15 @@ public class WallCleaningController implements Initializable {
                         for (Integer obj : postList) {
                             System.out.println("delete " + obj);
                            
+                            // перемещать в временный альбом фотку потом удалять
+                            
                             api.wallDelete(Integer.parseInt(
                                             pref.getPref(pref.VK_USER_ID)),
                                             obj);
+                            
+                            mvPH(idAlb,photoID);
+                            
+                            
                             
                         }
 
@@ -248,20 +254,32 @@ public class WallCleaningController implements Initializable {
         myThready.start();
 
     }
-    
-    void movePhotoFromPost(WallPostFull elt,Integer idAlb){
+// из топика постов вытащил картинки   
+    ArrayList<Integer>  photoFromPost(WallPostFull elt){
         
         ArrayList<Integer> list=new ArrayList<>();
        
         for( WallpostAttachment obj:elt.getAttachments()){
-          
-             System.out.println("movePhotoFromPost " +  obj.getPhoto().getId()); 
-               api.movePhoto( 
-                          Integer.parseInt(pref.getPref(pref.VK_USER_ID)),
-                           idAlb,
-                            obj.getPhoto().getId());
-        
+            
+            if(obj.getPhoto().getId()!=null){
+                list.add(obj.getPhoto().getId());
+            System.out.println("movePhotoFromPost " +  obj.getPhoto().getId());
+            }
+             
         }
+       return  list;
+    }
+    
+    
+    void mvPH(Integer alb,ArrayList<Integer> phID){
+        
+        for(Integer elt:phID){
+            api.movePhoto(Integer.parseInt(pref.getPref(pref.VK_USER_ID)),
+                           alb,
+                           elt);
+        }
+    
+     
         
     }
 
