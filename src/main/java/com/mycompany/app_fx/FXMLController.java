@@ -29,6 +29,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -48,6 +50,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import javafx.util.Pair;
 import org.slf4j.LoggerFactory;
@@ -225,6 +228,19 @@ public class FXMLController implements Initializable {
             stage.setTitle("Settings");
             stage.setScene(scene);
             stage.show();
+            
+            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    System.err.println("Close");
+                    if(new WallCleaningController().myThready!=null){
+                 
+                     System.err.println( "not null  "+new WallCleaningController().myThready.getId());
+                        new WallCleaningController().myThready.interrupt();
+                    }
+                    
+                }
+            });
         } catch (IOException ex) {
             Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
         }
