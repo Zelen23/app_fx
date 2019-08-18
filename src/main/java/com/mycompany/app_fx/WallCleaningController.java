@@ -230,9 +230,6 @@ public class WallCleaningController implements Initializable {
                     if (index == -1) {
 
                         for (ConstructorPhotoPost obj : photoPostList) {
-
-                            System.out.println("delete " + obj.post_ID);
-
                             // перемещать в временный альбом фотку потом удалять
                             if (api.wallDelete(Integer.parseInt(
                                     pref.getPref(pref.VK_USER_ID)),
@@ -241,20 +238,16 @@ public class WallCleaningController implements Initializable {
                             } else {
                                 break;
                             }
-
                         }
 // остаток
                     } else {
-
-                        //удаляем до 14 и выскаиваем
-                        System.out.println("fucken " + index);
 
                         //вывел 100ку 150 был 3 по счету- удалил 1-2-3
                         /*общее кол-во*/
                         for (int i = photoPostList.size() - 1; i > index; i--) {
 
                             count = resp.getCount();
-                            System.out.println("delete last " + photoPostList.get(i).post_ID);
+                           
                             if (api.wallDelete(Integer.parseInt(
                                     pref.getPref(pref.VK_USER_ID)),
                                     photoPostList.get(i).post_ID).intValue() == 1) {
@@ -285,7 +278,7 @@ public class WallCleaningController implements Initializable {
 
             for (WallpostAttachment obj : elt.getAttachments()) {
 
-                if (obj.getPhoto().getId() != null) {
+                if (obj.getPhoto() != null) {
                     list.add(obj.getPhoto().getId());
                     //    System.out.println("movePhoto " + obj.getPhoto().getId() + "FromPost " + elt.getId());
                 }
