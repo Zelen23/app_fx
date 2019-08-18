@@ -158,7 +158,6 @@ public class WallCleaningController implements Initializable {
                     break;
                 case "back":
 
-                   
 // получил пост_id взял фотки создал альбом переместил порст удалил
                     break;
             }
