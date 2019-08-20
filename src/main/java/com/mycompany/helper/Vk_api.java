@@ -241,7 +241,7 @@ public class Vk_api {
                     .ownerId(ownId)
                     .postId(postId)
                     .execute();
-        System.out.println( "wallDelete "+postId);
+        System.out.println( "wallDelete "+postId+"resp "+deleteWpos.getValue());
          
         return deleteWpos.getValue();
            
@@ -306,6 +306,7 @@ public class Vk_api {
                     .execute();
         } catch (ApiException ex) {
             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+              System.out.println( "movePhoto "+photo_id+" resp "+movePh.getValue());
               final String alertInfo = ex.getMessage();
             new Helper().alertInfo(alertInfo);
         } catch (ClientException ex) {
@@ -315,7 +316,7 @@ public class Vk_api {
         } catch (InterruptedException ex) {
             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
         }
-    System.out.println( "movePhoto "+photo_id+" resp "+movePh.getValue());
+
     return movePh.getValue();
     }
     //__________________________________
