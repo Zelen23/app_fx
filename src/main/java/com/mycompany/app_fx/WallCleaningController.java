@@ -81,8 +81,6 @@ public class WallCleaningController implements Initializable {
 // id предпоследней записи       
         resp = api.getwalls(
                 Integer.parseInt(pref.getPref(pref.VK_USER_ID)),
-                // офсетом двигать
-                // 419021587,
                 10,
                 1);
 
@@ -99,10 +97,10 @@ public class WallCleaningController implements Initializable {
 
                 // респонс с 100 постов
                 if (newValue.intValue() < count) {
+
+                    postTodeleteCount = count - newValue.intValue();
                     resp = api.getwalls(
                             Integer.parseInt(pref.getPref(pref.VK_USER_ID)),
-                            // офсетом двигать
-                            // 419021587,
                             2,
                             newValue.intValue());
                     postID = resp.getItems().get(0).getId();
@@ -179,22 +177,18 @@ public class WallCleaningController implements Initializable {
                 "arch" + new Helper().unixTime())
                 .getId();
 
-      
-
-        b_CleanWall.setText("Stop");
         myThready = new Thread(new Runnable() {
             public void run() //Этот метод будет выполняться в побочном потоке
             {
-                int j=0;
+                int j = 0;
 
                 /* пройдусь по всем постамм пачками по 100,
                 когда дойду до последнего и отниму 100(взможно будет отрицательное)
                 верну эту сотку назад и не пойду на следущий цикл
-                
                 удаляю пачки  пока не найду пачку где есть искомый пост
                  */
                 while (count > 0) {
-                  
+
                     ArrayList<ConstructorPhotoPost> photoPostList = new ArrayList<ConstructorPhotoPost>();
                     count = count - 100;
                     resp = api.getwalls(
@@ -203,41 +197,61 @@ public class WallCleaningController implements Initializable {
                             count > 0 ? count : count + 100);
 
                     for (WallPostFull elt : resp.getItems()) {
-
                         photoPostList.add(new ConstructorPhotoPost(
                                 elt.getId(),
                                 photoFromPost(elt))
                         );
                     }
 
-                    
                     /*удалять есе подряд если нашли индекс то до него*/
-                    int index=0;
-
+                    int index = -1;
                     for (int i = 0; i < photoPostList.size(); i++) {
                         if (photoPostList.get(i).post_ID.equals(post.post_ID)) {
                             index = i;
                             System.out.println("bingo " + index);
-                        } 
+                        }
                     }
 
-                    /*общее кол-во*/
-                    for (int i = photoPostList.size() - 1; i > index; i--) {
+                    if (index == -1) {
+                        for (int i = photoPostList.size() - 1; i > 0; i--) {
+                            /*Замутить проверку если искомый пост удаляемого*/
 
-                        if (api.wallDelete(Integer.parseInt(
-                                pref.getPref(pref.VK_USER_ID)),
-                                photoPostList.get(i).post_ID).intValue() == 1) {
-                            
-                             progessStatus(progress(j));
-                            j++;
-                            
-                            mvPH(idAlb, photoPostList.get(i).photoID_inPost);
-                        } else {
-                            break;
-                        }
+                            if (api.wallDelete(Integer.parseInt(
+                                    pref.getPref(pref.VK_USER_ID)),
+                                    photoPostList.get(i).post_ID).intValue() == 1) {
 
-                    };
+                                progessStatus(progress(j));
+                                j++;
 
+                                mvPH(idAlb, photoPostList.get(i).photoID_inPost);
+
+                            } else {
+                                progessStatus(progress(postTodeleteCount));
+                                break;
+                            }
+
+                        };
+                    } else {
+                        for (int i = photoPostList.size() - 1; i > index; i--) {
+                            /*Замутить проверку если искомый пост удаляемого*/
+
+                            if (api.wallDelete(Integer.parseInt(
+                                    pref.getPref(pref.VK_USER_ID)),
+                                    photoPostList.get(i).post_ID).intValue() == 1) {
+
+                                progessStatus(progress(j));
+                                j++;
+
+                                mvPH(idAlb, photoPostList.get(i).photoID_inPost);
+
+                            } else {
+                                progessStatus(progress(postTodeleteCount));
+                                break;
+                            }
+                       
+                        };
+                         break;
+                    }
 
                 }
 
@@ -275,32 +289,35 @@ public class WallCleaningController implements Initializable {
                         alb,
                         elt);
             }
-
         }
 
     }
 
-    Task progress(final Integer ink){
-    
-    Task task=new Task() {
-        @Override
-        protected Object call() throws Exception {
-            updateProgress(ink,count);
-            return null;
-          
-        }
-        
-    };
-  return task;
+    Task progress(final Integer ink) {
+
+        Task task = new Task() {
+            @Override
+            protected Object call() throws Exception {
+                updateProgress(ink, postTodeleteCount);
+                updateMessage("stopClean");
+                if(ink==postTodeleteCount){
+                    updateMessage("finish");
+                }
+                return null;
+            }
+
+        };
+        return task;
     }
-    
-        public void progessStatus(final Task task) {
+
+    public void progessStatus(final Task task) {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
 
                 prb_clean.progressProperty().bind(task.progressProperty());
                 new Thread(task).start();
+                b_CleanWall.textProperty().bind(task.messageProperty());
 
             }
         });
