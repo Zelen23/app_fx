@@ -213,43 +213,11 @@ public class WallCleaningController implements Initializable {
                     }
 
                     if (index == -1) {
-                        for (int i = photoPostList.size() - 1; i > 0; i--) {
-                            /*Замутить проверку если искомый пост удаляемого*/
-
-                            if (api.wallDelete(Integer.parseInt(
-                                    pref.getPref(pref.VK_USER_ID)),
-                                    photoPostList.get(i).post_ID).intValue() == 1) {
-
-                                progessStatus(progress(j));
-                                j++;
-
-                                mvPH(idAlb, photoPostList.get(i).photoID_inPost);
-
-                            } else {
-                                progessStatus(progress(postTodeleteCount));
-                                break;
-                            }
-
-                        };
+                         deletePostCombine(photoPostList,0,idAlb,j);
                     } else {
-                        for (int i = photoPostList.size() - 1; i > index; i--) {
-                            /*Замутить проверку если искомый пост удаляемого*/
-
-                            if (api.wallDelete(Integer.parseInt(
-                                    pref.getPref(pref.VK_USER_ID)),
-                                    photoPostList.get(i).post_ID).intValue() == 1) {
-
-                                progessStatus(progress(j));
-                                j++;
-
-                                mvPH(idAlb, photoPostList.get(i).photoID_inPost);
-
-                            } else {
-                                progessStatus(progress(postTodeleteCount));
-                                break;
-                            }
-                       
-                        };
+                         deletePostCombine(photoPostList,index,idAlb,j);
+                         progessStatus(progress(postTodeleteCount));
+                         System.err.println("finish");
                          break;
                     }
 
@@ -310,6 +278,30 @@ public class WallCleaningController implements Initializable {
         return task;
     }
 
+    void deletePostCombine(
+            ArrayList<ConstructorPhotoPost> photoPostList, 
+            Integer index,
+            Integer albom,
+            Integer j){
+                            for (int i = photoPostList.size() - 1; i >= index; i--) {
+                            /*Замутить проверку если искомый пост удаляемого*/
+
+                            if (api.wallDelete(Integer.parseInt(
+                                    pref.getPref(pref.VK_USER_ID)),
+                                    photoPostList.get(i).post_ID).intValue() == 1) {
+
+                                 mvPH(albom, photoPostList.get(i).photoID_inPost);
+
+                                j++;
+                                progessStatus(progress(j));
+                               
+                            } else {
+                                progessStatus(progress(postTodeleteCount));
+                                break;
+                            }
+                       
+                        };}
+    
     public void progessStatus(final Task task) {
         Platform.runLater(new Runnable() {
             @Override
