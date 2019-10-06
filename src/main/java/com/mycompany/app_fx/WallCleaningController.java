@@ -12,6 +12,7 @@ import com.mycompany.helper.Vk_preferences;
 import com.vk.api.sdk.objects.wall.WallPostFull;
 import com.vk.api.sdk.objects.wall.WallpostAttachment;
 import com.vk.api.sdk.objects.wall.responses.GetResponse;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +25,13 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -34,6 +40,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
+import static javafx.scene.input.KeyCode.T;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  * FXML Controller class
@@ -72,6 +82,9 @@ public class WallCleaningController implements Initializable {
     Slider sliderClean;
     @FXML
     ProgressBar prb_clean;
+    
+    @FXML 
+    private AnchorPane AnchorPaneClean;
 
     Vk_api api = new Vk_api();
     Vk_preferences pref = new Vk_preferences();
@@ -81,6 +94,7 @@ public class WallCleaningController implements Initializable {
     Integer postID;
     ArrayList<Integer> photoList;
     Thread myThready;
+    Boolean shotdown = false;
     Integer postToDeleteCount;
     Integer vkUserID = Integer.parseInt(pref.getPref(pref.VK_USER_ID));
     Integer j = 0;
@@ -118,9 +132,12 @@ public class WallCleaningController implements Initializable {
                 }
 
             }
-        });
-
+        }); 
+        
+     
+        
     }
+
 
     /*по нажатию на clean нужно собрать массив со всеми id  для удаления
     убедиться что последний пост- последий
@@ -167,9 +184,14 @@ public class WallCleaningController implements Initializable {
             }
         } else {
             // myThready.interrupt();
-            myThready.stop();
+            //myThready.stop();
+            shutdown();
         }
 
+    }
+
+    public void shutdown() {
+        shotdown = true;
     }
 
     public void deletePost(final Integer post) {
@@ -182,16 +204,15 @@ public class WallCleaningController implements Initializable {
                 .getId();
 
         myThready = new Thread(new Runnable() {
-            public void run() //Этот метод будет выполняться в побочном потоке
+            public void run() //Этот метод будет выполняться в побочном потоке  
             {
-                int j = 0;
 
                 /* пройдусь по всем постамм пачками по 100,
                 когда дойду до последнего и отниму 100(взможно будет отрицательное)
                 верну эту сотку назад и не пойду на следущий цикл
                 удаляю пачки  пока не найду пачку где есть искомый пост
                  */
-                while (count > 0) {
+                while (count > 0 && !shotdown) {
 
                     //храню ИД поста и его фотки
                     ArrayList<ConstructorPhotoPost> photoPostList = new ArrayList<ConstructorPhotoPost>();
@@ -231,6 +252,7 @@ public class WallCleaningController implements Initializable {
             }
 
         });
+
         myThready.start();
 
     }
@@ -272,8 +294,11 @@ public class WallCleaningController implements Initializable {
     }
 
     void deletePostCombine(ArrayList<ConstructorPhotoPost> photoPostList, Integer index, Integer albom) {
-    
+
         for (int i = photoPostList.size() - 1; i >= index; i--) {
+            if (shotdown) {
+                break;
+            }
 
             int successDeletePost = api.wallDelete(
                     vkUserID,

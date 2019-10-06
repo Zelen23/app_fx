@@ -6,8 +6,9 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="AnchorPane" prefHeight="269.0" prefWidth="549.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.app_fx.SettingsController">
+<AnchorPane fx:id="AnchorPaneClean" prefHeight="269.0" prefWidth="549.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.app_fx.SettingsController">
    <children>
+      
       <Label layoutX="32.0" layoutY="29.0" text="User_id" />
       <Label layoutX="32.0" layoutY="78.0" text="Number of Posts" />
       <Label layoutX="32.0" layoutY="114.0" text="Time interval" />

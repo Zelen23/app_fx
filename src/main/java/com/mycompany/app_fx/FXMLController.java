@@ -231,19 +231,23 @@ public class FXMLController implements Initializable {
             stage.setTitle("Settings");
             stage.setScene(scene);
             stage.show();
-            
+           /* 
             stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                 @Override
                 public void handle(WindowEvent event) {
+                    
+                    
                     System.err.println("Close");
                     if(new WallCleaningController().myThready!=null){
                  
                      System.err.println( "not null  "+new WallCleaningController().myThready.getId());
-                        new WallCleaningController().myThready.stop();
+                        new WallCleaningController().shutdown();
+                        
                     }
                     
                 }
             });
+            */
         } catch (IOException ex) {
             Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
         }
