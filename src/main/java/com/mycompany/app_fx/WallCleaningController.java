@@ -82,13 +82,14 @@ public class WallCleaningController implements Initializable {
     ArrayList<Integer> photoList;
     Thread myThready;
     Integer postToDeleteCount;
-    Integer vkUserID=Integer.parseInt(pref.getPref(pref.VK_USER_ID));
+    Integer vkUserID = Integer.parseInt(pref.getPref(pref.VK_USER_ID));
+    Integer j = 0;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
 // id предпоследней записи       
-        resp = api.getwalls(vkUserID, 10,1);
+        resp = api.getwalls(vkUserID, 10, 1);
         count = resp.getCount();
 
         l_count.setText("Count: " + count + "max_id" + resp.getItems().get(2).getId());
@@ -104,7 +105,7 @@ public class WallCleaningController implements Initializable {
                 if (newValue.intValue() < count) {
 
                     postToDeleteCount = count - newValue.intValue();
-                    resp = api.getwalls( vkUserID,2, newValue.intValue());
+                    resp = api.getwalls(vkUserID, 2, newValue.intValue());
                     postID = resp.getItems().get(0).getId();
                     photoList = photoFromPost(resp.getItems().get(0));
 
@@ -165,7 +166,7 @@ public class WallCleaningController implements Initializable {
                     break;
             }
         } else {
-           // myThready.interrupt();
+            // myThready.interrupt();
             myThready.stop();
         }
 
@@ -217,12 +218,12 @@ public class WallCleaningController implements Initializable {
                     }
 
                     if (indexPost == -1) {
-                         deletePostCombine(photoPostList,0,albumID);
+                        deletePostCombine(photoPostList, 0, albumID);
                     } else {
-                         deletePostCombine(photoPostList,indexPost,albumID);
-                         progessStatus(progress(postToDeleteCount));
-                         System.err.println("finish");
-                         break;
+                        deletePostCombine(photoPostList, indexPost, albumID);
+                        progessStatus(progress(postToDeleteCount));
+                        System.err.println("finish");
+                        break;
                     }
 
                 }
@@ -233,6 +234,7 @@ public class WallCleaningController implements Initializable {
         myThready.start();
 
     }
+
     // из топика постов вытащил картинки   
     ArrayList<Integer> photoFromPost(WallPostFull elt) {
 
@@ -243,7 +245,7 @@ public class WallCleaningController implements Initializable {
 
                 if (obj.getPhoto() != null) {
                     list.add(obj.getPhoto().getId());
-                    
+
                 }
             }
 
@@ -268,33 +270,33 @@ public class WallCleaningController implements Initializable {
         }
 
     }
-    void deletePostCombine(
-            ArrayList<ConstructorPhotoPost> photoPostList, 
-            Integer index,
-            Integer albom
-            ){
-                            Integer j=0;
-                            for (int i = photoPostList.size() - 1; i >= index; i--) {
-                                int successDeletePost=api.wallDelete(
-                                        vkUserID,
-                                        photoPostList.get(i).post_ID)
-                                        .intValue();
-                            /*Замутить проверку если искомый пост удаляемого*/
 
-                            if (successDeletePost == 1) {
-                                 movePhotoToArchAlbum(albom,
-                                         photoPostList.get(i).photoID_inPost
-                                 );
+    void deletePostCombine(ArrayList<ConstructorPhotoPost> photoPostList, Integer index, Integer albom) {
+    
+        for (int i = photoPostList.size() - 1; i >= index; i--) {
 
-                                j++;
-                                progessStatus(progress(j));
-                               
-                            } else {
-                                progessStatus(progress(postToDeleteCount));
-                                break;
-                            }
-                       
-                        };}
+            int successDeletePost = api.wallDelete(
+                    vkUserID,
+                    photoPostList.get(i).post_ID)
+                    .intValue();
+            /*защита: если каунт esp.getCount(); меньше чем 300 */
+
+            if (successDeletePost == 1) {
+                movePhotoToArchAlbum(albom,
+                        photoPostList.get(i).photoID_inPost
+                );
+
+                j++;
+                progessStatus(progress(j));
+
+            } else {
+                progessStatus(progress(postToDeleteCount));
+                break;
+            }
+
+        };
+    }
+
     Task progress(final Integer ink) {
 
         Task task = new Task() {
@@ -302,8 +304,8 @@ public class WallCleaningController implements Initializable {
             protected Object call() throws Exception {
                 updateProgress(ink, postToDeleteCount);
                 updateMessage("stopClean");
-                
-                if(ink==postToDeleteCount){
+
+                if (ink == postToDeleteCount) {
                     updateMessage("finish");
                 }
                 return null;
@@ -312,6 +314,7 @@ public class WallCleaningController implements Initializable {
         };
         return task;
     }
+
     public void progessStatus(final Task task) {
         Platform.runLater(new Runnable() {
             @Override
