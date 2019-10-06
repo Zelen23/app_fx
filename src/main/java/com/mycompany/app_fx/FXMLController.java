@@ -84,6 +84,9 @@ public class FXMLController implements Initializable {
     private TextField eM;
     @FXML
     private TextField eTimeInterval;
+    @FXML
+    private TextField eActualday;
+    public int day=1;
 
     @FXML
     DatePicker datePick;
@@ -236,7 +239,7 @@ public class FXMLController implements Initializable {
                     if(new WallCleaningController().myThready!=null){
                  
                      System.err.println( "not null  "+new WallCleaningController().myThready.getId());
-                        new WallCleaningController().myThready.interrupt();
+                        new WallCleaningController().myThready.stop();
                     }
                     
                 }
@@ -275,6 +278,7 @@ public class FXMLController implements Initializable {
     private void handle_Button_GetPostProviders(ActionEvent event) {
 
         int vk_id = Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
+        day= Integer.parseInt(eActualday.getText());
 
         String groups = pref.getPref(Vk_preferences.GROUPS_PROVIDER);
         List<ConstructorProvider> listProvDBX = new DbHandler().providerDBX(vk_id, groups);
@@ -286,7 +290,7 @@ public class FXMLController implements Initializable {
                 providerList.add(elt.id);
             }
         }
-        postGrabber = new PostGrabber(providerList, postListView, progressBar, l_status);
+        postGrabber = new PostGrabber(providerList, postListView, progressBar, l_status,day);
         postGrabber.start();
         logger.info("handle_Button_GetPostProviders " + providerList);
     }

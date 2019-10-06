@@ -8,10 +8,10 @@
 
 <AnchorPane id="AnchorPane" prefHeight="357.0" prefWidth="556.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.app_fx.WallCleaningController">
    <children>
-      <Label fx:id="l_count" layoutX="14.0" layoutY="14.0" prefHeight="18.0" prefWidth="269.0" text="Total count" />
-      <Button fx:id="b_CleanWall" layoutX="56.0" layoutY="261.0" mnemonicParsing="false" onAction="#handler_CleanWall" prefHeight="26.0" prefWidth="440.0" text="Clean" AnchorPane.bottomAnchor="69.60000000000002" AnchorPane.leftAnchor="56.0" AnchorPane.rightAnchor="53.0" />
-      <Label fx:id="l_info" layoutX="14.0" layoutY="118.0" prefHeight="87.0" prefWidth="524.0" AnchorPane.bottomAnchor="106.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="118.0" />
-      <Slider fx:id="sliderClean" layoutX="14.0" layoutY="87.0" prefHeight="16.0" prefWidth="524.0" />
-      <ProgressBar fx:id="prb_clean" layoutX="14.0" layoutY="324.0" prefHeight="18.0" prefWidth="531.0" progress="0.0" />
+      <Label fx:id="l_count" layoutX="14.0" layoutY="14.0" prefHeight="18.0" prefWidth="269.0" text="Total count" AnchorPane.leftAnchor="14.0" />
+      <Button fx:id="b_CleanWall" layoutX="56.0" layoutY="289.0" mnemonicParsing="false" onAction="#handler_CleanWall" prefHeight="26.0" prefWidth="440.0" text="Clean" AnchorPane.bottomAnchor="41.60000000000002" AnchorPane.leftAnchor="56.0" AnchorPane.rightAnchor="53.0" />
+      <Label fx:id="l_info" layoutX="18.0" layoutY="81.0" prefHeight="200.0" prefWidth="531.0" AnchorPane.bottomAnchor="76.0" AnchorPane.leftAnchor="18.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="81.0" />
+      <Slider fx:id="sliderClean" layoutX="16.0" layoutY="32.0" prefHeight="16.0" prefWidth="524.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="32.0" />
+      <ProgressBar fx:id="prb_clean" layoutX="14.0" layoutY="324.0" prefHeight="18.0" prefWidth="531.0" progress="0.0" AnchorPane.bottomAnchor="14.600000000000001" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="10.799999999999955" />
    </children>
 </AnchorPane>

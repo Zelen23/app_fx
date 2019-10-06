@@ -38,7 +38,7 @@ public class PostLinkGetter extends Thread {
         List<WallPostFull> wallItem = new ArrayList<WallPostFull>();
         wallItem = new Vk_api().getwallbyId(postList);
 
-        PostGrabber postGrab = new PostGrabber(null, postListView, null, null);
+        PostGrabber postGrab = new PostGrabber(null, postListView, null, null,100);
         postGrab.filterX(wallItem);
     }
 
