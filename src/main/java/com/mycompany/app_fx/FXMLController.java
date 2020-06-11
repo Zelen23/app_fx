@@ -29,6 +29,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -48,6 +50,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import javafx.util.Pair;
 import org.slf4j.LoggerFactory;
@@ -81,6 +84,9 @@ public class FXMLController implements Initializable {
     private TextField eM;
     @FXML
     private TextField eTimeInterval;
+    @FXML
+    private TextField eActualday;
+    public int day=1;
 
     @FXML
     DatePicker datePick;
@@ -212,6 +218,41 @@ public class FXMLController implements Initializable {
             Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    
+    @FXML
+    private void handle_edit_WallCleaning(ActionEvent event) {
+
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/WallCleaning.fxml"));
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add("/styles/Styles.css");
+            Stage stage = new Stage();
+            stage.setTitle("Settings");
+            stage.setScene(scene);
+            stage.show();
+           /* 
+            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    
+                    
+                    System.err.println("Close");
+                    if(new WallCleaningController().myThready!=null){
+                 
+                     System.err.println( "not null  "+new WallCleaningController().myThready.getId());
+                        new WallCleaningController().shutdown();
+                        
+                    }
+                    
+                }
+            });
+            */
+        } catch (IOException ex) {
+            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
 
 //====================================BUTTON====================================
     @FXML
@@ -241,6 +282,7 @@ public class FXMLController implements Initializable {
     private void handle_Button_GetPostProviders(ActionEvent event) {
 
         int vk_id = Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
+        day= Integer.parseInt(eActualday.getText());
 
         String groups = pref.getPref(Vk_preferences.GROUPS_PROVIDER);
         List<ConstructorProvider> listProvDBX = new DbHandler().providerDBX(vk_id, groups);
@@ -252,7 +294,7 @@ public class FXMLController implements Initializable {
                 providerList.add(elt.id);
             }
         }
-        postGrabber = new PostGrabber(providerList, postListView, progressBar, l_status);
+        postGrabber = new PostGrabber(providerList, postListView, progressBar, l_status,day);
         postGrabber.start();
         logger.info("handle_Button_GetPostProviders " + providerList);
     }

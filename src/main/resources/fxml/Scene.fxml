@@ -15,7 +15,7 @@
 
 <AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="627.0" prefWidth="890.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.app_fx.FXMLController">
     <children>
-      <TabPane layoutX="1.0" layoutY="31.0" prefHeight="558.0" prefWidth="890.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="38.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="-1.0" AnchorPane.topAnchor="31.0">
+      <TabPane layoutX="1.0" layoutY="69.0" prefHeight="520.0" prefWidth="890.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="38.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="-1.0" AnchorPane.topAnchor="69.0">
         <tabs>
           <Tab text="GetPostFromProviders">
             <content>
@@ -59,6 +59,7 @@
           <Menu mnemonicParsing="false" text="Edit">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#handle_edit_Settings" text="Settings" />
+                  <MenuItem mnemonicParsing="false" onAction="#handle_edit_WallCleaning" text="WallCleaning" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
@@ -76,5 +77,7 @@
       <TextField fx:id="eTimeInterval" layoutX="507.0" layoutY="38.0" prefHeight="26.0" prefWidth="70.0" AnchorPane.rightAnchor="305.0" AnchorPane.topAnchor="38.0" />
       <ProgressBar fx:id="progressBar" layoutX="1.0" layoutY="603.0" prefHeight="18.0" prefWidth="641.0" progress="0.0" AnchorPane.bottomAnchor="5.600000000000001" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="165.0" />
       <Label fx:id="l_status" layoutX="747.0" layoutY="603.0" prefHeight="18.0" prefWidth="142.0" text="status" AnchorPane.bottomAnchor="5.600000000000001" AnchorPane.rightAnchor="4.0" />
+      <Label layoutX="24.0" layoutY="42.0" text="Acual Day" />
+      <TextField fx:id="eActualday" layoutX="93.0" layoutY="38.0" prefHeight="26.0" prefWidth="44.0" text="7" />
     </children>
 </AnchorPane>

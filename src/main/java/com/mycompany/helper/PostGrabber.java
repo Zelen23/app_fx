@@ -5,6 +5,7 @@
  */
 package com.mycompany.helper;
 
+import com.mycompany.app_fx.FXMLController;
 import com.mycompany.app_fx.ListViewCell;
 import com.vk.api.sdk.objects.base.LikesInfo;
 import com.vk.api.sdk.objects.photos.Photo;
@@ -25,6 +26,8 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import javafx.util.Callback;
+import org.joda.time.DateTime;
+import org.joda.time.JodaTimePermission;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -51,31 +54,32 @@ public class PostGrabber extends Thread {
     ListView postListView = new ListView();
     ProgressBar progressBar = new ProgressBar();
     Label status = new Label();
+    int day;
 
     Vk_api vk_api = new Vk_api();
     List<GetResponse> massiveGetResponses = new ArrayList<GetResponse>();
     public List<ConstructorPost> listPost = new ArrayList<ConstructorPost>();
 
-    public PostGrabber(List<Integer> providerList, ListView postListView, ProgressBar progressBar, Label status) {
+    public PostGrabber(List<Integer> providerList, ListView postListView, ProgressBar progressBar, Label status,int day) {
         this.providerList = providerList;
         this.postListView = postListView;
         this.progressBar = progressBar;
         this.status = status;
+        this.day= day;
 
     }
     //529989036
     Vk_preferences pref = new Vk_preferences();
-    Integer user_id=Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
+    Integer user_id = Integer.valueOf(pref.getPref(Vk_preferences.VK_USER_ID));
     Integer NumbersOfPosts = new DbHandler().settingsList("NumbersOfPosts",
             user_id);
-    
- 
 
     org.slf4j.Logger logger = LoggerFactory.getLogger(PostGrabber.class);
 
     /*цикл в час в этом цикле каждые 10мин перебираю*/
     @Override
     public void run() {
+        //postListView=new  ListView();
 
         // while (true) {
         Task task = new Task() {
@@ -162,8 +166,8 @@ public class PostGrabber extends Thread {
                 //херачит в несколько проходов
 
                 if (listPhoto.size() > 0) {
-                   // addtoListPost(new ConstructorPost(provId, postId, postdate, postViews, postLikes, text, count_itemsAttach, listPhoto, false));
-                   fromFilterToListView(new ConstructorPost(provId, postId, postdate, postViews, postLikes, text, count_itemsAttach, listPhoto, false));
+                    // addtoListPost(new ConstructorPost(provId, postId, postdate, postViews, postLikes, text, count_itemsAttach, listPhoto, false));
+                    fromFilterToListView(new ConstructorPost(provId, postId, postdate, postViews, postLikes, text, count_itemsAttach, listPhoto, false));
                 }
 
             }
@@ -171,30 +175,32 @@ public class PostGrabber extends Thread {
 
     }
 
-    void fromFilterToListView(ConstructorPost addtoWallsList){
+    void fromFilterToListView(ConstructorPost addtoWallsList) {
         // не показывать размещенные
-        Boolean flagLogs=  pref.getBooleanPref(Vk_preferences.SHOW_POSTED);
-        
+        Boolean flagLogs = pref.getBooleanPref(Vk_preferences.SHOW_POSTED);
+      
         // не показывать старше чем ...
-        
-        
         // не показывать если лайков меньше
-        
-        List<Integer> postIdList= 
-                new DbHandler().postedList(addtoWallsList.provId,user_id );
-        
-       if(flagLogs&&postIdList.contains(addtoWallsList.postId)){
-      logger.info("this post is myWall: " + addtoWallsList.provId + "_" + addtoWallsList.postId);
-       }else{
-       listPost.add(addtoWallsList);
-       viewInListView(listPost);
-       logger.info("3rd step: addtoListPost" + addtoWallsList.provId + "_" + addtoWallsList.postId);
-       }
+        List<Integer> postIdList
+                = new DbHandler().postedList(addtoWallsList.provId, user_id);
 
-       
-    
+        if (flagLogs && postIdList.contains(addtoWallsList.postId)) {
+            logger.info("this post is myWall: " + addtoWallsList.provId + "_" + addtoWallsList.postId);
+        } else {
+                if(addtoWallsList.postdate>=new Helper().unixTime()-(new DateTime().getSecondOfDay()*day)){
+                 listPost.add(addtoWallsList);
+                viewInListView(listPost);
+                logger.info("3rd step: addtoListPost" + addtoWallsList.provId + "_" + addtoWallsList.postId);
+
+                }
+         
+               
+            
+
+        }
+
     }
-    
+
     void viewInListView(List<ConstructorPost> listPost) {
 
         final ObservableList<ConstructorPost> observableList = FXCollections.observableArrayList();
@@ -267,18 +273,14 @@ public class PostGrabber extends Thread {
         });
 
     }
-    
-
-
 
 //-----
-
     // тут можно проводить фильтрацию
     void addtoListPost(ConstructorPost addtoWallsList) {
-        
-        List<Integer> postIdList= 
-                new DbHandler().postedList(addtoWallsList.provId,user_id );
-        
+
+        List<Integer> postIdList
+                = new DbHandler().postedList(addtoWallsList.provId, user_id);
+
         if (addtoWallsList != null) {
             Boolean isExist = false;
             if (listPost.isEmpty()) {
@@ -294,18 +296,15 @@ public class PostGrabber extends Thread {
                             && listPost.get(i).provId.equals(addtoWallsList.provId)) {
                         isExist = true;
                     }
-                    if(postIdList.contains(listPost.get(i).postId)) {
+                    if (postIdList.contains(listPost.get(i).postId)) {
                         //listPost.get(i).text="ПОСТИЛ \n"+listPost.get(i).text;
-                        System.out.println("----" +  addtoWallsList.provId + "_" + addtoWallsList.postId);
+                        System.out.println("----" + addtoWallsList.provId + "_" + addtoWallsList.postId);
                         //isExist = true;
-                    
+
                     };
-                    
- 
+
                 }
-                
-                
-                
+
                 if (isExist == false) {
 
                     logger.info("3rd step: addtoListPost" + addtoWallsList.provId + "_" + addtoWallsList.postId);
@@ -321,5 +320,5 @@ public class PostGrabber extends Thread {
         }
 
     }
-    
+
 }

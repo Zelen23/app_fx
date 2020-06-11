@@ -5,10 +5,7 @@
  */
 package com.mycompany.helper;
 
-import com.mycompany.app_fx.FXMLController;
 import static com.mycompany.helper.Vk_preferences.CLIENT_ID;
-import com.vk.api.sdk.actions.Photos;
-import com.vk.api.sdk.actions.Upload;
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.UserActor;
@@ -16,9 +13,9 @@ import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import com.vk.api.sdk.objects.UserAuthResponse;
-import com.vk.api.sdk.objects.ads.Client;
 import com.vk.api.sdk.objects.base.responses.OkResponse;
 import com.vk.api.sdk.objects.photos.Photo;
+import com.vk.api.sdk.objects.photos.PhotoAlbumFull;
 import com.vk.api.sdk.objects.photos.PhotoUpload;
 import com.vk.api.sdk.objects.photos.responses.WallUploadResponse;
 import com.vk.api.sdk.objects.users.UserXtrCounters;
@@ -26,23 +23,13 @@ import com.vk.api.sdk.objects.wall.WallPostFull;
 import com.vk.api.sdk.objects.wall.responses.GetResponse;
 import com.vk.api.sdk.objects.wall.responses.PostResponse;
 import com.vk.api.sdk.queries.users.UserField;
-import com.vk.api.sdk.queries.users.UsersGetFollowersQueryWithFields;
+import com.vk.api.sdk.queries.wall.WallDeleteQuery;
 import com.vk.api.sdk.queries.wall.WallGetFilter;
-import com.vk.api.sdk.queries.wall.WallPostQuery;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Label;
-import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -144,6 +131,7 @@ public class Vk_api {
             try {
 
                 File file = new Helper().saveFile(elt);
+                    
 
                 PhotoUpload serverResponse = vk.photos().getWallUploadServer(getActor()).execute();
                 WallUploadResponse uploadResponse = vk.upload().photoWall(serverResponse.getUploadUrl(), file).execute();
@@ -242,7 +230,95 @@ public class Vk_api {
         }
     return null;
     }
+    
+    public Integer wallDelete(Integer ownId,Integer postId){
+        try {
+            Thread.sleep(600);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        TransportClient transportClient = HttpTransportClient.getInstance();
+        VkApiClient vk = new VkApiClient(transportClient);
+            
+        try {
+           
+            OkResponse deleteWpos = vk.wall().delete(getActor())
+                    .ownerId(ownId)
+                    .postId(postId)
+                    .execute();
+        System.out.println( "wallDelete "+postId+"resp "+deleteWpos.getValue());
+         
+        return deleteWpos.getValue();
+           
+        
+        
+            
+        } catch (ApiException ex) {
+            Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+            final String alertInfo = ex.getMessage();
+            new Helper().alertInfo(alertInfo);
+            
+            return null;
+        } catch (ClientException ex) {
+            Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+            final String alertInfo = ex.getMessage();
+            new Helper().alertInfo(alertInfo);
+            
+            return null;
+        } 
+        
+        
+   
+    }
 
+    public PhotoAlbumFull crtAlbum(Integer group_id,String title){
+        
+        PhotoAlbumFull alb=new PhotoAlbumFull();
+        try {
+            TransportClient transportClient = HttpTransportClient.getInstance();
+            VkApiClient vk = new VkApiClient(transportClient);
+             alb=vk.photos()
+                    .createAlbum( getActor(),title)
+                    .description(title)
+                    .privacyView("nobody")
+                    .execute();
+        } catch (ApiException ex) {
+            Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+              final String alertInfo = ex.getMessage();
+            new Helper().alertInfo(alertInfo);
+        } catch (ClientException ex) {
+            Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+              final String alertInfo = ex.getMessage();
+            new Helper().alertInfo(alertInfo);
+        }
+  
+    return alb;
+    }
+    
+    public Integer movePhoto(Integer owner_id,Integer target_album_id,Integer photo_id){
+        OkResponse movePh = null;
+        try {
+             
+            TransportClient transportClient = HttpTransportClient.getInstance();
+            VkApiClient vk = new VkApiClient(transportClient);
+             movePh = vk.photos()
+                    .move(getActor(),target_album_id , photo_id)
+                    .ownerId(owner_id)
+                    .execute();
+        } catch (ApiException ex) {
+            Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+              System.out.println( "movePhoto "+photo_id+" resp "+movePh.getValue());
+              final String alertInfo = ex.getMessage();
+            new Helper().alertInfo(alertInfo);
+        } catch (ClientException ex) {
+            Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+              final String alertInfo = ex.getMessage();
+            new Helper().alertInfo(alertInfo);
+        } 
+
+    return movePh.getValue();
+    }
     //__________________________________
     public void getuser(UserActor actor) {
 
