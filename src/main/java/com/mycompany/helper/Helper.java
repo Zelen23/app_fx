@@ -24,6 +24,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -33,6 +34,7 @@ import org.apache.commons.io.FileUtils;
 public class Helper {
 
     static final long ONE_MINUTE_IN_MILLIS = 60;
+    org.slf4j.Logger logger = LoggerFactory.getLogger(Poster.class);
 
     public List<String> parseUrl(String url) {
         List<String> list_blank = new ArrayList<>();
@@ -102,16 +104,20 @@ public class Helper {
     public File saveFile(String link) {
 
         String[] parseUrl = link.split("/");
-        String path = "C:" + File.separator + "vkTest" + File.separator + parseUrl[6];
+        String path = "C:" + File.separator + "vkTest" + File.separator + parseUrl[parseUrl.length-1];
         File file = new File(path);
         file.getParentFile().mkdirs();
+        logger.info("save file# "+path );
 
         try {
             file.createNewFile();
             FileUtils.copyURLToFile(new URL(link), file);
+            logger.info("copyURLToFile");
         } catch (IOException ex) {
             Logger.getLogger(Helper.class.getName()).log(Level.SEVERE, null, ex);
+            logger.info("errrFile");
         }
+          logger.info("return");
         return file;
 
     }

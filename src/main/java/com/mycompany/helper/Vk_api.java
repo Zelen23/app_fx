@@ -131,6 +131,7 @@ public class Vk_api {
             try {
 
                 File file = new Helper().saveFile(elt);
+                    
 
                 PhotoUpload serverResponse = vk.photos().getWallUploadServer(getActor()).execute();
                 WallUploadResponse uploadResponse = vk.upload().photoWall(serverResponse.getUploadUrl(), file).execute();
