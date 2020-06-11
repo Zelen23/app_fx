@@ -231,7 +231,11 @@ public class Vk_api {
     }
     
     public Integer wallDelete(Integer ownId,Integer postId){
-        
+        try {
+            Thread.sleep(600);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+        }
         TransportClient transportClient = HttpTransportClient.getInstance();
         VkApiClient vk = new VkApiClient(transportClient);
             
