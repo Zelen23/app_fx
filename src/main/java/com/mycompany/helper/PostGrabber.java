@@ -86,12 +86,17 @@ public class PostGrabber extends Thread {
             @Override
             protected Object call() throws Exception {
                 for (int i = 0; i < providerList.size(); i++) {
+                    //если поставщик не блокирован
+                    if(vk_api.checkAvalable(providerList.get(i))){
+                         //получаю посты со сетны от поставщика
                     GetResponse getwalls = vk_api.getwalls(providerList.get(i), NumbersOfPosts, 0);
                     wallItemX(getwalls);
 
                     sleep(100);
                     updateProgress(i + 1, providerList.size());
                     updateMessage(providerList.get(i).toString());
+                    }
+                   
                 }
 
                 return null;

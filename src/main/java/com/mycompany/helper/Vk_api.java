@@ -67,6 +67,7 @@ public class Vk_api {
         try {
             try {
                 Thread.sleep(600);
+
             } catch (InterruptedException ex) {
                 Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -131,7 +132,6 @@ public class Vk_api {
             try {
 
                 File file = new Helper().saveFile(elt);
-                    
 
                 PhotoUpload serverResponse = vk.photos().getWallUploadServer(getActor()).execute();
                 WallUploadResponse uploadResponse = vk.upload().photoWall(serverResponse.getUploadUrl(), file).execute();
@@ -166,6 +166,11 @@ public class Vk_api {
     }
 
     public List<UserXtrCounters> getUserInfo(String vk_id) {
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         List<UserXtrCounters> userinfo = null;
         try {
@@ -216,8 +221,8 @@ public class Vk_api {
                     .attachments(attach)
                     .execute();
 
-            logger.info("Send post to my wall: OK "+postId.getPostId());
-          
+            logger.info("Send post to my wall: OK " + postId.getPostId());
+
             return postId.getPostId();
         } catch (ApiException ex) {
             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
@@ -228,10 +233,10 @@ public class Vk_api {
             final String alertInfo = ex.getMessage();
             new Helper().alertInfo(alertInfo);
         }
-    return null;
+        return null;
     }
-    
-    public Integer wallDelete(Integer ownId,Integer postId){
+
+    public Integer wallDelete(Integer ownId, Integer postId) {
         try {
             Thread.sleep(600);
         } catch (InterruptedException ex) {
@@ -239,86 +244,82 @@ public class Vk_api {
         }
         TransportClient transportClient = HttpTransportClient.getInstance();
         VkApiClient vk = new VkApiClient(transportClient);
-            
+
         try {
-           
+
             OkResponse deleteWpos = vk.wall().delete(getActor())
                     .ownerId(ownId)
                     .postId(postId)
                     .execute();
-        System.out.println( "wallDelete "+postId+"resp "+deleteWpos.getValue());
-         
-        return deleteWpos.getValue();
-           
-        
-        
-            
+            System.out.println("wallDelete " + postId + "resp " + deleteWpos.getValue());
+
+            return deleteWpos.getValue();
+
         } catch (ApiException ex) {
             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
             final String alertInfo = ex.getMessage();
             new Helper().alertInfo(alertInfo);
-            
+
             return null;
         } catch (ClientException ex) {
             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
             final String alertInfo = ex.getMessage();
             new Helper().alertInfo(alertInfo);
-            
+
             return null;
-        } 
-        
-        
-   
+        }
+
     }
 
-    public PhotoAlbumFull crtAlbum(Integer group_id,String title){
-        
-        PhotoAlbumFull alb=new PhotoAlbumFull();
+    public PhotoAlbumFull crtAlbum(Integer group_id, String title) {
+
+        PhotoAlbumFull alb = new PhotoAlbumFull();
         try {
             TransportClient transportClient = HttpTransportClient.getInstance();
             VkApiClient vk = new VkApiClient(transportClient);
-             alb=vk.photos()
-                    .createAlbum( getActor(),title)
+            alb = vk.photos()
+                    .createAlbum(getActor(), title)
                     .description(title)
                     .privacyView("nobody")
                     .execute();
         } catch (ApiException ex) {
             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-              final String alertInfo = ex.getMessage();
+            final String alertInfo = ex.getMessage();
             new Helper().alertInfo(alertInfo);
         } catch (ClientException ex) {
             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-              final String alertInfo = ex.getMessage();
+            final String alertInfo = ex.getMessage();
             new Helper().alertInfo(alertInfo);
         }
-  
-    return alb;
+
+        return alb;
     }
-    
-    public Integer movePhoto(Integer owner_id,Integer target_album_id,Integer photo_id){
+
+    public Integer movePhoto(Integer owner_id, Integer target_album_id, Integer photo_id) {
         OkResponse movePh = null;
         try {
-             
+
             TransportClient transportClient = HttpTransportClient.getInstance();
             VkApiClient vk = new VkApiClient(transportClient);
-             movePh = vk.photos()
-                    .move(getActor(),target_album_id , photo_id)
+            movePh = vk.photos()
+                    .move(getActor(), target_album_id, photo_id)
                     .ownerId(owner_id)
                     .execute();
         } catch (ApiException ex) {
             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-              System.out.println( "movePhoto "+photo_id+" resp "+movePh.getValue());
-              final String alertInfo = ex.getMessage();
+            System.out.println("movePhoto " + photo_id + " resp " + movePh.getValue());
+            final String alertInfo = ex.getMessage();
             new Helper().alertInfo(alertInfo);
         } catch (ClientException ex) {
             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
-              final String alertInfo = ex.getMessage();
+            final String alertInfo = ex.getMessage();
             new Helper().alertInfo(alertInfo);
-        } 
+        }
 
-    return movePh.getValue();
+        return movePh.getValue();
     }
+
     //__________________________________
     public void getuser(UserActor actor) {
 
@@ -363,6 +364,19 @@ public class Vk_api {
             java.util.logging.Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClientException ex) {
             java.util.logging.Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    boolean checkAvalable(Integer provider_id) {
+        String avalable = getUserInfo(String.valueOf(provider_id)).get(0).getDeactivated();
+        if (avalable == null) {
+            return true;
+        } else {
+            //тут метод который  уберет галку с поставщика
+            logger.info("provider_id: "+provider_id+"is "+avalable);
+            new DbHandler().updflag_post(false, provider_id);
+            return false;
         }
 
     }
