@@ -102,9 +102,14 @@ public class Helper {
     }
 
     public File saveFile(String link) {
+        
+     
+        String cutParams=link.split(".jpg")[0];
+        String[] parseUrl =cutParams.split("/");
+        String path = "C:" + File.separator + "vkTest" + File.separator + parseUrl[parseUrl.length-1]+".jpg";
+        /*найти .jpg*/
+       // String pathX = "C:" + File.separator + "vkTest" + File.separator + parseUrl[parseUrl.length-1];
 
-        String[] parseUrl = link.split("/");
-        String path = "C:" + File.separator + "vkTest" + File.separator + parseUrl[parseUrl.length-1];
         File file = new File(path);
         file.getParentFile().mkdirs();
         logger.info("save file# "+path );
