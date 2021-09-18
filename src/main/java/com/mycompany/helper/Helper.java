@@ -8,7 +8,12 @@ package com.mycompany.helper;
 import com.vk.api.sdk.objects.wall.responses.GetResponse;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -39,14 +44,23 @@ public class Helper {
     public List<String> parseUrl(String url) {
         List<String> list_blank = new ArrayList<>();
 
-        if (url.contains("access_token")) {
+        String urldec="";
+
+        try {
+            urldec=new URI(url).getPath();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+        if (urldec.contains("/blank.html")&&url.contains("access_token")) {
+
             url = url.substring(url.indexOf("#") + 1);
             String[] token = url.split("&");
             for (int i = 0; i < token.length; i++) {
                 list_blank.add(token[i].substring(token[i].indexOf("=") + 1));
             }
 
-            System.out.println(list_blank.toString());
+            System.out.println(" parse list_blank"+list_blank.toString());
         }
 
         return list_blank;

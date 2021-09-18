@@ -54,7 +54,7 @@ public class FXMLControllerAuth implements Initializable {
  
         String vk_url = "https://oauth.vk.com/authorize?client_id=" + pref.getPref(Vk_preferences.CLIENT_ID)
                 + "&display=page&redirect_uri=https://oauth.vk.com/blank.html"
-                + "&scope=wall,photos&response_type=token&v=5.101";
+                + "&scope=wall,photos&response_type=token&v=5.131";
 
         WebEngine webEngine = webView.getEngine();
         // Delete cache for navigate back
@@ -67,6 +67,8 @@ public class FXMLControllerAuth implements Initializable {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 if (helper.parseUrl(newValue).size() > 1) {
+
+                    System.out.println(newValue);
 
                     String token = helper.parseUrl(newValue).get(0);
                     pref.putPref(Vk_preferences.TOKEN, token);

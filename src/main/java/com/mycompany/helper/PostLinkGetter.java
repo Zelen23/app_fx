@@ -6,7 +6,7 @@
 package com.mycompany.helper;
 
 import com.vk.api.sdk.client.actors.UserActor;
-import com.vk.api.sdk.objects.wall.WallPostFull;
+import com.vk.api.sdk.objects.wall.WallpostFull;
 import com.vk.api.sdk.objects.wall.responses.GetResponse;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ public class PostLinkGetter extends Thread {
     @Override
     public void run() {
 
-        List<WallPostFull> wallItem = new ArrayList<WallPostFull>();
+        List<WallpostFull> wallItem = new ArrayList<WallpostFull>();
         wallItem = new Vk_api().getwallbyId(postList);
 
         PostGrabber postGrab = new PostGrabber(null, postListView, null, null,100);

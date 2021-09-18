@@ -6,25 +6,27 @@
 package com.mycompany.helper;
 
 import static com.mycompany.helper.Vk_preferences.CLIENT_ID;
+
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
-import com.vk.api.sdk.objects.UserAuthResponse;
 import com.vk.api.sdk.objects.base.responses.OkResponse;
+import com.vk.api.sdk.objects.enums.WallFilter;
 import com.vk.api.sdk.objects.photos.Photo;
-import com.vk.api.sdk.objects.photos.PhotoAlbumFull;
 import com.vk.api.sdk.objects.photos.PhotoUpload;
+import com.vk.api.sdk.objects.photos.responses.CreateAlbumResponse;
+import com.vk.api.sdk.objects.photos.responses.GetWallUploadServerResponse;
+import com.vk.api.sdk.objects.photos.responses.SaveWallPhotoResponse;
 import com.vk.api.sdk.objects.photos.responses.WallUploadResponse;
+import com.vk.api.sdk.objects.users.Fields;
 import com.vk.api.sdk.objects.users.UserXtrCounters;
-import com.vk.api.sdk.objects.wall.WallPostFull;
+
+import com.vk.api.sdk.objects.wall.WallpostFull;
 import com.vk.api.sdk.objects.wall.responses.GetResponse;
 import com.vk.api.sdk.objects.wall.responses.PostResponse;
-import com.vk.api.sdk.queries.users.UserField;
-import com.vk.api.sdk.queries.wall.WallDeleteQuery;
-import com.vk.api.sdk.queries.wall.WallGetFilter;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,10 +47,10 @@ public class Vk_api {
 
     String url = "https://oauth.vk.com/authorize?client_id=" + pref.getPref(CLIENT_ID)
             + "&display=page&redirect_uri=https://oauth.vk.com/blank.html"
-            + "&scope=friends&response_type=token&v=5.52";
+            + "&scope=friends&response_type=token&v=5.131";
     String urlWall = "https://oauth.vk.com/authorize?client_id=" + pref.getPref(CLIENT_ID)
             + "&display=page&redirect_uri=https://oauth.vk.com/blank.html"
-            + "&scope=wall&response_type=token&v=5.52";
+            + "&scope=wall&response_type=token&v=5.131";
 
     org.slf4j.Logger logger = LoggerFactory.getLogger(Vk_api.class);
 
@@ -60,6 +62,7 @@ public class Vk_api {
 
         return actor;
     }
+
 
     public GetResponse getwalls(Integer provider_id, int count, int offset) {
         GetResponse walls = new GetResponse();
@@ -76,7 +79,7 @@ public class Vk_api {
             walls = vk.wall().get(getActor())
                     .count(count)
                     .offset(offset)
-                    .filter(WallGetFilter.OWNER)
+                    .filter(WallFilter.OWNER)
                     .ownerId(provider_id)
                     .execute();
 
@@ -97,15 +100,15 @@ public class Vk_api {
         return walls;
     }
 
-    public List< WallPostFull> getwallbyId(List<String> posts) {
-        List< WallPostFull> walls = new ArrayList<WallPostFull>();
+    public List<WallpostFull> getwallbyId(List<String> posts) {
+        List< WallpostFull> walls = new ArrayList<WallpostFull>();
         try {
 
             TransportClient transportClient = HttpTransportClient.getInstance();
             VkApiClient vk = new VkApiClient(transportClient);
             walls = vk.wall()
-                    .getById(getActor(), posts)
-                    .execute();
+                    .getByIdExtended(getActor(), posts)
+                    .execute().getItems();
 
         } catch (ApiException ex) {
             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
@@ -120,6 +123,7 @@ public class Vk_api {
         return walls;
     }
 
+
     public List<String> addPhoto(List<String> listPhoto, String caption) {
 
         //получаю лист со ссылками фоток
@@ -133,16 +137,18 @@ public class Vk_api {
 
                 File file = new Helper().saveFile(elt);
 
-                PhotoUpload serverResponse = vk.photos().getWallUploadServer(getActor()).execute();
-                WallUploadResponse uploadResponse = vk.upload().photoWall(serverResponse.getUploadUrl(), file).execute();
+                GetWallUploadServerResponse serverResponse = vk.photos()
+                        .getWallUploadServer(getActor()).execute();
+                WallUploadResponse uploadResponse = vk.upload()
+                        .photoWall(serverResponse.getUploadUrl().toString(), file).execute();
 
-                List<Photo> photoList = vk.photos().saveWallPhoto(getActor(), uploadResponse.getPhoto())
+                List<SaveWallPhotoResponse> photoList = vk.photos().saveWallPhoto(getActor(), uploadResponse.getPhoto())
                         .caption(caption)
                         .server(uploadResponse.getServer())
                         .hash(uploadResponse.getHash())
                         .execute();
 
-                Photo photo = photoList.get(0);
+                SaveWallPhotoResponse photo = photoList.get(0);
 
                 ouList.add("photo" + photo.getOwnerId() + "_" + photo.getId());
                 Thread.sleep(1500);
@@ -165,20 +171,21 @@ public class Vk_api {
         return ouList;
     }
 
-    public List<UserXtrCounters> getUserInfo(String vk_id) {
+
+    public List<com.vk.api.sdk.objects.users.responses.GetResponse> getUserInfo(String vk_id) {
         try {
             Thread.sleep(100);
         } catch (InterruptedException ex) {
             Logger.getLogger(Vk_api.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        List<UserXtrCounters> userinfo = null;
+        List<com.vk.api.sdk.objects.users.responses.GetResponse> userinfo = null;
         try {
             TransportClient transportClient = HttpTransportClient.getInstance();
             VkApiClient vk = new VkApiClient(transportClient);
             userinfo = vk.users().get(getActor())
                     .userIds(vk_id)
-                    .fields(UserField.ABOUT)
+                    .fields(Fields.ABOUT)
                     .execute();
 
         } catch (ApiException ex) {
@@ -194,10 +201,13 @@ public class Vk_api {
         return userinfo;
     }
 
-    public List<ConstructorProvider> fromUsertoProvider(List<UserXtrCounters> userinfo) {
+
+
+
+    public List<ConstructorProvider> fromUsertoProvider(List<com.vk.api.sdk.objects.users.responses.GetResponse> userinfo) {
         List<ConstructorProvider> vk_Providers = new ArrayList<>();
 
-        for (UserXtrCounters elt : userinfo) {
+        for ( com.vk.api.sdk.objects.users.responses.GetResponse elt : userinfo) {
             vk_Providers.add(new ConstructorProvider(elt.getFirstName() + " " + elt.getLastName(),
                     "plase",
                     elt.getId(),
@@ -236,7 +246,7 @@ public class Vk_api {
         return null;
     }
 
-    public Integer wallDelete(Integer ownId, Integer postId) {
+    public String wallDelete(Integer ownId, Integer postId) {
         try {
             Thread.sleep(600);
         } catch (InterruptedException ex) {
@@ -272,9 +282,10 @@ public class Vk_api {
 
     }
 
-    public PhotoAlbumFull crtAlbum(Integer group_id, String title) {
+    public CreateAlbumResponse crtAlbum(Integer group_id, String title) {
 
-        PhotoAlbumFull alb = new PhotoAlbumFull();
+        CreateAlbumResponse alb=new CreateAlbumResponse();
+
         try {
             TransportClient transportClient = HttpTransportClient.getInstance();
             VkApiClient vk = new VkApiClient(transportClient);
@@ -296,7 +307,7 @@ public class Vk_api {
         return alb;
     }
 
-    public Integer movePhoto(Integer owner_id, Integer target_album_id, Integer photo_id) {
+    public String movePhoto(Integer owner_id, Integer target_album_id, Integer photo_id) {
         OkResponse movePh = null;
         try {
 
@@ -341,6 +352,7 @@ public class Vk_api {
         }
     }
 
+/*
     public void openVK(Integer APP_ID, String REDIRECT_URI, String CLIENT_SECRET, String code) {
         try {
             TransportClient transportClient = HttpTransportClient.getInstance();
@@ -367,6 +379,7 @@ public class Vk_api {
         }
 
     }
+*/
 
     boolean checkAvalable(Integer provider_id) {
         String avalable = getUserInfo(String.valueOf(provider_id)).get(0).getDeactivated();

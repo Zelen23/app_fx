@@ -10,9 +10,9 @@ import com.mycompany.app_fx.ListViewCell;
 import com.vk.api.sdk.objects.base.LikesInfo;
 import com.vk.api.sdk.objects.photos.Photo;
 import com.vk.api.sdk.objects.wall.Views;
-import com.vk.api.sdk.objects.wall.WallPostFull;
 import com.vk.api.sdk.objects.wall.WallpostAttachment;
 import com.vk.api.sdk.objects.wall.WallpostAttachmentType;
+import com.vk.api.sdk.objects.wall.WallpostFull;
 import com.vk.api.sdk.objects.wall.responses.GetResponse;
 import static java.lang.Thread.sleep;
 import java.util.ArrayList;
@@ -106,7 +106,7 @@ public class PostGrabber extends Thread {
     }
 
     public void wallItemX(GetResponse getwalls) {
-        List<WallPostFull> list = new ArrayList<WallPostFull>();
+        List<WallpostFull> list = new ArrayList<WallpostFull>();
         for (int i = 0; i < getwalls.getItems().size(); i++) {
 
             list.add(getwalls.getItems().get(i));
@@ -114,7 +114,7 @@ public class PostGrabber extends Thread {
         filterX(list);
     }
 
-    public void filterX(List<WallPostFull> list) {
+    public void filterX(List<WallpostFull> list) {
 
         ConstructorPost post = null;
         Integer provId = null;
@@ -125,8 +125,12 @@ public class PostGrabber extends Thread {
         String text = "";
         Integer count_itemsAttach = null;
 
-        for (WallPostFull wallItem : list) {
+        for (WallpostFull wallItem : list) {
+
+            System.out.println(wallItem.toString());
             List<WallpostAttachment> attachments = wallItem.getAttachments();
+
+
             Integer isPinned = wallItem.getIsPinned();
 
             //если данные удовлетворяют могу добавить в listPost
@@ -229,7 +233,7 @@ public class PostGrabber extends Thread {
 
     }
 
-    public String gettingPhoto(Photo photo) {
+    /*public String _gettingPhoto(Photo photo) {
 
         String returnPhoto = "";
         if (photo.getPhoto2560() != null) {
@@ -259,6 +263,17 @@ public class PostGrabber extends Thread {
             }
 
         }
+        logger.info("    2nd step: gettingPhoto" + returnPhoto + " " + photo.getOwnerId() + "_" + photo.getId());
+        return returnPhoto;
+
+    }*/
+    public String gettingPhoto(Photo photo) {
+
+        String returnPhoto = "";
+        returnPhoto=photo.getSizes().get(photo.getSizes().size()-1).getUrl().toString();
+
+
+
         logger.info("    2nd step: gettingPhoto" + returnPhoto + " " + photo.getOwnerId() + "_" + photo.getId());
         return returnPhoto;
 

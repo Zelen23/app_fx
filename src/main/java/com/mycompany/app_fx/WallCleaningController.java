@@ -9,7 +9,7 @@ import com.mycompany.helper.ConstructorPhotoPost;
 import com.mycompany.helper.Helper;
 import com.mycompany.helper.Vk_api;
 import com.mycompany.helper.Vk_preferences;
-import com.vk.api.sdk.objects.wall.WallPostFull;
+import com.vk.api.sdk.objects.wall.Wallpost;
 import com.vk.api.sdk.objects.wall.WallpostAttachment;
 import com.vk.api.sdk.objects.wall.responses.GetResponse;
 import java.io.IOException;
@@ -157,7 +157,7 @@ public class WallCleaningController implements Initializable {
 
             List l_post = new ArrayList<String>();
             l_post.add(post_id);
-            List< WallPostFull> postDetails = api.getwallbyId(l_post);
+            List< Wallpost> postDetails = api.getwallbyId(l_post);
 
 //alert
             Alert alert = new Alert(AlertType.CONFIRMATION);
@@ -222,7 +222,7 @@ public class WallCleaningController implements Initializable {
                             100,
                             count > 0 ? count : count + 100);
 
-                    for (WallPostFull elt : resp.getItems()) {
+                    for (Wallpost elt : resp.getItems()) {
                         photoPostList.add(new ConstructorPhotoPost(
                                 elt.getId(),
                                 photoFromPost(elt))
@@ -258,7 +258,7 @@ public class WallCleaningController implements Initializable {
     }
 
     // из топика постов вытащил картинки   
-    ArrayList<Integer> photoFromPost(WallPostFull elt) {
+    ArrayList<Integer> photoFromPost(Wallpost elt) {
 
         ArrayList<Integer> list = new ArrayList<>();
         if (elt.getAttachments() != null) {
@@ -300,13 +300,12 @@ public class WallCleaningController implements Initializable {
                 break;
             }
 
-            int successDeletePost = api.wallDelete(
+            String successDeletePost = api.wallDelete(
                     vkUserID,
-                    photoPostList.get(i).post_ID)
-                    .intValue();
+                    photoPostList.get(i).post_ID);
             /*защита: если каунт esp.getCount(); меньше чем 300 */
 
-            if (successDeletePost == 1) {
+            if (successDeletePost == "1") {
                 movePhotoToArchAlbum(albom,
                         photoPostList.get(i).photoID_inPost
                 );
